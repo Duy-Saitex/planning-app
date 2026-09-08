@@ -560,6 +560,25 @@ function isLate(model, o) {
   if (isDate(dly) && dly.getUTCFullYear() > 2000) { if (dayKey(dly) < dayKey(asOf)) return true; if (isDate(ex) && ex.getUTCFullYear() > 2000 && dayKey(ex) > dayKey(dly)) return true; }
   return false;
 }
+// Why an order is late, in the order a planner would ask: how far past the promise,
+// what the sheet's own delay note says, and what is still holding it up.
+function lateReasons(model, o) {
+  const F = model.F, out = [], asOf = dayKey(model.asOf);
+  const ex = o.v[F.planExFactory], dly = o.v[F.cusFinalDly];
+  if (isDate(ex) && isDate(dly) && ex.getUTCFullYear() > 2000 && dly.getUTCFullYear() > 2000 && dayKey(ex) > dayKey(dly))
+    out.push(`ex-factory ${dayKey(ex) - dayKey(dly)} d after the ${fmtDate(dly)} delivery`);
+  const otd = otdDays(model, o);
+  if (otd != null && otd < 0) out.push(`on-time delivery ${Math.round(otd)} d`);
+  if (isDate(dly) && dly.getUTCFullYear() > 2000 && dayKey(dly) < asOf && !orderProgress(model, o).shipped)
+    out.push(`delivery ${fmtDate(dly)} already passed`);
+  const gates = openGates(model, o);
+  if (gates.length) out.push('waiting on ' + gates.join(', '));
+  const note = str(o.v[F.delayReason]).trim();
+  if (note) out.push('note: ' + note);
+  const merch = str(o.v[F.merchComment]).trim();
+  if (merch) out.push('merch: ' + merch);
+  return out;
+}
 function facetValue(model, o, k) {
   const F = model.F;
   switch (k) {
@@ -690,6 +709,6 @@ async function buildEditedWorkbook(model, opts = {}) {
 
 return { loadWorkbook, recompute, setCell, undo, redo, beginGroup, endGroup, orderByRow, exportEdits, importEdits, buildEditedWorkbook, shiftFormula, parseLineName, buildLines,
   STAGES, STAGE_INDEX, STAGE_NAMES, stageLabel, stageWindow, orderProgress, resourceOf, spreadLoad, capacityOf, autoCapacity, workdayCount, isNonWash, isLate, approvalPending,
-  buildPredicate, applyFilter, facetCounts, facetValue, textOf, FIELD_DEFS, otdDays, openGates, runState, trimsPending, productionComplete, leadDays, READY_WINDOW_DAYS,
+  buildPredicate, applyFilter, facetCounts, facetValue, textOf, FIELD_DEFS, otdDays, openGates, runState, lateReasons, trimsPending, productionComplete, leadDays, READY_WINDOW_DAYS,
   util: { serialToDate, dateToSerial, isDate, dayKey, keyToDate, addDays, startOfDay, isSunday, skipSunday, plusSkip, num, str, ymd, fmtDate, fmtDateShort, parseYmd, monthKey, weekKey, mmmyy, colToIdx, idxToCol, normKey, MON } };
 });

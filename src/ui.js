@@ -770,7 +770,9 @@ function renderBoard(view, bar) {
       lane.appendChild(h('div', { class: 'lanehead' + (B.narrowLanes ? ' narrow' : ''), style: `width:${HEADW}px`, title: B.narrowLanes ? `${L.label} · ${items.length} orders` : '' },
         h('div', { class: 'ln' },
           h('span', { class: 'nm', title: 'Filter everything to ' + L.name, onclick: () => { if (B.stage === 'sew') setOnlyFacet('lineUnit', L.label); else if (B.stage === 'wash') setOnlyFacet('ldLine', L.name); else if (B.stage === 'fin' || B.stage === 'pack') setOnlyFacet('finLine', L.name); else setOnlyFacet('site', L.name); } }, L.label),
-          items.length ? h('button', { class: 'lanecount', title: 'List every order queued on this lane', onclick: () => showLaneOrders(L, items, stage) }, items.length) : null),
+          items.length ? h('button', { class: 'lanecount', title: 'List every order queued on this lane', onclick: e => showLaneOrders(L, items, stage, false, e) }, items.length) : null,
+          (function () { const n = items.filter(i => PC.isLate(m, i.o)).length;
+            return n ? h('button', { class: 'lanelate', title: `${n} order${n > 1 ? 's' : ''} on this lane will miss the delivery — click to see why`, onclick: e => showLaneOrders(L, items, stage, true, e) }, n + ' late') : null; })()),
         h('div', { class: 'meta' }, capIn, h('span', {}, 'pcs/day capacity'), h('span', { class: 'now', title: nowNext.title }, nowNext.text))));
       // plot
       const plot = h('div', { class: 'laneplot', style: `width:${plotW}px;height:${plotH}px` });
@@ -806,22 +808,44 @@ function renderBoard(view, bar) {
     scroll.scrollLeft = x; scroll.classList.toggle('pinned', x > 0);
   });
 }
-function showLaneOrders(L, items, stage) {
+function showLaneOrders(L, items, stage, lateOnly, ev) {
   const m = S.model, F = m.F, asOfK = dayKey(m.asOf);
-  const pop = openPop(`${L.label || L.name} · ${items.length} orders in this filter`);
+  const lateItems = items.filter(i => PC.isLate(m, i.o));
+  const shown = (lateOnly ? lateItems : items).slice().sort((a, b) => a.a - b.a);
+  const pop = openPop(`${L.label || L.name} — ${lateOnly ? fmt(lateItems.length) + ' late' : fmt(items.length) + ' orders'}`,
+    ev ? ev.clientX : null, ev ? ev.clientY : null);
   const info = capFor(S.board.stage, L.name, null);
-  pop.appendChild(h('div', { class: 'hint', style: 'margin-bottom:6px' },
-    `${fmt(items.reduce((a, i) => a + num(i.o.v[F.qty]), 0))} pcs${info.cap ? ' · ' + fmt(info.cap) + ' pcs/day' : ''}. Running now is marked ●, everything below it is what comes next.`));
-  const sorted = items.slice().sort((a, b) => a.a - b.a);
-  for (const it of sorted) {
+  pop.appendChild(h('div', { class: 'hint', style: 'margin-bottom:7px' },
+    lateOnly
+      ? `Ex-factory falls after the confirmed delivery on ${fmt(lateItems.length)} of ${fmt(items.length)} orders here. Reasons come from the plan and from the sheet's own delay note.`
+      : `${fmt(shown.reduce((a, i) => a + num(i.o.v[F.qty]), 0))} pcs${info.cap ? ' · ' + fmt(info.cap) + ' pcs/day' : ''}. ● is running now, ✓ has finished, the rest is what comes next.`));
+  if (!lateOnly && lateItems.length) pop.appendChild(h('button', { class: 'btn', style: 'width:100%;justify-content:center;margin-bottom:7px',
+    onclick: e => showLaneOrders(L, items, stage, true, e) }, `Show the ${lateItems.length} late order${lateItems.length > 1 ? 's' : ''} and why`));
+  for (const it of shown) {
     const o = it.o, running = it.a <= asOfK && it.b >= asOfK, future = it.a > asOfK;
-    pop.appendChild(h('button', { class: 'prow', onclick: () => { closePop(); openDrawer(o); } },
-      h('span', { style: 'width:9px;flex:none;color:var(--sx-text-success)' }, running ? '●' : future ? '' : '✓'),
-      h('span', { class: 'mono', style: 'width:82px;flex:none;overflow:hidden' }, str(o.v[F.po])),
-      h('span', { style: 'flex:1;overflow:hidden;text-overflow:ellipsis' }, str(o.v[F.customer]) + ' · ' + str(o.v[F.style])),
-      h('span', { class: 'mono muted', style: 'flex:none' }, fmt(num(o.v[F.qty]))),
-      h('span', { class: 'mono muted', style: 'flex:none;width:96px;text-align:right' }, fmtDateShort(keyToDate(it.a)) + '→' + fmtDateShort(keyToDate(it.b)))));
+    const late = PC.isLate(m, o);
+    const slip = (function () { const ex = o.v[F.planExFactory], dly = o.v[F.cusFinalDly];
+      return isDate(ex) && isDate(dly) ? dayKey(ex) - dayKey(dly) : null; })();
+    const row = h('button', { class: 'prow lrowdet', onclick: () => { closePop(); openDrawer(o); } },
+      h('span', { class: 'top' },
+        h('span', { style: 'width:9px;flex:none;color:var(--sx-text-success)' }, running ? '●' : future ? '' : '✓'),
+        h('span', { class: 'mono', style: 'width:80px;flex:none;overflow:hidden' }, str(o.v[F.po])),
+        h('span', { style: 'flex:1;overflow:hidden;text-overflow:ellipsis' }, str(o.v[F.customer]) + ' · ' + str(o.v[F.style])),
+        h('span', { class: 'mono muted', style: 'flex:none' }, fmt(num(o.v[F.qty]))),
+        late ? h('span', { class: 'tag bad', style: 'flex:none' }, slip != null && slip > 0 ? '+' + slip + ' d' : 'late')
+             : h('span', { class: 'mono muted', style: 'flex:none;width:86px;text-align:right' }, fmtDateShort(keyToDate(it.a)) + '→' + fmtDateShort(keyToDate(it.b)))));
+    if (late) {
+      const why = PC.lateReasons(m, o);
+      if (why.length) row.appendChild(h('span', { class: 'why' }, why.join(' · ')));
+    }
+    pop.appendChild(row);
   }
+  if (!shown.length) pop.appendChild(h('div', { class: 'empty' }, 'Nothing late on this lane.'));
+  if (shown.length) pop.appendChild(h('button', { class: 'btn', style: 'width:100%;justify-content:center;margin-top:8px',
+    onclick: () => { closePop(); S.filters.quick.late = lateOnly || undefined; if (!lateOnly) delete S.filters.quick.late;
+      if (S.board.stage === 'sew') setOnlyFacet('lineUnit', L.label); else if (S.board.stage === 'wash') setOnlyFacet('ldLine', L.name);
+      else if (S.board.stage === 'fin' || S.board.stage === 'pack') setOnlyFacet('finLine', L.name); else setOnlyFacet('site', L.name); } },
+    lateOnly ? 'Filter the whole app to these' : 'Filter the whole app to this lane'));
   return pop;
 }
 function describeLane(items, asOfK) {
@@ -1533,16 +1557,29 @@ let popEl = null;
 function openPop(title, x, y) {
   closePop();
   popEl = h('div', { class: 'pop', tabindex: -1 }, h('h4', {}, title));
+  popEl._at = [x, y];
+  popEl.style.maxHeight = Math.max(180, window.innerHeight - 24) + 'px';   // set once, never from the observer
   document.body.appendChild(popEl);
-  const w = popEl.offsetWidth || 300, hh = popEl.offsetHeight || 200;
-  const px = x == null ? window.innerWidth / 2 - w / 2 : Math.min(x + 12, window.innerWidth - w - 12);
-  const py = y == null ? 120 : Math.min(y + 12, window.innerHeight - hh - 12);
-  popEl.style.left = Math.max(8, px) + 'px'; popEl.style.top = Math.max(8, py) + 'px';
+  placePop();
+  // the caller fills it after this returns, and the web font settles later still,
+  // so follow every size change rather than guessing when it has finished growing
+  if (window.ResizeObserver) { popEl._ro = new ResizeObserver(() => placePop()); popEl._ro.observe(popEl); }
+  requestAnimationFrame(placePop);
+  setTimeout(placePop, 80);   // after the web font settles
   setTimeout(() => document.addEventListener('pointerdown', outside, { once: false }), 0);
   return popEl;
 }
+function placePop() {
+  if (!popEl) return;
+  const [x, y] = popEl._at || [null, null];
+  const w = popEl.offsetWidth || 300, hh = popEl.offsetHeight || 200;
+  const px = x == null ? window.innerWidth / 2 - w / 2 : Math.min(x + 12, window.innerWidth - w - 12);
+  const py = y == null ? 120 : Math.min(y + 12, window.innerHeight - hh - 12);
+  popEl.style.left = Math.max(8, px) + 'px';
+  popEl.style.top = Math.max(8, py) + 'px';
+}
 function outside(e) { if (popEl && !popEl.contains(e.target)) closePop(); }
-function closePop() { if (popEl) { popEl.remove(); popEl = null; document.removeEventListener('pointerdown', outside); } }
+function closePop() { if (popEl) { if (popEl._ro) popEl._ro.disconnect(); popEl.remove(); popEl = null; document.removeEventListener('pointerdown', outside); } }
 
 /* ================= export ================= */
 async function doExport() {
