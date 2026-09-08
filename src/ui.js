@@ -693,11 +693,6 @@ function renderBoard(view, bar) {
         : 'Drag sideways to shift the whole plan, or onto another lane to reassign this stage.'));
   }));
   bar.appendChild(h('div', { style: 'flex:1' }));
-  bar.appendChild(h('div', { class: 'runkey' },
-    h('span', { title: 'A process has produced pieces, or the marker is already cut' }, h('i', { style: 'border-color:var(--run-go)' }), 'Running'),
-    h('span', { title: `Nothing is holding it up and sewing starts within ${PC.READY_WINDOW_DAYS} days` }, h('i', { style: 'border-color:var(--run-ready)' }), 'Ready to run'),
-    h('span', { title: 'Not started: waiting on fabric, approvals, trims or shrinkage, or not due yet' }, h('i', {}), 'Not started'),
-    h('span', { title: 'Ex-factory runs past the confirmed delivery' }, h('i', { class: 'lateswatch' }), 'Late')));
   bar.appendChild(h('div', { style: 'flex:1' }));
 
   const from = B.from, to = from + B.days - 1;
@@ -730,6 +725,16 @@ function renderBoard(view, bar) {
   const BLKH = ROWH - 3, MINW = 240;   // short orders are padded to this so their text stays readable
 
   const board = h('div', { class: 'board' });
+  board.appendChild(h('div', { class: 'boardkey' },
+    h('span', { class: 'lbl' }, 'Bar border'),
+    h('span', { title: 'A process has produced pieces, or the marker is already cut' }, h('i', { style: 'border-color:var(--run-go)' }), 'Running'),
+    h('span', { title: `Nothing is holding it up and sewing starts within ${PC.READY_WINDOW_DAYS} days` }, h('i', { style: 'border-color:var(--run-ready)' }), 'Ready to run'),
+    h('span', { title: 'Not started: waiting on fabric, approvals, trims or shrinkage, or not due yet' }, h('i', {}), 'Not started'),
+    h('span', { title: 'Ex-factory runs past the confirmed delivery' }, h('i', { class: 'lateswatch' }), 'Late'),
+    h('span', { class: 'sep' }),
+    h('span', { class: 'lbl' }, 'Fill'), h('span', {}, 'production stage, palest at cutting'),
+    h('span', { class: 'sep' }),
+    h('span', { class: 'lbl' }, 'Bar under the lane'), h('span', {}, 'load against capacity')));
   const scroll = h('div', { class: 'bscroll' });
   const grid = h('div', { class: 'bgrid' });
   const HEADW = B.narrowLanes ? 66 : 208, dayW = B.dayW, plotW = B.days * dayW;

@@ -327,6 +327,15 @@ svg .caplin{stroke:var(--sx-intent-danger);stroke-width:1.5;stroke-dasharray:4 3
 .blk .lateflag{position:absolute;top:0;bottom:0;right:0;width:7px;background:var(--sx-intent-danger);
   pointer-events:none;clip-path:polygon(100% 0,100% 100%,0 100%)}
 .blk.sel{outline:2px solid var(--sx-intent-primary);outline-offset:1px;z-index:8}
+.boardkey{display:flex;align-items:center;gap:9px;padding:4px 10px;font-size:11px;color:var(--sx-text-secondary);
+  background:var(--sx-surface-raised);border-bottom:1px solid var(--sx-border-subtle);flex:none;flex-wrap:wrap}
+.boardkey span{display:inline-flex;align-items:center;gap:4px}
+.boardkey .lbl{color:var(--sx-text-disabled);font-weight:500}
+.boardkey .sep{width:1px;height:12px;background:var(--sx-border-default);margin:0 3px}
+.boardkey i{width:16px;height:11px;border:2px solid rgba(0,0,0,.25);border-radius:2px;background:var(--st3);display:block}
+.boardkey i.lateswatch{border:1px solid rgba(0,0,0,.25);position:relative;overflow:hidden}
+.boardkey i.lateswatch::after{content:"";position:absolute;top:0;bottom:0;right:0;width:7px;
+  background:var(--sx-intent-danger);clip-path:polygon(100% 0,100% 100%,0 100%)}
 .runkey{display:flex;align-items:center;gap:10px;font-size:11px;color:var(--sx-text-secondary);flex-wrap:wrap}
 .runkey span{display:inline-flex;align-items:center;gap:4px}
 .runkey i{width:16px;height:11px;border:2px solid rgba(0,0,0,.25);border-radius:2px;background:var(--st3);display:block}
