@@ -77,6 +77,21 @@ const FILE = process.argv[2] || '/Users/khuongduypham/Downloads/Production Plan 
   const NOTE = 'self-check <&>"quoted"';
   P.setCell(m, o, F.delayReason, NOTE);
   P.setCell(m, o, F.qty, 4242);
+  // every kind of write the interface can make must survive the export
+  const used = new Set([o]);
+  const free = pred => { const x = m.orders.find(y => !used.has(y) && pred(y)); if (x) used.add(x); return x; };
+  const withLine = free(x => U.isDate(x.v[F.sew1]) && U.str(x.v[F.line]));
+  const withLd = free(x => U.str(x.v[F.ldLine]));
+  const withFin = free(x => U.str(x.v[F.finLine]));
+  const blankRemark = free(x => x.v[F.remark] == null && U.str(x.v[F.po]));
+  const formulaCell = free(x => x.f[F.cusFinalDly]);
+  const want = [];
+  if (withLine) { P.setCell(m, withLine, F.line, null); want.push([withLine.r, F.line, null, 'cleared a lane (stash / take off)']); }
+  if (withLd) { P.setCell(m, withLd, F.ldLine, null); want.push([withLd.r, F.ldLine, null, 'cleared a laundry lane']); }
+  if (withFin) { P.setCell(m, withFin, F.finLine, 'L9'); want.push([withFin.r, F.finLine, 'L9', 'set a finishing lane']); }
+  if (blankRemark) { P.setCell(m, blankRemark, F.remark, 'written into a blank cell'); want.push([blankRemark.r, F.remark, 'written into a blank cell', 'wrote a previously empty cell']); }
+  if (formulaCell) { const d = new Date(Date.UTC(2026, 11, 24)); P.setCell(m, formulaCell, F.cusFinalDly, d); want.push([formulaCell.r, F.cusFinalDly, U.ymd(d), 'overwrote a formula cell']); }
+
   const buf = Buffer.from(await (await P.buildEditedWorkbook(m, {})).arrayBuffer());
   const zip = await require('jszip').loadAsync(buf);
   const xml = await zip.file(m.sheetPath).async('string');
@@ -85,12 +100,21 @@ const FILE = process.argv[2] || '/Users/khuongduypham/Downloads/Production Plan 
   assert((await zip.file('xl/workbook.xml').async('string')).includes('fullCalcOnLoad="1"'), 'Excel will not recalculate on open');
 
   // reopen the exported file: the edits survive a full round trip, the neighbouring row does not move
-  const back = await P.loadWorkbook(buf, { fileName: 're-read.xlsx' });
+  const m2 = await P.loadWorkbook(buf, { fileName: 're-read.xlsx' });
+  const back = m2;
   const same = P.orderByRow(back, o.r), neighbour = back.orders.find(x => x.r === o.r + 1);
   assert.equal(U.str(same.v[F.delayReason]), NOTE, 'the typed note did not survive the export');
   assert.equal(same.v[F.qty], 4242, 'the edited quantity did not survive the export');
   assert.equal(U.str(same.v[F.line]), before.line, 'an undone edit was exported anyway');
   if (neighbour) assert.equal(U.str(neighbour.v[F.po]), U.str(m.orders[m.orders.indexOf(o) + 1].v[F.po]), 'the next row was disturbed');
+  for (const [row, col, expected, how] of want) {
+    const back = P.orderByRow(m2, row);
+    assert(back, 'row ' + row + ' vanished from the export');
+    const got = U.isDate(back.v[col]) ? U.ymd(back.v[col]) : back.v[col];
+    assert.equal(got == null ? null : String(got), expected == null ? null : String(expected),
+      `${how}: ${U.idxToCol(col)}${row} came back as ${JSON.stringify(got)}, expected ${JSON.stringify(expected)}`);
+    assert.equal(back.f[col], 0, `${how}: ${U.idxToCol(col)}${row} still carries a formula after being edited`);
+  }
 
   console.log(`OK — ${m.orders.length} orders, ${m.ncols} columns, export ${(buf.length / 1048576).toFixed(1)} MB`);
   console.log('   run states:', JSON.stringify(runs));
