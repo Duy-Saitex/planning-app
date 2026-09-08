@@ -1491,9 +1491,23 @@ function kvSection(key, title, fieldKeys, o, open) {
     const c = m.cols[ci], v = o.v[ci];
     const edited = m.edits.has(o.r + ':' + ci);
     const val = h('div', { class: 'v editable' + (edited ? ' edited' : ''), tabindex: 0, title: 'Click to edit ' + c.name, onclick: () => editKV(val, o, c), onkeydown: e => { if (e.key === 'Enter') editKV(val, o, c); } }, cellText(v, c) || '—');
-    grid.appendChild(h('div', {}, h('div', { class: 'k' }, h('span', { class: 'cl' }, c.letter), c.name.slice(0, 30)), val));
+    grid.appendChild(h('div', {}, h('div', { class: 'k', title: `Column ${c.letter} · ${c.name}` },
+      h('span', { class: 'nm' }, tidyLabel(c.name)), h('span', { class: 'cl' }, c.letter)), val));
   }
   return h('details', { class: 'dsec', 'data-k': key, open: !!open }, h('summary', {}, title), grid);
+}
+// The sheet shouts its headers. Title-case the words but leave the trade's
+// abbreviations alone: "SAITEX PO" -> "Saitex PO", "PLANNED QTY" -> "Planned Qty".
+const LABEL_WORDS = { NO: 'No', QTY: 'Qty', DLY: 'Dly', PKC: 'Pkc', APP: 'App', REQ: 'Req', ACT: 'Act', EST: 'Est',
+  MK: 'Mk', CUS: 'Cus', FOR: 'for', TO: 'to', IN: 'in', OF: 'of', AND: 'and', VS: 'vs' };
+function tidyLabel(name) {
+  const t = String(name).replace(/\s+/g, ' ').trim().slice(0, 30);
+  if (/[a-z]/.test(t)) return t.charAt(0).toUpperCase() + t.slice(1);   // already mixed case, leave it
+  return t.split(' ').map(w => {
+    if (LABEL_WORDS[w]) return LABEL_WORDS[w];
+    if (w.length <= 3 && /^[A-Z&/()#%+-]+$/.test(w)) return w;          // PO, BLK, LDR, OTD, PP
+    return w.charAt(0) + w.slice(1).toLowerCase();
+  }).join(' ');
 }
 function editKV(el, o, c) {
   if (el.querySelector('input')) return;
