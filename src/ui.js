@@ -678,10 +678,6 @@ function renderBoard(view, bar) {
   });
   bar.appendChild(zoom); bar.appendChild(zoomOut);
   bar.appendChild(h('button', { class: 'btn', title: 'Scroll back to this week', onclick: () => { B.from = dayKey(m.asOf) - 7; render(); } }, 'Today'));
-  bar.appendChild(h('button', { class: 'btn' + (S.stash.size ? ' hasstash' : ''), 'aria-pressed': S.stashOpen,
-    title: S.stash.size ? 'Orders parked off the board. Open the tray to put one back or drag it onto a lane.' : 'Nothing stashed yet. Park an order from its detail panel.',
-    onclick: () => { S.stashOpen = !S.stashOpen; renderStashTray(); } },
-    S.stash.size ? `⇩ Stash ${S.stash.size}` : '⇩ Stash'));
   bar.appendChild(menuButton('Board options', 'Fit, column width, load display and drop behaviour', pop => {
     pop.appendChild(menuRow('Fit the dates to the filter', false, () => fitToFiltered(), 'zoom to what is showing'));
     pop.appendChild(menuRow('Narrow the line column', B.narrowLanes, () => { B.narrowLanes = !B.narrowLanes; render(); }, 'when it covers the bars'));
@@ -693,7 +689,12 @@ function renderBoard(view, bar) {
         : 'Drag sideways to shift the whole plan, or onto another lane to reassign this stage.'));
   }));
   bar.appendChild(h('div', { style: 'flex:1' }));
-  bar.appendChild(h('div', { style: 'flex:1' }));
+  bar.appendChild(h('button', { class: 'btn stashtab' + (S.stash.size ? ' full' : ''), 'aria-pressed': S.stashOpen,
+    title: S.stash.size ? `${S.stash.size} order${S.stash.size > 1 ? 's' : ''} parked off the board. Open the tray to put one back or drag it onto a lane.`
+      : 'Nothing stashed yet. Park an order from its detail panel to hold it here.',
+    onclick: () => { S.stashOpen = !S.stashOpen; renderStashTray(); } },
+    h('span', {}, '⇩ Stash'),
+    S.stash.size ? h('span', { class: 'stashbadge' }, S.stash.size) : null));
 
   const from = B.from, to = from + B.days - 1;
   const groups = laneList(B.stage);

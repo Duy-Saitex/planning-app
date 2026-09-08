@@ -359,7 +359,7 @@ input.zoom{width:110px;accent-color:var(--sx-intent-primary);height:20px;cursor:
   background:var(--sx-surface-raised)}
 .lane.group{background:var(--sx-surface-raised);border-bottom:1px solid var(--sx-border-default)}
 .groupbar .gn{color:var(--sx-text-disabled);font-weight:400;letter-spacing:0;text-transform:none;font-family:var(--sx-font-mono)}
-.stashtray{position:fixed;right:12px;top:96px;width:340px;max-height:60vh;z-index:60;display:flex;flex-direction:column;
+.stashtray{position:fixed;right:12px;top:88px;width:340px;max-height:60vh;z-index:60;display:flex;flex-direction:column;
   background:var(--sx-surface-base);border:1px solid var(--sx-border-strong);border-radius:var(--sx-radius-control);
   box-shadow:var(--sx-shadow-layer);overflow:hidden}
 .stashtray > header{display:flex;align-items:center;gap:8px;padding:6px 8px 6px 10px;border-bottom:1px solid var(--sx-border-subtle)}
@@ -378,7 +378,11 @@ input.zoom{width:110px;accent-color:var(--sx-intent-primary);height:20px;cursor:
 .stashghost{position:fixed;z-index:210;pointer-events:none;background:var(--sx-intent-primary);color:#fff;
   font-size:11px;font-weight:600;padding:3px 7px;border-radius:2px;box-shadow:var(--sx-shadow-layer);white-space:nowrap}
 .lane.droptarget{outline:2px solid var(--sx-intent-primary);outline-offset:-2px}
-.btn.hasstash{border-color:var(--sx-orange-3);color:var(--sx-text-warning)}
+.btn.stashtab{gap:6px;font-weight:600}
+.btn.stashtab.full{background:var(--sx-orange-3);border-color:var(--sx-orange-3);color:#fff}
+.btn.stashtab.full:hover{background:var(--sx-orange-2);border-color:var(--sx-orange-2)}
+.stashbadge{background:#fff;color:var(--sx-orange-2);border-radius:100px;padding:0 6px;min-width:18px;
+  text-align:center;font-family:var(--sx-font-mono);font-size:11px;font-weight:700;line-height:16px}
 .dragtip{position:fixed;z-index:200;background:var(--sx-surface-base);color:var(--sx-text-primary);
   border:1px solid var(--sx-border-strong);border-radius:var(--sx-radius-control);padding:6px 9px;font-size:12px;
   font-family:var(--sx-font-mono);pointer-events:none;box-shadow:var(--sx-shadow-layer);line-height:1.5;white-space:pre}
