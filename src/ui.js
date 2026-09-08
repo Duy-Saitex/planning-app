@@ -68,7 +68,7 @@ function boot() {
   const hasSample = !!window.SAMPLE;
   $('usesample').classList.toggle('hidden', !hasSample);
   $('usesample').onclick = () => { $('drop').classList.add('hide'); loadSample(); };
-  $('scrim').onclick = closeDrawer;
+  $('scrim').onclick = () => closeDrawer();
   const drop = $('drop');
   ['dragenter', 'dragover'].forEach(t => document.addEventListener(t, e => { if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) { e.preventDefault(); drop.classList.remove('hide'); drop.classList.add('over'); } }));
   drop.addEventListener('dragleave', e => { if (e.target === drop) drop.classList.remove('over'); });
@@ -1391,6 +1391,7 @@ function openDrawer(o, keepScroll) {
   const prevScroll = keepScroll ? (d.querySelector('.dbody') || {}).scrollTop : 0;
   const openSecs = new Set([...d.querySelectorAll('details[open]')].map(x => x.dataset.k));
   S.sel = o;
+  if (!keepScroll) S.drawerMark = m.undo.length;   // edits made from here on belong to this visit
   clear(d);
   const p = PC.orderProgress(m, o);
   const g = k => (F[k] >= 0 ? o.v[F[k]] : null);
@@ -1404,7 +1405,7 @@ function openDrawer(o, keepScroll) {
       h('div', { style: 'flex:1;min-width:0' },
         h('h2', {}, h('span', { class: 'mono' }, str(g('po')) || '(no MO)'), h('span', { class: 'tag neutral' }, str(g('blk')))),
         h('div', { class: 'sub' }, [str(g('customer')), 'style ' + str(g('style')), str(g('desc'))].filter(Boolean).join(' · '))),
-      h('button', { class: 'btn icon', title: 'Close', onclick: closeDrawer }, '×')),
+      h('button', { class: 'btn icon', title: 'Close', onclick: () => closeDrawer() }, '×')),
     h('div', { class: 'dpills' },
       h('span', { class: 'tag accent' }, PC.stageLabel(p.stage)),
       (function () {
@@ -1436,6 +1437,10 @@ function openDrawer(o, keepScroll) {
   d.appendChild(head);
 
   const body = h('div', { class: 'dbody' });
+  body.appendChild(h('div', { class: 'edithint' },
+    h('span', {}, 'Click any value to edit it.'),
+    (function () { const n = drawerEditCount();
+      return n ? h('span', { class: 'tag warn' }, `${n} unsaved change${n > 1 ? 's' : ''}`) : null; })()));
   // --- order identity (the non-production columns the planner asked for)
   body.appendChild(kvSection('order', 'Order', [
     'po', 'blk', 'ldrLine', 'season', 'factoryNo', 'line', 'customerPlan', 'style', 'desc',
@@ -1587,7 +1592,35 @@ function removeFromLane(o, ev) {
     h('button', { class: 'btn', onclick: closePop }, 'Cancel')));
   go.focus();
 }
-function closeDrawer() { $('drawer').classList.remove('on'); $('scrim').classList.remove('on'); }
+function drawerEditCount() {
+  const m = S.model;
+  if (!m || S.drawerMark == null) return 0;
+  return Math.max(0, m.undo.length - S.drawerMark);
+}
+function closeDrawer(force) {
+  if (drawerEditCount() > 0 && force !== true) { confirmDrawerClose(); return; }
+  S.drawerMark = null;
+  $('drawer').classList.remove('on'); $('scrim').classList.remove('on');
+}
+function confirmDrawerClose() {
+  const m = S.model, o = S.sel, F = m.F;
+  const n = drawerEditCount();
+  const changed = m.undo.slice(S.drawerMark).map(x => m.cols[x.c].name);
+  const seen = [...new Set(changed)];
+  const pop = openPop(`Save ${n} change${n > 1 ? 's' : ''}?`);
+  pop.appendChild(h('div', { style: 'font-weight:600;font-size:12px;margin-bottom:6px' },
+    h('span', { class: 'mono' }, str(o.v[F.po])), ' · ', str(o.v[F.customer])));
+  pop.appendChild(h('div', { class: 'hint', style: 'white-space:normal;line-height:1.5' },
+    'You edited ' + seen.slice(0, 6).map(tidyLabel).join(', ') + (seen.length > 6 ? ` and ${seen.length - 6} more` : '') +
+    '. Saving keeps them for the export; discarding puts every one of them back.'));
+  const save = h('button', { class: 'btn primary', onclick: () => { closePop(); closeDrawer(true); toast(`${n} change${n > 1 ? 's' : ''} kept. Export writes them into the workbook.`); } }, 'Save changes');
+  pop.appendChild(h('div', { style: 'display:flex;gap:6px;margin-top:10px;flex-wrap:wrap' }, save,
+    h('button', { class: 'btn', onclick: () => { closePop();
+      while (drawerEditCount() > 0 && m.undo.length) PC.undo(m);
+      closeDrawer(true); afterEdit('Changes discarded.'); } }, 'Discard changes'),
+    h('button', { class: 'btn', onclick: closePop }, 'Keep editing')));
+  save.focus();
+}
 
 /* ---- popover ---- */
 let popEl = null;
