@@ -299,14 +299,20 @@ svg .caplin{stroke:var(--sx-intent-danger);stroke-width:1.5;stroke-dasharray:4 3
 .capbar.under > i{background:var(--st3);opacity:.7}
 .capbar.ghost > i{background:var(--sx-border-strong);opacity:.28}
 .blk{position:absolute;height:20px;background:var(--st3);color:#fff;font-size:11px;font-weight:600;
-  display:flex;align-items:center;gap:4px;padding:0 5px;cursor:grab;overflow:hidden;border-radius:2px;
-  border:1px solid rgba(0,0,0,.2);z-index:4;white-space:nowrap;touch-action:none;user-select:none;line-height:1}
+  display:flex;flex-direction:column;justify-content:center;gap:1px;padding:0 5px;cursor:grab;overflow:hidden;
+  border-radius:2px;border:1px solid rgba(0,0,0,.2);z-index:4;white-space:nowrap;touch-action:none;
+  user-select:none;line-height:1.1}
+.blk .l1{display:flex;align-items:baseline;gap:5px;position:relative;min-width:0}
+.blk .mo{font-family:var(--sx-font-mono);font-size:10px;font-weight:600;opacity:.88;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.blk .l2{position:relative;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;font-weight:600;min-width:0}
+.blk .l3{position:relative;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;font-weight:400;opacity:.85;min-width:0}
 .blk .prog{position:absolute;left:0;top:0;bottom:0;background:rgba(0,0,0,.22);pointer-events:none}
 .lanecount{font-size:11px;font-family:var(--sx-font-mono);color:var(--sx-text-secondary);background:var(--sx-surface-raised);
   border:1px solid var(--sx-border-subtle);border-radius:var(--sx-radius-badge);padding:0 5px;line-height:15px;flex:none}
 .lanecount:hover{border-color:var(--sx-intent-primary);color:var(--sx-text-link)}
 .blk > span{position:relative;overflow:hidden;text-overflow:ellipsis}
-.blk .qty{margin-left:auto;opacity:.85;font-weight:400;position:relative;flex:none;font-family:var(--sx-font-mono)}
+.blk .qty{margin-left:auto;opacity:.8;font-weight:400;position:relative;flex:none;font-family:var(--sx-font-mono);font-size:10px}
 .blk[data-run="running"],.blk[data-run="ready"]{border-width:2px}
 .blk[data-run="running"]{border-color:var(--run-go)}
 .blk[data-run="ready"]{border-color:var(--run-ready)}

@@ -700,8 +700,8 @@ function renderBoard(view, bar) {
   const keepLane = L => blocks.has(L.name) || (!laneFilterOn && B.stage === 'sew');
   const visGroups = groups.map(g => ({ group: g.group, lines: g.lines.filter(keepLane) })).filter(g => g.lines.length);
   const laneCount = visGroups.reduce((a, g) => a + g.lines.length, 0);
-  const ROWH = laneCount <= 2 ? 40 : laneCount <= 5 ? 30 : laneCount <= 12 ? 25 : 22;
-  const BLKH = ROWH - 3, MINW = 92;
+  const ROWH = laneCount <= 2 ? 46 : laneCount <= 5 ? 38 : laneCount <= 12 ? 32 : 30;
+  const BLKH = ROWH - 3, MINW = 118;
 
   const board = h('div', { class: 'board' });
   const scroll = h('div', { class: 'bscroll' });
@@ -844,11 +844,11 @@ function makeBlock(it, rowH, blkH, stage) {
   const lead = PC.leadDays(m, o);
   const locked = p.stage > 5 || (p.qty > 0 && num(o.v[F.packedQty]) >= p.qty);
   const doneFrac = p.qty ? Math.min(1, p.done[si] / p.qty) : 0;
-  const label = width < 150 ? str(o.v[F.customer]) : `${str(o.v[F.customer])} · ${str(o.v[F.style])}`;
+  const buyer = str(o.v[F.customer]), style = str(o.v[F.style]);
   const b = h('div', {
     class: 'blk' + (late ? ' late' : '') + (locked ? ' locked' : '') + (S.sel === o ? ' sel' : ''),
     'data-run': run,
-    style: `left:${left}px;width:${width}px;top:${it.row * rowH + 1}px;height:${blkH}px;background:${stageColor(si)};color:${stageInk(si)};font-size:${blkH >= 24 ? 12 : 11}px`,
+    style: `left:${left}px;width:${width}px;top:${it.row * rowH + 1}px;height:${blkH}px;background:${stageColor(si)};color:${stageInk(si)}`,
     tabindex: 0, role: 'button',
     title: `${str(o.v[F.po])} · ${str(o.v[F.customer])} · style ${str(o.v[F.style])}\n${fmt(p.qty)} pcs · ${str(o.v[F.line])}\n${stage.name}: ${fmtDate(keyToDate(it.a))} → ${fmtDate(keyToDate(it.b))}${widened ? ' (bar widened to fit the name; the dashed line is the real end)' : ''}\n${RUN_LABEL[run]}${run === 'running' ? ' — ' + fmt(p.done[si]) + ' of ' + fmt(p.qty) + ' pcs done at ' + stage.name.toLowerCase() : lead != null && lead >= 0 ? ' — sewing starts in ' + lead + ' d' : ''}${gates.length ? '\nStill waiting on: ' + gates.join(', ') : ''}\nEx-factory ${fmtDate(o.v[F.planExFactory])} · delivery ${fmtDate(o.v[F.cusFinalDly])}${locked ? '\nLocked: already packed or shipped' : ''}`,
     onclick: e => { if (b._dragged) return; openDrawer(o); },
@@ -858,8 +858,12 @@ function makeBlock(it, rowH, blkH, stage) {
       if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); shiftOrder(o, e.key === 'ArrowRight' ? 1 : -1); }
     }
   }, h('i', { class: 'prog', style: `width:${Math.min(width, doneFrac * it.natW)}px` }),
-    h('span', {}, label),
-    width > 150 ? h('span', { class: 'qty' }, fmt(p.qty)) : null,
+    h('span', { class: 'l1' },
+      h('span', { class: 'mo' }, str(o.v[F.po])),
+      h('span', { class: 'qty' }, fmt(p.qty))),
+    blkH >= 40
+      ? [h('span', { class: 'l2' }, buyer), style ? h('span', { class: 'l3' }, style) : null]
+      : h('span', { class: 'l2' }, buyer + (style ? ' · ' + style : '')),
     widened ? h('i', { class: 'trueend', style: `left:${it.natW}px` }) : null,
     late ? h('i', { class: 'lateflag', title: 'Ex-factory runs past the confirmed delivery' }) : null,
     h('i', { class: 'grip l' }), h('i', { class: 'grip r' }));
