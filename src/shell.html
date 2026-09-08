@@ -350,6 +350,26 @@ input.zoom{width:110px;accent-color:var(--sx-intent-primary);height:20px;cursor:
   background:var(--sx-surface-raised)}
 .lane.group{background:var(--sx-surface-raised);border-bottom:1px solid var(--sx-border-default)}
 .groupbar .gn{color:var(--sx-text-disabled);font-weight:400;letter-spacing:0;text-transform:none;font-family:var(--sx-font-mono)}
+.stashtray{position:fixed;right:12px;top:96px;width:340px;max-height:60vh;z-index:60;display:flex;flex-direction:column;
+  background:var(--sx-surface-base);border:1px solid var(--sx-border-strong);border-radius:var(--sx-radius-control);
+  box-shadow:var(--sx-shadow-layer);overflow:hidden}
+.stashtray > header{display:flex;align-items:center;gap:8px;padding:6px 8px 6px 10px;border-bottom:1px solid var(--sx-border-subtle)}
+.stashtray > header b{font-size:12px;font-weight:600}
+.stashtray > header .hint{flex:1;font-size:11px;line-height:1.35;white-space:normal}
+.stashlist{overflow-y:auto;padding:4px}
+.stashrow{display:flex;align-items:center;gap:7px;padding:5px 6px;border-radius:var(--sx-radius-badge);
+  cursor:grab;touch-action:none;user-select:none;border:1px solid transparent}
+.stashrow:hover{background:var(--sx-surface-hover);border-color:var(--sx-border-subtle)}
+.stashrow .grab{color:var(--sx-text-disabled);font-size:12px;flex:none;letter-spacing:-2px}
+.stashrow .body{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.stashrow .l1{font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stashrow .l2{font-size:11px;color:var(--sx-text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stashrow .acts{display:flex;gap:4px;flex:none}
+.stashrow .acts .btn{height:20px;padding:0 6px;font-size:11px}
+.stashghost{position:fixed;z-index:210;pointer-events:none;background:var(--sx-intent-primary);color:#fff;
+  font-size:11px;font-weight:600;padding:3px 7px;border-radius:2px;box-shadow:var(--sx-shadow-layer);white-space:nowrap}
+.lane.droptarget{outline:2px solid var(--sx-intent-primary);outline-offset:-2px}
+.btn.hasstash{border-color:var(--sx-orange-3);color:var(--sx-text-warning)}
 .dragtip{position:fixed;z-index:200;background:var(--sx-surface-base);color:var(--sx-text-primary);
   border:1px solid var(--sx-border-strong);border-radius:var(--sx-radius-control);padding:6px 9px;font-size:12px;
   font-family:var(--sx-font-mono);pointer-events:none;box-shadow:var(--sx-shadow-layer);line-height:1.5;white-space:pre}

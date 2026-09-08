@@ -41,6 +41,7 @@ const S = {
   cap: { stage: 'all', grain: 'week', weeks: 14 },
   table: { preset: 'planner', sort: null, dir: 1 },
   caps: {}, storeKey: null, savedViews: [], railHidden: false,
+  stash: new Map(), stashOpen: false,   // orders parked off the board, row -> where it came from
 };
 const VIEWS = [['overview', 'Overview'], ['board', 'Line board'], ['capacity', 'Capacity'], ['orders', 'Orders'], ['changes', 'Changes']];
 
@@ -144,7 +145,7 @@ function loadSample() {
 function adopt(model, key) {
   S.model = model; S.storeKey = 'sxplan:v2:' + key;
   S.filters = { search: $('search').value.trim(), facets: {}, ranges: {}, custom: [], quick: {} };
-  S.caps = {}; S.sel = null;
+  S.caps = {}; S.sel = null; S.stash = new Map(); S.stashOpen = false;
   S.board.from = dayKey(model.asOf) - 7;
   restore();
   const chip = $('filechip'); clear(chip);
@@ -160,7 +161,8 @@ function adopt(model, key) {
 function persist() {
   if (!S.storeKey) return;
   try {
-    localStorage.setItem(S.storeKey, JSON.stringify({ edits: PC.exportEdits(S.model), caps: S.caps, views: S.savedViews, t: Date.now() }));
+    localStorage.setItem(S.storeKey, JSON.stringify({ edits: PC.exportEdits(S.model), caps: S.caps, views: S.savedViews,
+      stash: [...S.stash.entries()], t: Date.now() }));
   } catch (e) { /* quota */ }
 }
 function restore() {
@@ -169,6 +171,7 @@ function restore() {
     const raw = localStorage.getItem(S.storeKey); if (!raw) return;
     const d = JSON.parse(raw);
     S.caps = d.caps || {}; S.savedViews = d.views || [];
+    S.stash = new Map((d.stash || []).filter(e => PC.orderByRow(S.model, e[0])));
     const n = PC.importEdits(S.model, d.edits);
     if (n) toast(`Restored ${n} unsaved edit${n > 1 ? 's' : ''} from your last session.`, 'Discard', discardAll);
   } catch (e) { }
@@ -193,7 +196,7 @@ const RANGES = [
 const QUICKS = [
   ['late', 'At risk / late'], ['wip', 'In production'], ['unassigned', 'No line yet'],
   ['fabricPending', 'Fabric not in-house'], ['approvalPending', 'Approval pending'],
-  ['unconfirmed', 'Un-confirmed order'], ['dirty', 'Edited by me'],
+  ['unconfirmed', 'Un-confirmed order'], ['dirty', 'Edited by me'], ['stashed', 'Stashed'],
 ];
 function activeCount() {
   const f = S.filters; let n = 0;
@@ -206,7 +209,8 @@ function activeCount() {
 }
 function applyFilters() {
   if (!S.model) return;
-  S.filtered = PC.applyFilter(S.model, S.filters);
+  const hit = PC.applyFilter(S.model, S.filters);
+  S.filtered = S.filters.quick.stashed ? hit.filter(o => S.stash.has(o.r)) : hit.filter(o => !S.stash.has(o.r));
   renderRail(); render();
 }
 function toggleFacet(key, val) {
@@ -663,6 +667,10 @@ function renderBoard(view, bar) {
     title: 'The line column stays pinned while you scroll. Narrow it when it covers the blocks you want to see.',
     onclick: () => { B.narrowLanes = !B.narrowLanes; render(); } }, B.narrowLanes ? 'Widen line column' : 'Narrow line column'));
   bar.appendChild(h('button', { class: 'btn', 'aria-pressed': B.others, title: 'Show load from orders hidden by the filter as grey bars', onclick: () => { B.others = !B.others; render(); } }, B.others ? 'Hiding nothing' : 'Filtered load only'));
+  bar.appendChild(h('button', { class: 'btn' + (S.stash.size ? ' hasstash' : ''), 'aria-pressed': S.stashOpen,
+    title: S.stash.size ? 'Orders parked off the board. Open the tray to put one back or drag it onto a lane.' : 'Nothing stashed yet. Park an order from its detail panel.',
+    onclick: () => { S.stashOpen = !S.stashOpen; renderStashTray(); } },
+    S.stash.size ? `⇩ Stash ${S.stash.size}` : '⇩ Stash'));
   bar.appendChild(h('button', { class: 'btn', 'aria-pressed': B.refitOnDrop, title: 'When an order is dropped on another line, refit its end date to that line’s daily target', onclick: () => { B.refitOnDrop = !B.refitOnDrop; render(); } }, B.refitOnDrop ? 'Refit on drop: on' : 'Refit on drop: off'));
   bar.appendChild(h('div', { style: 'flex:1' }));
   bar.appendChild(h('div', { class: 'runkey' },
@@ -802,6 +810,8 @@ function renderBoard(view, bar) {
   }
   scroll.appendChild(grid); board.appendChild(scroll); view.appendChild(board);
   attachDrag(scroll, laneEls, from, dayW, stage);
+  S._laneEls = laneEls; S._boardGeom = { from, dayW };
+  renderStashTray();
   scroll.addEventListener('scroll', () => scroll.classList.toggle('pinned', scroll.scrollLeft > 0), { passive: true });
   requestAnimationFrame(() => {
     const x = Math.max(0, (asOfK - from) * dayW - 180);
@@ -847,6 +857,101 @@ function showLaneOrders(L, items, stage, lateOnly, ev) {
       else if (S.board.stage === 'fin' || S.board.stage === 'pack') setOnlyFacet('finLine', L.name); else setOnlyFacet('site', L.name); } },
     lateOnly ? 'Filter the whole app to these' : 'Filter the whole app to this lane'));
   return pop;
+}
+// The stash tray: parked orders, retrievable by button or by dragging onto a lane.
+function renderStashTray() {
+  const old = document.getElementById('stashtray'); if (old) old.remove();
+  if (!S.stashOpen || S.view !== 'board') return;
+  const m = S.model, F = m.F;
+  const tray = h('div', { class: 'stashtray', id: 'stashtray' },
+    h('header', {}, h('b', {}, `Stash · ${S.stash.size}`),
+      h('span', { class: 'hint' }, S.stash.size ? 'Drag a row onto a lane, or put it back where it came from.' : ''),
+      h('button', { class: 'btn icon', title: 'Close the tray', onclick: () => { S.stashOpen = false; renderStashTray(); } }, '×')));
+  const list = h('div', { class: 'stashlist' });
+  if (!S.stash.size) list.appendChild(h('div', { class: 'empty' }, 'Nothing stashed. Open an order and press Stash to park it here.'));
+  for (const [row, info] of S.stash) {
+    const o = PC.orderByRow(m, row); if (!o) continue;
+    const r = h('div', { class: 'stashrow', 'data-row': row, title: 'Drag onto a lane, or use the buttons' },
+      h('span', { class: 'grab' }, '⠿'),
+      h('span', { class: 'body' },
+        h('span', { class: 'l1' }, h('span', { class: 'mono' }, str(o.v[F.po])), ' ', str(o.v[F.desc])),
+        h('span', { class: 'l2' }, str(o.v[F.customer]) + ' · ' + fmt(num(o.v[F.qty])) + ' pcs' + (info.lane ? ' · was ' + info.lane : ''))),
+      h('span', { class: 'acts' },
+        info.lane ? h('button', { class: 'btn', title: 'Put it back on ' + info.lane, onclick: () => unstash(row) }, 'Put back') : null,
+        h('button', { class: 'btn', title: 'Take it out of the stash and leave it unassigned on the board', onclick: () => unstash(row, '') }, 'Release')));
+    r._o = o;
+    list.appendChild(r);
+  }
+  tray.appendChild(list);
+  document.body.appendChild(tray);
+  attachStashDrag(tray);
+}
+function attachStashDrag(tray) {
+  let drag = null;
+  tray.addEventListener('pointerdown', e => {
+    const row = e.target.closest('.stashrow'); if (!row || e.target.closest('.btn')) return;
+    drag = { o: row._o, ghost: null, lane: null };
+    row.setPointerCapture(e.pointerId); e.preventDefault();
+  });
+  tray.addEventListener('pointermove', e => {
+    if (!drag) return;
+    if (!drag.ghost) {
+      drag.ghost = h('div', { class: 'stashghost' }, str(drag.o.v[S.model.F.po]) + ' · ' + str(drag.o.v[S.model.F.customer]));
+      document.body.appendChild(drag.ghost);
+    }
+    drag.ghost.style.left = (e.clientX + 12) + 'px'; drag.ghost.style.top = (e.clientY + 12) + 'px';
+    const hit = laneUnder(e.clientX, e.clientY);
+    if (drag.lane && drag.lane !== (hit && hit.el)) drag.lane.classList.remove('droptarget');
+    drag.lane = hit ? hit.el : null;
+    if (drag.lane) drag.lane.classList.add('droptarget');
+    drag.hit = hit;
+  });
+  const end = e => {
+    if (!drag) return;
+    const d = drag; drag = null;
+    if (d.ghost) d.ghost.remove();
+    if (d.lane) d.lane.classList.remove('droptarget');
+    if (d.hit) dropFromStash(d.o, d.hit, e);
+  };
+  tray.addEventListener('pointerup', end);
+  tray.addEventListener('pointercancel', end);
+}
+function laneUnder(x, y) {
+  for (const el of (S._laneEls || [])) {
+    const r = el.getBoundingClientRect();
+    if (y >= r.top && y <= r.bottom && x >= r.left && x <= r.right && el._lane) {
+      const plot = el._plot.getBoundingClientRect();
+      const day = S._boardGeom.from + Math.floor((x - plot.left) / S._boardGeom.dayW);
+      return { el, lane: el._lane, day };
+    }
+  }
+  return null;
+}
+function dropFromStash(o, hit, ev) {
+  const m = S.model, F = m.F, info = S.stash.get(o.r);
+  const s1 = o.v[F.sew1], s2 = o.v[F.sew2];
+  const shift = isDate(s1) ? hit.day - dayKey(s1) : 0;
+  const pop = openPop('Put it on ' + hit.lane.label, ev ? ev.clientX : null, ev ? ev.clientY : null);
+  pop.appendChild(h('div', { style: 'font-weight:600;font-size:12px;margin-bottom:6px' },
+    h('span', { class: 'mono' }, str(o.v[F.po])), ' · ', str(o.v[F.customer]), ' · ', fmt(num(o.v[F.qty])), ' pcs'));
+  const rows = h('div', { style: 'display:grid;grid-template-columns:auto 1fr auto;gap:2px 8px;font-size:12px;align-items:center' });
+  const addRow = (k, a, b) => { rows.appendChild(h('span', { class: 'muted' }, k));
+    rows.appendChild(h('span', { class: 'mono', style: 'color:var(--sx-text-disabled);text-decoration:line-through' }, a));
+    rows.appendChild(h('span', { class: 'mono', style: 'color:var(--sx-text-warning);font-weight:600' }, b)); };
+  addRow(m.cols[info.col].name, info.lane || '—', hit.lane.name);
+  if (shift && isDate(s1)) { addRow('Sewing starts', fmtDate(s1), fmtDate(keyToDate(dayKey(s1) + shift)));
+    if (isDate(s2)) addRow('Sewing ends', fmtDate(s2), fmtDate(keyToDate(dayKey(s2) + shift))); }
+  pop.appendChild(rows);
+  const go = h('button', { class: 'btn primary', onclick: () => { closePop();
+    S.stash.delete(o.r);
+    PC.beginGroup(m);
+    try { PC.setCell(m, o, info.col, hit.lane.name); if (shift) { shiftDatesInner(o, shift); } } finally { PC.endGroup(); }
+    S.sel = o;
+    afterEdit(`${str(o.v[F.po])} placed on ${hit.lane.name}`, true);
+    renderStashTray();
+  } }, 'Place it here');
+  pop.appendChild(h('div', { style: 'display:flex;gap:6px;margin-top:10px' }, go, h('button', { class: 'btn', onclick: closePop }, 'Cancel')));
+  go.focus();
 }
 function describeLane(items, asOfK) {
   const m = S.model, F = m.F;
@@ -1061,9 +1166,10 @@ function commitDrag(plan) {
   S.sel = o;
   afterEdit(`${str(o.v[F.po])} · ${plan.rows.map(r => r[0].toLowerCase() + ' ' + r[2]).join(', ')}`, true);
 }
-function shiftDates(o, dd) {
+function shiftDates(o, dd) { grouped(() => shiftDatesInner(o, dd)); }
+function shiftDatesInner(o, dd) {
   const m = S.model, F = m.F;
-  grouped(() => {
+  (() => {
   const s1 = o.v[F.sew1], s2 = o.v[F.sew2];
     if (isDate(s1)) PC.setCell(m, o, F.sew1, U.skipSunday(U.startOfDay(addDays(s1, dd))));
     if (isDate(s2)) PC.setCell(m, o, F.sew2, U.skipSunday(U.startOfDay(addDays(s2, dd))));
@@ -1433,7 +1539,9 @@ function openDrawer(o, keepScroll) {
         if (!cur || /^#/.test(cur)) return null;
         return h('button', { class: 'unassign', title: `Clear ${lane.what} ${cur}. The order leaves that lane and parks under "Not assigned to a lane", where you can drag it back. It is not deleted.`,
           onclick: e => removeFromLane(o, e) }, '✕ Take off ' + cur);
-      })()));
+      })(),
+      h('button', { class: 'unassign stashbtn', title: 'Park this order in the stash. It comes off the board and off the capacity figures, and waits in the tray until you put it back or drag it onto a lane.',
+        onclick: () => stashOrder(o) }, '⇩ Stash')));
   d.appendChild(head);
 
   const body = h('div', { class: 'dbody' });
@@ -1561,6 +1669,23 @@ function editKV(el, o, c) {
   };
   inp.addEventListener('blur', () => commit(true));
   inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); inp.blur(); } else if (e.key === 'Escape') commit(false); });
+}
+function stashOrder(o) {
+  const m = S.model, F = m.F, lane = laneFieldForBoard();
+  const from = str(o.v[lane.col]).trim();
+  PC.beginGroup(m);
+  try { if (from) PC.setCell(m, o, lane.col, null); } finally { PC.endGroup(); }
+  S.stash.set(o.r, { col: lane.col, lane: from, what: lane.what });
+  closeDrawer(true);
+  afterEdit(`${str(o.v[F.po])} stashed${from ? ' from ' + from : ''}`, true);
+}
+function unstash(row, laneName) {
+  const m = S.model, o = PC.orderByRow(m, row), info = S.stash.get(row);
+  if (!o || !info) return;
+  S.stash.delete(row);
+  const target = laneName === undefined ? info.lane : laneName;
+  if (target) { PC.beginGroup(m); try { PC.setCell(m, o, info.col, target); } finally { PC.endGroup(); } }
+  afterEdit(`${str(o.v[m.F.po])} back${target ? ' on ' + target : ' on the board'}`, true);
 }
 // Which lane column the board is currently drawing rows from.
 function laneFieldForBoard() {
