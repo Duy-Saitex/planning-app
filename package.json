@@ -1,0 +1,14 @@
+{
+  "name": "planning-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Drag-and-drop line board for the Saitex master production plan",
+  "scripts": {
+    "build": "./build.sh",
+    "check": "node selfcheck.js",
+    "sample": "node tools/make-sample.js"
+  },
+  "dependencies": {
+    "jszip": "3.10.1"
+  }
+}

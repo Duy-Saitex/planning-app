@@ -1,0 +1,9 @@
+# Real production data — never commit. It holds live customer orders.
+sample.json
+*.xlsx
+*.xlsm
+
+node_modules/
+package-lock.json
+.DS_Store
+app.demo.html

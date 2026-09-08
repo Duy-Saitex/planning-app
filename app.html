@@ -1,0 +1,2768 @@
+<title>Saitex Line Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* ================================================================
+   Design system: the sx tokens from the Saitex tech-pack workbench.
+   Light is the base :root; both dark paths redefine tokens only.
+   ================================================================ */
+:root{
+  /* palette (fixed in both themes) */
+  --sx-orange-3:#C87619;
+  /* geometry */
+  --sx-font-sans:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --sx-font-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sx-radius-control:4px; --sx-radius-badge:2px;
+  --sx-control-height:30px; --sx-control-height-compact:24px;
+  --sx-topbar-height:40px; --sx-toolbar-height:40px; --sx-row-height:30px;
+  --sx-sidebar-width:240px;
+  --sx-ease-out:cubic-bezier(0.4,1,0.75,0.9); --sx-duration-state:100ms; --sx-duration-layer:150ms;
+  /* light surfaces */
+  --sx-surface-sunken:#EDEFF2; --sx-surface-base:#FFFFFF; --sx-surface-raised:#F6F7F9;
+  --sx-surface-hover:#F6F7F9; --sx-surface-active:#E5E8EB;
+  --sx-surface-selected:rgba(45,114,210,.14); 
+  --sx-border-subtle:#E5E8EB; --sx-border-default:#D3D8DE; --sx-border-strong:#ABB3BF; --sx-border-control:#8F99A8;
+  --sx-text-primary:#1C2127; --sx-text-secondary:#5F6B7C; --sx-text-disabled:#8F99A8;
+  --sx-text-on-primary:#FFFFFF; --sx-text-link:#215DB0;
+  --sx-intent-primary:#2D72D2; --sx-intent-primary-hover:#215DB0;
+  --sx-intent-success:#238551; --sx-intent-warning:#C87619; --sx-intent-danger:#CD4246;
+  --sx-text-success:#1C6E42; --sx-text-warning:#935610; --sx-text-danger:#AC2F33;
+  --sx-tint-primary:rgba(45,114,210,.12); --sx-tint-success:rgba(35,133,81,.13);
+  --sx-tint-warning:rgba(200,118,25,.14); --sx-tint-danger:rgba(205,66,70,.13);
+  --sx-shadow-layer:0 2px 4px rgba(17,20,24,.2),0 8px 24px rgba(17,20,24,.2);
+  /* stage ramp: one hue, cutting (pale) to ex-factory (deep) */
+  --st1:#74A9F5; --st2:#5A97EE; --st3:#4C90F0; --st4:#2D72D2; --st5:#215DB0; --st6:#12386F;
+  --st1-ink:#0D203C; --st2-ink:#0D203C; --st3-ink:#0B1B33; --st4-ink:#FFFFFF; --st5-ink:#FFFFFF; --st6-ink:#FFFFFF;
+  --grid-line:#E5E8EB; --sunday:#DDE1E7; --edit:#935610; --edit-tint:rgba(200,118,25,.14);
+  --run-go:#1C6E42; --run-ready:#935610;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --sx-surface-sunken:#111418; --sx-surface-base:#1C2127; --sx-surface-raised:#252A31;
+    --sx-surface-hover:#252A31; --sx-surface-active:#2F343C;
+    --sx-surface-selected:rgba(45,114,210,.20); 
+    --sx-border-subtle:#2F343C; --sx-border-default:#383E47; --sx-border-strong:#5F6B7C; --sx-border-control:#8F99A8;
+    --sx-text-primary:#F6F7F9; --sx-text-secondary:#ABB3BF; --sx-text-disabled:#738091;
+    --sx-text-on-primary:#FFFFFF; --sx-text-link:#8ABBFF;
+    --sx-text-success:#72CA9B; --sx-text-warning:#FBB360; --sx-text-danger:#FA999C;
+    --sx-tint-primary:rgba(45,114,210,.20); --sx-tint-success:rgba(114,202,155,.15);
+    --sx-tint-warning:rgba(251,179,96,.15); --sx-tint-danger:rgba(205,66,70,.20);
+      --sx-shadow-layer:0 2px 4px rgba(17,20,24,.4),0 10px 30px rgba(17,20,24,.6);
+    --st1:#215DB0; --st2:#2D72D2; --st3:#4C90F0; --st4:#6BA5F5; --st5:#8ABBFF; --st6:#B4D3FF;
+    --st1-ink:#FFFFFF; --st2-ink:#FFFFFF; --st3-ink:#0B1B33; --st4-ink:#0B1B33; --st5-ink:#0B1B33; --st6-ink:#0B1B33;
+    --grid-line:#252A31; --sunday:#1A1F26; --edit:#FBB360; --edit-tint:rgba(251,179,96,.15);
+  --run-go:#72CA9B; --run-ready:#FBB360;
+    --run-go:#72CA9B; --run-ready:#FBB360;
+  }
+}
+:root[data-theme="dark"]{
+  --sx-surface-sunken:#111418; --sx-surface-base:#1C2127; --sx-surface-raised:#252A31;
+  --sx-surface-hover:#252A31; --sx-surface-active:#2F343C;
+  --sx-surface-selected:rgba(45,114,210,.20); 
+  --sx-border-subtle:#2F343C; --sx-border-default:#383E47; --sx-border-strong:#5F6B7C; --sx-border-control:#8F99A8;
+  --sx-text-primary:#F6F7F9; --sx-text-secondary:#ABB3BF; --sx-text-disabled:#738091;
+  --sx-text-on-primary:#FFFFFF; --sx-text-link:#8ABBFF;
+  --sx-text-success:#72CA9B; --sx-text-warning:#FBB360; --sx-text-danger:#FA999C;
+  --sx-tint-primary:rgba(45,114,210,.20); --sx-tint-success:rgba(114,202,155,.15);
+  --sx-tint-warning:rgba(251,179,96,.15); --sx-tint-danger:rgba(205,66,70,.20);
+  --sx-shadow-layer:0 2px 4px rgba(17,20,24,.4),0 10px 30px rgba(17,20,24,.6);
+  --st1:#215DB0; --st2:#2D72D2; --st3:#4C90F0; --st4:#6BA5F5; --st5:#8ABBFF; --st6:#B4D3FF;
+  --st1-ink:#FFFFFF; --st2-ink:#FFFFFF; --st3-ink:#0B1B33; --st4-ink:#0B1B33; --st5-ink:#0B1B33; --st6-ink:#0B1B33;
+  --grid-line:#252A31; --sunday:#1A1F26; --edit:#FBB360; --edit-tint:rgba(251,179,96,.15);
+  --run-go:#72CA9B; --run-ready:#FBB360;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--sx-surface-sunken);color:var(--sx-text-primary);
+  font-family:var(--sx-font-sans);font-size:14px;line-height:1.286;-webkit-font-smoothing:antialiased;
+  overflow:hidden;font-variant-numeric:tabular-nums}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer;padding:0;font-family:inherit}
+:focus-visible{outline:2px solid var(--sx-intent-primary);outline-offset:2px}
+::-webkit-scrollbar{width:12px;height:12px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--sx-border-default);border:3px solid transparent;background-clip:content-box;border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:var(--sx-border-strong);background-clip:content-box;border:3px solid transparent}
+.mono{font-family:var(--sx-font-mono);font-variant-numeric:tabular-nums}
+.sm{font-size:12px}
+.muted{color:var(--sx-text-secondary)}
+.hidden{display:none!important}
+
+/* ---------------- shell ---------------- */
+#app{display:grid;grid-template-rows:var(--sx-topbar-height) 1fr;height:100dvh}
+.topbar{display:flex;align-items:center;gap:8px;padding:0 8px 0 12px;background:var(--sx-surface-base);
+  border-bottom:1px solid var(--sx-border-default);position:relative;z-index:40}
+.brand{display:flex;align-items:center;gap:8px;flex:none;font-size:12px;font-weight:600;letter-spacing:.02em}
+.brand .mark{width:3px;height:14px;background:var(--sx-intent-primary);display:block}
+.brand .sep{color:var(--sx-text-disabled)}
+.filechip{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--sx-text-secondary);height:24px;
+  padding:0 8px;border-radius:var(--sx-radius-control);max-width:250px;border:1px solid transparent}
+.filechip:hover{background:var(--sx-surface-hover);border-color:var(--sx-border-subtle);color:var(--sx-text-primary)}
+.filechip .fname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--sx-font-mono);font-size:12px}
+.filechip.sample{color:var(--sx-text-warning)}
+#openbtn{flex:none}
+button.tag{cursor:pointer;border:1px solid transparent}
+button.tag:hover{border-color:currentColor}
+.tabs{display:flex;gap:0;margin-left:8px}
+.tabs button{height:var(--sx-topbar-height);padding:0 12px;font-size:12px;font-weight:500;color:var(--sx-text-secondary);
+  border-bottom:2px solid transparent;letter-spacing:.02em;white-space:nowrap;
+  transition:color var(--sx-duration-state) var(--sx-ease-out)}
+.tabs button[aria-selected="true"]{color:var(--sx-text-primary);border-bottom-color:var(--sx-intent-primary);font-weight:600}
+.tabs button:hover{color:var(--sx-text-primary);background:var(--sx-surface-hover)}
+.spacer{flex:1}
+.search{display:flex;align-items:center;gap:6px;background:var(--sx-surface-raised);border:1px solid var(--sx-border-default);
+  border-radius:var(--sx-radius-control);padding:0 8px;height:var(--sx-control-height-compact);min-width:200px}
+.search:focus-within{border-color:var(--sx-intent-primary);box-shadow:0 0 0 1px var(--sx-intent-primary)}
+.search input{background:none;border:0;outline:none;width:100%;font-size:12px}
+.search input::placeholder{color:var(--sx-text-disabled)}
+.btn{display:inline-flex;align-items:center;gap:6px;height:var(--sx-control-height-compact);padding:0 8px;
+  border-radius:var(--sx-radius-control);border:1px solid var(--sx-border-default);background:var(--sx-surface-raised);
+  font-size:12px;font-weight:500;color:var(--sx-text-primary);white-space:nowrap;
+  transition:background-color var(--sx-duration-state) var(--sx-ease-out)}
+.btn:hover{background:var(--sx-surface-active);border-color:var(--sx-border-strong)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:disabled:hover{background:var(--sx-surface-raised);border-color:var(--sx-border-default)}
+.btn.primary{background:var(--sx-intent-primary);border-color:var(--sx-intent-primary);color:var(--sx-text-on-primary);font-weight:600}
+.btn.primary:hover{background:var(--sx-intent-primary-hover);border-color:var(--sx-intent-primary-hover)}
+.btn.icon{padding:0;width:var(--sx-control-height-compact);justify-content:center;font-size:13px}
+.btn.tall{height:var(--sx-control-height);padding:0 12px}
+.editcount{font-size:11px;font-weight:600;background:var(--sx-orange-3);color:#fff;border-radius:var(--sx-radius-badge);
+  padding:0 5px;min-width:16px;text-align:center;line-height:16px;font-family:var(--sx-font-mono)}
+.main{display:grid;grid-template-columns:auto 1fr;min-height:0;position:relative}
+
+/* ---------------- filter rail ---------------- */
+.rail{width:var(--sx-sidebar-width);background:var(--sx-surface-base);border-right:1px solid var(--sx-border-default);
+  overflow-y:auto;overscroll-behavior:contain;padding-bottom:24px;flex:none}
+.rail.collapsed{width:0;border-right:0;overflow:hidden}
+.railhead{position:sticky;top:0;background:var(--sx-surface-base);border-bottom:1px solid var(--sx-border-subtle);
+  padding:0 12px;height:var(--sx-toolbar-height);z-index:3;display:flex;align-items:center;gap:8px}
+.railhead .count{font-size:12px;font-weight:600;font-family:var(--sx-font-mono)}
+.railhead .count small{font-weight:400;color:var(--sx-text-disabled)}
+.clearall{margin-left:auto;font-size:12px;color:var(--sx-text-link);font-weight:500}
+.clearall:hover{text-decoration:underline}
+.fsec{border-bottom:1px solid var(--sx-border-subtle)}
+.fsec > summary{list-style:none;cursor:pointer;padding:7px 12px;font-size:12px;font-weight:500;letter-spacing:.02em;
+  color:var(--sx-text-secondary);display:flex;align-items:center;gap:6px}
+.fsec > summary::-webkit-details-marker{display:none}
+.fsec > summary:hover{background:var(--sx-surface-hover);color:var(--sx-text-primary)}
+.fsec > summary::before{content:"";width:0;height:0;border-left:4px solid currentColor;border-top:3.5px solid transparent;
+  border-bottom:3.5px solid transparent;transition:transform var(--sx-duration-state)}
+.fsec[open] > summary::before{transform:rotate(90deg)}
+.fsec > summary .n{margin-left:auto;color:var(--sx-text-link);font-weight:600;font-family:var(--sx-font-mono)}
+.fbody{padding:2px 12px 10px}
+.qgrid{display:flex;flex-wrap:wrap;gap:4px}
+.chip{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--sx-border-default);background:var(--sx-surface-raised);
+  border-radius:var(--sx-radius-badge);padding:2px 7px;font-size:12px;color:var(--sx-text-secondary);line-height:16px}
+.chip:hover{border-color:var(--sx-border-strong);color:var(--sx-text-primary)}
+.chip[aria-pressed="true"]{background:var(--sx-tint-primary);border-color:var(--sx-intent-primary);color:var(--sx-text-link);font-weight:600}
+.chip .cn{opacity:.75;font-family:var(--sx-font-mono);font-size:11px}
+.facet{max-height:206px;overflow-y:auto;margin:0 -4px;padding:0 4px}
+.frow{display:flex;align-items:center;gap:7px;padding:2px 4px;border-radius:var(--sx-radius-badge);cursor:pointer;
+  font-size:12px;width:100%;text-align:left;min-height:22px}
+.frow:hover{background:var(--sx-surface-hover)}
+.frow .box{width:12px;height:12px;border:1px solid var(--sx-border-control);border-radius:2px;flex:none;position:relative}
+.frow[aria-checked="true"] .box{background:var(--sx-intent-primary);border-color:var(--sx-intent-primary)}
+.frow[aria-checked="true"] .box::after{content:"";position:absolute;left:3.5px;top:.5px;width:3px;height:7px;
+  border:solid #fff;border-width:0 1.6px 1.6px 0;transform:rotate(42deg)}
+.frow .lbl{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.frow .cnt{color:var(--sx-text-disabled);font-size:11px;font-family:var(--sx-font-mono)}
+.frow .swatch{width:8px;height:8px;border-radius:2px;flex:none}
+.fsearch,.inp{width:100%;background:var(--sx-surface-raised);border:1px solid var(--sx-border-default);
+  border-radius:var(--sx-radius-control);padding:2px 7px;font-size:12px;outline:none;height:var(--sx-control-height-compact)}
+.fsearch:focus,.inp:focus{border-color:var(--sx-intent-primary);box-shadow:0 0 0 1px var(--sx-intent-primary)}
+.fsearch{margin-bottom:5px}
+.daterow{display:flex;align-items:center;gap:5px;margin-bottom:4px}
+.daterow label{font-size:12px;color:var(--sx-text-secondary);width:78px;flex:none}
+.daterow input{flex:1;min-width:0}
+.rule{display:grid;grid-template-columns:1fr auto;gap:4px;align-items:center;margin-bottom:5px;padding:6px;
+  background:var(--sx-surface-raised);border:1px solid var(--sx-border-subtle);border-radius:var(--sx-radius-control)}
+.rule select,.rule input{width:100%;background:var(--sx-surface-base);border:1px solid var(--sx-border-default);
+  border-radius:var(--sx-radius-control);padding:1px 5px;font-size:12px;outline:none;min-width:0;height:24px}
+.rule .row2{grid-column:1/-1;display:flex;gap:4px}
+.rule .x{color:var(--sx-text-disabled);font-size:15px;line-height:1;padding:0 2px}
+.rule .x:hover{color:var(--sx-intent-danger)}
+
+/* ---------------- view frame ---------------- */
+.viewwrap{min-width:0;min-height:0;display:flex;flex-direction:column;background:var(--sx-surface-sunken)}
+.viewbar{display:flex;align-items:center;gap:8px;padding:0 10px;min-height:var(--sx-toolbar-height);
+  border-bottom:1px solid var(--sx-border-default);background:var(--sx-surface-base);flex:none;flex-wrap:wrap}
+.seg{display:flex;border:1px solid var(--sx-border-default);border-radius:var(--sx-radius-control);overflow:hidden}
+.seg button{padding:0 9px;height:22px;font-size:12px;font-weight:500;color:var(--sx-text-secondary);
+  border-right:1px solid var(--sx-border-default);white-space:nowrap}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--sx-tint-primary);color:var(--sx-text-link);font-weight:600}
+.seg button:hover:not([aria-pressed="true"]){background:var(--sx-surface-hover);color:var(--sx-text-primary)}
+.vlabel{font-size:12px;font-weight:500;color:var(--sx-text-disabled);letter-spacing:.02em}
+.view{flex:1;min-height:0;overflow:auto;position:relative}
+
+/* ---------------- overview ---------------- */
+.ov{padding:12px;display:flex;flex-direction:column;gap:10px;max-width:1600px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--sx-border-subtle);
+  border:1px solid var(--sx-border-subtle)}
+.kpi{background:var(--sx-surface-base);padding:9px 12px;display:flex;flex-direction:column;gap:1px;text-align:left;cursor:pointer}
+.kpi:hover{background:var(--sx-surface-hover)}
+.kpi .k{font-size:12px;font-weight:500;color:var(--sx-text-secondary);letter-spacing:.02em}
+.kpi .v{font-size:20px;font-weight:600;letter-spacing:-.01em;line-height:1.2;font-family:var(--sx-font-mono)}
+.kpi .s{font-size:12px;color:var(--sx-text-disabled)}
+.kpi.alert .v{color:var(--sx-text-danger)}
+.kpi.warn .v{color:var(--sx-text-warning)}
+.kpi.good .v{color:var(--sx-text-success)}
+.masonry{columns:3 340px;column-gap:10px}
+.masonry .panel{display:block;break-inside:avoid;margin:0 0 10px}
+.panel{background:var(--sx-surface-base);border:1px solid var(--sx-border-subtle);display:flex;flex-direction:column;min-width:0}
+.panel > header{padding:6px 12px;min-height:var(--sx-toolbar-height);border-bottom:1px solid var(--sx-border-subtle);
+  display:flex;align-items:center;gap:4px 8px;flex:none;flex-wrap:wrap}
+.panel > header h3{margin:0;font-size:14px;font-weight:600;letter-spacing:-.005em}
+.panel > header .sub{font-size:12px;color:var(--sx-text-disabled);margin-left:auto}
+.panel .body{padding:10px 12px;min-width:0;overflow-x:auto}
+.funnel{display:flex;flex-direction:column;gap:5px}
+.frow2{display:grid;grid-template-columns:108px 1fr 132px;gap:8px;align-items:center;font-size:12px;cursor:pointer;
+  padding:2px 2px;text-align:left;width:100%}
+.frow2:hover{background:var(--sx-surface-hover)}
+.frow2 .nm{display:flex;align-items:center;gap:6px;font-weight:500}
+.frow2 .dot{width:9px;height:9px;flex:none;border-radius:2px}
+.bar{height:14px;background:var(--sx-surface-active);overflow:hidden;display:flex;min-width:40px;border-radius:2px}
+.bar > i{display:block;height:100%}
+.frow2 .fig{text-align:right;color:var(--sx-text-secondary);font-family:var(--sx-font-mono);font-size:12px}
+.frow2 .fig b{color:var(--sx-text-primary);font-weight:600}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--sx-text-secondary);padding-top:6px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:9px;height:9px;border-radius:2px;display:block}
+.list{display:flex;flex-direction:column}
+.lrow{display:grid;gap:8px;align-items:center;padding:5px 4px;border-bottom:1px solid var(--sx-border-subtle);
+  font-size:12px;text-align:left;width:100%;cursor:pointer}
+.lrow:hover{background:var(--sx-surface-hover)}
+.lrow:last-child{border-bottom:0}
+.lrow .t{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lrow .m{color:var(--sx-text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tag{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:0 5px;line-height:16px;
+  border-radius:var(--sx-radius-badge);letter-spacing:.02em;white-space:nowrap}
+.tag.bad{background:var(--sx-tint-danger);color:var(--sx-text-danger)}
+.tag.warn{background:var(--sx-tint-warning);color:var(--sx-text-warning)}
+.tag.ok{background:var(--sx-tint-success);color:var(--sx-text-success)}
+.tag.neutral{background:var(--sx-surface-active);color:var(--sx-text-secondary)}
+.tag.accent{background:var(--sx-tint-primary);color:var(--sx-text-link)}
+.empty{padding:28px 14px;text-align:center;color:var(--sx-text-disabled);font-size:12px}
+svg text{fill:var(--sx-text-secondary);font-family:var(--sx-font-mono);font-size:10px}
+svg text.val{fill:var(--sx-text-primary);font-weight:600}
+svg .gridline{stroke:var(--grid-line);stroke-width:1}
+svg .axis{stroke:var(--sx-border-default);stroke-width:1}
+svg .caplin{stroke:var(--sx-intent-danger);stroke-width:1.5;stroke-dasharray:4 3}
+
+/* ---------------- board ---------------- */
+.board{position:relative;height:100%;display:flex;flex-direction:column;background:var(--sx-surface-base)}
+.bscroll{flex:1;min-height:0;overflow:auto;position:relative}
+.bgrid{position:relative;min-width:max-content}
+.bhead{position:sticky;top:0;z-index:20;background:var(--sx-surface-base);border-bottom:1px solid var(--sx-border-default);display:flex}
+.bhead .corner{position:sticky;left:0;z-index:2;background:var(--sx-surface-base);border-right:1px solid var(--sx-border-default);
+  flex:none;display:flex;flex-direction:column;justify-content:flex-end;padding:3px 10px 4px}
+.bhead .corner .t{font-size:12px;font-weight:500;color:var(--sx-text-disabled);letter-spacing:.02em}
+.bhead .days{position:relative;flex:none}
+.months{display:flex;height:18px;align-items:center}
+.months .m{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--sx-text-disabled);
+  border-left:1px solid var(--sx-border-subtle);padding-left:5px;height:100%;display:flex;align-items:center;
+  overflow:hidden;white-space:nowrap}
+.dayrow{display:flex;height:26px}
+.dcell{flex:none;text-align:center;font-size:10px;line-height:1.1;padding-top:2px;color:var(--sx-text-disabled);
+  border-left:1px solid var(--grid-line);font-family:var(--sx-font-mono)}
+.dcell.sun{background:var(--sunday)}
+.dcell b{display:block;font-size:11px;font-weight:600;color:var(--sx-text-secondary)}
+.dcell.tdy b{color:var(--sx-text-danger)}
+.lane{display:flex;border-bottom:1px solid var(--sx-border-default);position:relative}
+.lanehead{position:sticky;left:0;z-index:10;background:var(--sx-surface-base);border-right:1px solid var(--sx-border-default);
+  flex:none;padding:4px 8px;display:flex;flex-direction:column;gap:1px;justify-content:center;min-width:0}
+.bscroll.pinned .lanehead,.bscroll.pinned .bhead .corner{box-shadow:7px 0 9px -7px rgba(17,20,24,.55)}
+.lanehead.narrow{padding:4px 5px}
+.lanehead.narrow .meta,.lanehead.narrow .lanecount{display:none}
+.lanehead .ln{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;min-width:0}
+.lanehead .ln .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.lanehead .ln .nm:hover{color:var(--sx-text-link);text-decoration:underline}
+.lanehead .meta{font-size:11px;color:var(--sx-text-disabled);display:flex;align-items:center;gap:5px;min-width:0}
+.lanehead .meta .now{color:var(--sx-text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--sx-font-mono)}
+.capedit{width:40px;background:var(--sx-surface-raised);border:1px solid var(--sx-border-subtle);border-radius:2px;
+  padding:0 3px;font-size:11px;text-align:right;outline:none;font-family:var(--sx-font-mono);font-weight:600;
+  color:var(--sx-text-primary);height:16px}
+.capedit:focus{border-color:var(--sx-intent-primary);background:var(--sx-surface-base)}
+.capedit.est{color:var(--sx-text-disabled)}
+.laneplot{position:relative;flex:none}
+.daycols{position:absolute;inset:0;display:flex;pointer-events:none}
+.daycol{flex:none;border-left:1px solid var(--grid-line);height:100%}
+.daycol.sun{background:var(--sunday);border-left-color:var(--sx-border-subtle)}
+.todayline{position:absolute;top:0;bottom:0;width:2px;background:var(--sx-intent-danger);opacity:.8;pointer-events:none;z-index:6}
+.capstrip{position:absolute;left:0;right:0;bottom:0;height:12px;display:flex;pointer-events:none;z-index:2}
+.capbar{flex:none;position:relative;height:100%}
+.capbar > i{position:absolute;bottom:0;left:1px;right:1px;display:block;border-radius:1px 1px 0 0}
+.capbar.over > i{background:var(--sx-intent-danger)}
+.capbar.near > i{background:var(--sx-orange-3)}
+.capbar.under > i{background:var(--st3);opacity:.7}
+.capbar.ghost > i{background:var(--sx-border-strong);opacity:.28}
+.blk{position:absolute;height:20px;background:var(--st3);color:#fff;font-size:11px;font-weight:600;
+  display:flex;align-items:center;gap:4px;padding:0 5px;cursor:grab;overflow:hidden;border-radius:2px;
+  border:1px solid rgba(0,0,0,.2);z-index:4;white-space:nowrap;touch-action:none;user-select:none;line-height:1}
+.blk .prog{position:absolute;left:0;top:0;bottom:0;background:rgba(0,0,0,.22);pointer-events:none}
+.lanecount{font-size:11px;font-family:var(--sx-font-mono);color:var(--sx-text-secondary);background:var(--sx-surface-raised);
+  border:1px solid var(--sx-border-subtle);border-radius:var(--sx-radius-badge);padding:0 5px;line-height:15px;flex:none}
+.lanecount:hover{border-color:var(--sx-intent-primary);color:var(--sx-text-link)}
+.blk > span{position:relative;overflow:hidden;text-overflow:ellipsis}
+.blk .qty{margin-left:auto;opacity:.85;font-weight:400;position:relative;flex:none;font-family:var(--sx-font-mono)}
+.blk[data-run="running"],.blk[data-run="ready"]{border-width:2px}
+.blk[data-run="running"]{border-color:var(--run-go)}
+.blk[data-run="ready"]{border-color:var(--run-ready)}
+.blk .lateflag{position:absolute;top:0;bottom:0;right:0;width:7px;background:var(--sx-intent-danger);
+  pointer-events:none;clip-path:polygon(100% 0,100% 100%,0 100%)}
+.blk.sel{outline:2px solid var(--sx-intent-primary);outline-offset:1px;z-index:8}
+.runkey{display:flex;align-items:center;gap:10px;font-size:11px;color:var(--sx-text-secondary);flex-wrap:wrap}
+.runkey span{display:inline-flex;align-items:center;gap:4px}
+.runkey i{width:16px;height:11px;border:2px solid rgba(0,0,0,.25);border-radius:2px;background:var(--st3);display:block}
+.runkey i.lateswatch{border:1px solid rgba(0,0,0,.25);position:relative;overflow:hidden}
+.runkey i.lateswatch::after{content:"";position:absolute;top:0;bottom:0;right:0;width:7px;
+  background:var(--sx-intent-danger);clip-path:polygon(100% 0,100% 100%,0 100%)}
+.blk.locked{cursor:not-allowed;background-image:repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(0,0,0,.16) 3px,rgba(0,0,0,.16) 6px)}
+.blk.dragging{opacity:.3}
+.blk .trueend{position:absolute;top:0;bottom:0;width:0;border-right:1px dashed currentColor;opacity:0;pointer-events:none;
+  transition:opacity var(--sx-duration-state)}
+.blk:hover .trueend,.blk.sel .trueend{opacity:.6}
+input.zoom{width:110px;accent-color:var(--sx-intent-primary);height:20px;cursor:pointer}
+.blk .grip{position:absolute;top:0;bottom:0;width:6px;cursor:ew-resize;z-index:2}
+.blk .grip.l{left:0} .blk .grip.r{right:0}
+.blk:focus-visible{outline:2px solid var(--sx-intent-primary);outline-offset:1px}
+.ghostblk{position:absolute;height:20px;border:1px dashed var(--sx-intent-primary);background:var(--sx-tint-primary);
+  z-index:30;pointer-events:none;font-size:11px;font-weight:600;color:var(--sx-text-link);border-radius:2px;
+  display:flex;align-items:center;padding:0 5px;white-space:nowrap;overflow:hidden}
+.groupbar{position:sticky;left:0;display:flex;align-items:center;gap:8px;padding:3px 10px;font-size:11px;font-weight:600;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--sx-text-secondary);width:100%;cursor:pointer;
+  background:var(--sx-surface-raised)}
+.lane.group{background:var(--sx-surface-raised);border-bottom:1px solid var(--sx-border-default)}
+.groupbar .gn{color:var(--sx-text-disabled);font-weight:400;letter-spacing:0;text-transform:none;font-family:var(--sx-font-mono)}
+.dragtip{position:fixed;z-index:200;background:var(--sx-surface-base);color:var(--sx-text-primary);
+  border:1px solid var(--sx-border-strong);border-radius:var(--sx-radius-control);padding:6px 9px;font-size:12px;
+  font-family:var(--sx-font-mono);pointer-events:none;box-shadow:var(--sx-shadow-layer);line-height:1.5;white-space:pre}
+
+/* ---------------- capacity ---------------- */
+.heat{border-collapse:separate;border-spacing:0;font-size:12px}
+.heat th,.heat td{padding:0;border-bottom:1px solid var(--sx-border-subtle);border-right:1px solid var(--sx-border-subtle)}
+.heat thead th{position:sticky;top:0;background:var(--sx-surface-base);z-index:3;font-weight:500;color:var(--sx-text-secondary);
+  font-size:11px;padding:4px 4px;text-align:center;border-bottom:1px solid var(--sx-border-default);white-space:nowrap;
+  font-family:var(--sx-font-mono)}
+.heat .rh{position:sticky;left:0;background:var(--sx-surface-base);z-index:2;text-align:left;padding:3px 9px;
+  font-weight:500;border-right:1px solid var(--sx-border-default);min-width:190px;max-width:190px}
+.heat thead .rh{z-index:4}
+.heat .rh .sub{font-weight:400;color:var(--sx-text-disabled);font-size:11px;font-family:var(--sx-font-mono)}
+.heat .rh .nm{display:flex;align-items:center;gap:6px}
+.heat td.cell{text-align:center;height:var(--sx-row-height);cursor:pointer;position:relative;min-width:54px;
+  font-family:var(--sx-font-mono);font-size:11px}
+.heat td.cell:hover{outline:2px solid var(--sx-intent-primary);outline-offset:-2px;z-index:1}
+.heat td.cell .r{font-weight:600}
+.heat tr.grouprow .rh{background:var(--sx-surface-raised);font-weight:600;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--sx-text-secondary)}
+.heat tr.grouprow td{background:var(--sx-surface-raised)}
+.capkey{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--sx-text-secondary);flex-wrap:wrap}
+.capkey .sc{display:flex;align-items:center;gap:4px}
+.capkey i{width:16px;height:11px;border-radius:2px;display:block;border:1px solid var(--sx-border-subtle)}
+
+/* ---------------- orders table ---------------- */
+.tblwrap{position:relative;height:100%;overflow:auto;background:var(--sx-surface-base)}
+.tbl{border-collapse:separate;border-spacing:0;font-size:12px;table-layout:fixed;width:max-content}
+.tbl th{position:sticky;top:0;z-index:5;background:var(--sx-surface-base);border-bottom:1px solid var(--sx-border-default);
+  border-right:1px solid var(--sx-border-subtle);padding:3px 8px;text-align:left;font-weight:500;font-size:12px;
+  white-space:nowrap;cursor:pointer;vertical-align:bottom;height:var(--sx-row-height);color:var(--sx-text-secondary)}
+.tbl th .hl{display:block;font-size:10px;color:var(--sx-text-disabled);font-weight:500;font-family:var(--sx-font-mono)}
+.tbl th:hover{background:var(--sx-surface-hover);color:var(--sx-text-primary)}
+.tbl th .fx{color:var(--sx-text-link);font-size:10px;font-weight:600}
+.tbl td{border-bottom:1px solid var(--sx-border-subtle);border-right:1px solid var(--sx-border-subtle);padding:0 8px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;height:var(--sx-row-height)}
+.tbl tr:hover td{background:var(--sx-surface-hover)}
+.tbl td.editable{cursor:text}
+.tbl td.locked{color:var(--sx-text-disabled)}
+.tbl td.edited{background:var(--edit-tint);box-shadow:inset 2px 0 0 var(--edit)}
+.tbl tr.sel td{background:var(--sx-surface-selected)}
+.tbl td.n{text-align:right;font-family:var(--sx-font-mono)}
+.tbl td.d{font-family:var(--sx-font-mono)}
+.tbl input.cellin{width:100%;border:0;outline:2px solid var(--sx-intent-primary);background:var(--sx-surface-base);
+  padding:0 6px;font-size:12px;height:26px}
+.tbl .stickycol{position:sticky;z-index:3;background:var(--sx-surface-base)}
+.tbl tr:hover .stickycol{background:var(--sx-surface-hover)}
+.tbl th.stickycol{z-index:6}
+
+/* ---------------- drawer ---------------- */
+.scrim{position:fixed;inset:0;background:rgba(17,20,24,.45);z-index:90;opacity:0;pointer-events:none;
+  transition:opacity var(--sx-duration-layer) var(--sx-ease-out)}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(560px,100vw);background:var(--sx-surface-base);
+  border-left:1px solid var(--sx-border-default);z-index:100;transform:translateX(100%);
+  transition:transform var(--sx-duration-layer) var(--sx-ease-out);display:flex;flex-direction:column;box-shadow:var(--sx-shadow-layer)}
+.drawer.on{transform:none}
+.dhead{padding:10px 14px;border-bottom:1px solid var(--sx-border-default);flex:none}
+.dhead .top{display:flex;align-items:flex-start;gap:8px}
+.dhead h2{margin:0;font-size:20px;font-weight:600;letter-spacing:-.01em;display:flex;align-items:center;gap:8px;flex-wrap:wrap;line-height:1.2}
+.dhead .sub{color:var(--sx-text-secondary);font-size:12px;margin-top:3px}
+.dpills{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px}
+.dbody{flex:1;overflow-y:auto;padding:0 14px 24px}
+.dsec{border-bottom:1px solid var(--sx-border-subtle);padding:9px 0}
+.dsec > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;
+  letter-spacing:.04em;text-transform:uppercase;color:var(--sx-text-disabled)}
+.dsec > summary::-webkit-details-marker{display:none}
+.dsec > summary:hover{color:var(--sx-text-primary)}
+.dsec > summary::before{content:"";width:0;height:0;border-left:4px solid currentColor;border-top:3.5px solid transparent;
+  border-bottom:3.5px solid transparent;transition:transform var(--sx-duration-state)}
+.dsec[open] > summary::before{transform:rotate(90deg)}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(146px,1fr));gap:1px;background:var(--sx-border-subtle);
+  border:1px solid var(--sx-border-subtle);margin-top:8px}
+.kv > div{background:var(--sx-surface-base);padding:5px 8px;min-width:0}
+.kv .k{font-size:11px;font-weight:500;color:var(--sx-text-disabled);display:flex;align-items:baseline;gap:4px;letter-spacing:.02em}
+.kv .k .cl{color:var(--sx-text-link);font-family:var(--sx-font-mono);font-size:10px}
+.kv .v{font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-height:17px}
+.kv .v.editable{cursor:text;border-bottom:1px dashed var(--sx-border-default)}
+.kv .v.editable:hover{border-bottom-color:var(--sx-intent-primary);color:var(--sx-text-link)}
+.kv .v.edited{color:var(--sx-text-warning);font-weight:600}
+.kv input{width:100%;border:1px solid var(--sx-intent-primary);border-radius:2px;padding:0 4px;font-size:12px;
+  background:var(--sx-surface-base);outline:none;height:20px}
+.stagerail{display:flex;flex-direction:column;gap:1px;margin-top:8px;background:var(--sx-border-subtle);border:1px solid var(--sx-border-subtle)}
+.scard{background:var(--sx-surface-base);padding:7px 10px;display:grid;grid-template-columns:106px 1fr;gap:10px;align-items:start}
+.scard.current{background:var(--sx-tint-primary)}
+.scard.done{opacity:.7}
+.scard .sn{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600}
+.scard .sn .dot{width:9px;height:9px;flex:none;border-radius:2px}
+.scard .sd{display:flex;flex-direction:column;gap:3px;min-width:0}
+.scard .dates{font-size:12px;color:var(--sx-text-secondary);display:flex;flex-wrap:wrap;gap:2px 12px;font-family:var(--sx-font-mono)}
+.scard .dates b{color:var(--sx-text-primary);font-weight:500}
+.scard .qbar{height:4px;background:var(--sx-surface-active);overflow:hidden;border-radius:2px}
+.scard .qbar > i{display:block;height:100%;background:var(--sx-intent-success)}
+.scard .qty{font-size:11px;color:var(--sx-text-secondary);font-family:var(--sx-font-mono)}
+.scard .qty b{color:var(--sx-text-primary);font-weight:600}
+.trims{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.hist{display:flex;flex-direction:column;gap:2px;margin-top:8px;font-size:11px;font-family:var(--sx-font-mono)}
+.hist .h{display:grid;grid-template-columns:120px 74px 1fr;gap:8px;align-items:center}
+.hist .h .b{height:6px;background:var(--st3);border-radius:2px}
+.dactions{display:flex;gap:6px;padding:8px 14px;border-top:1px solid var(--sx-border-default);flex:none;
+  flex-wrap:wrap;background:var(--sx-surface-base)}
+
+/* ---------------- misc ---------------- */
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(8px);background:var(--sx-surface-base);
+  color:var(--sx-text-primary);border:1px solid var(--sx-border-strong);border-radius:var(--sx-radius-control);
+  padding:8px 12px;font-size:12px;z-index:300;box-shadow:var(--sx-shadow-layer);opacity:0;
+  transition:opacity var(--sx-duration-layer),transform var(--sx-duration-layer);display:flex;align-items:center;gap:12px;max-width:min(560px,92vw)}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.toast button{color:var(--sx-text-link);font-weight:600;font-size:12px;flex:none}
+.toast button:hover{text-decoration:underline}
+.drop{position:fixed;inset:0;z-index:400;background:var(--sx-surface-sunken);display:flex;align-items:center;
+  justify-content:center;flex-direction:column;gap:16px;padding:28px}
+.drop.hide{display:none}
+.dropbox{border:1px dashed var(--sx-border-strong);padding:34px 42px;text-align:center;max-width:520px;background:var(--sx-surface-base)}
+.drop.over .dropbox{border-color:var(--sx-intent-primary);background:var(--sx-tint-primary)}
+.dropbox h1{margin:0 0 6px;font-size:20px;font-weight:600;letter-spacing:-.01em;text-wrap:balance}
+.dropbox p{margin:0 0 16px;color:var(--sx-text-secondary);font-size:12px;max-width:46ch;margin-inline:auto;line-height:1.5}
+.prog{height:3px;background:var(--sx-surface-active);overflow:hidden;margin-top:14px}
+.prog > i{display:block;height:100%;background:var(--sx-intent-primary);width:0;transition:width .2s}
+.pop{position:fixed;z-index:250;background:var(--sx-surface-base);border:1px solid var(--sx-border-strong);
+  border-radius:var(--sx-radius-control);box-shadow:var(--sx-shadow-layer);padding:8px;min-width:240px;max-width:360px;
+  max-height:62vh;overflow:auto}
+.pop h4{margin:0 0 6px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--sx-text-disabled)}
+.pop .prow{display:flex;align-items:center;gap:7px;padding:3px 5px;border-radius:2px;font-size:12px;width:100%;text-align:left;cursor:pointer}
+.pop .prow:hover{background:var(--sx-surface-hover)}
+.clrow{display:grid;grid-template-columns:120px 1fr auto;gap:10px;padding:5px 10px;border-bottom:1px solid var(--sx-border-subtle);
+  align-items:center;font-size:12px;width:100%;text-align:left}
+.clrow:hover{background:var(--sx-surface-hover)}
+.clrow .col{color:var(--sx-text-secondary);font-family:var(--sx-font-mono);font-size:11px}
+.clrow .chg{font-family:var(--sx-font-mono);font-size:11px;overflow:hidden;text-overflow:ellipsis}
+.clrow .chg .old{color:var(--sx-text-disabled);text-decoration:line-through}
+.clrow .chg .new{color:var(--sx-text-warning);font-weight:600}
+.hint{font-size:12px;color:var(--sx-text-disabled);line-height:1.5}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:980px){
+  .rail{position:absolute;left:0;top:0;bottom:0;z-index:30;box-shadow:var(--sx-shadow-layer)}
+  .brand span.t{display:none}
+}
+</style>
+
+<div id="app">
+  <header class="topbar">
+    <div class="brand"><i class="mark"></i><span class="t">SAITEX</span><span class="sep">/</span></div>
+    <button class="filechip" id="filechip" title="Open a different workbook"><span class="fname">No file</span></button>
+    <button class="btn" id="openbtn" title="Read an .xlsx master plan from this computer">Open workbook</button>
+    <nav class="tabs" id="tabs" role="tablist"></nav>
+    <div class="spacer"></div>
+    <div class="search"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="4.6" stroke="currentColor" stroke-width="1.6"/><path d="M10.5 10.5 14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <input id="search" type="search" placeholder="MO, style, buyer, fabric…" autocomplete="off"></div>
+    <button class="btn icon" id="undo" title="Undo (Ctrl+Z)" disabled>&#8630;</button>
+    <button class="btn icon" id="redo" title="Redo (Ctrl+Shift+Z)" disabled>&#8631;</button>
+    <button class="btn" id="exportbtn" title="Write the edits into the workbook and download it">Export<span class="editcount hidden" id="editcount">0</span></button>
+    <button class="btn icon" id="themebtn" title="Switch theme" aria-label="Switch theme">◐</button>
+  </header>
+  <div class="main">
+    <aside class="rail" id="rail"></aside>
+    <div class="viewwrap">
+      <div class="viewbar" id="viewbar"></div>
+      <div class="view" id="view"></div>
+    </div>
+  </div>
+</div>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Order detail" role="dialog"></aside>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="drop hide" id="drop">
+  <div class="dropbox">
+    <h1>Open the master production plan</h1>
+    <p>Drop the workbook here, or choose the file. It is read in this browser only — nothing is uploaded, and your edits go back into the same file on export.</p>
+    <button class="btn primary tall" id="pick">Choose workbook</button>
+    <input type="file" id="file" accept=".xlsx,.xlsm" hidden>
+    <div class="prog hidden" id="prog"><i></i></div>
+    <p id="progtext" class="hint" style="margin-top:10px"></p>
+  </div>
+  <button class="btn" id="usesample">Open the 28 Aug sample instead</button>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+/* core.js — Saitex Master Plan data core (browser + node). No framework. */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory(require('jszip'));
+  else root.PlanCore = factory(root.JSZip);
+})(typeof self !== 'undefined' ? self : this, function (JSZip) {
+'use strict';
+
+const EPOCH = Date.UTC(1899, 11, 30);
+const DAY = 86400000;
+
+// ---------- primitives ----------
+function serialToDate(n) { return new Date(EPOCH + Math.round(n * DAY)); }
+function dateToSerial(d) { return (d.getTime() - EPOCH) / DAY; }
+function isDate(v) { return v instanceof Date && !isNaN(v); }
+function dayKey(d) { return Math.floor((d.getTime() - EPOCH) / DAY); }
+function keyToDate(k) { return new Date(EPOCH + k * DAY); }
+function addDays(d, n) { return new Date(d.getTime() + n * DAY); }
+function startOfDay(d) { return keyToDate(dayKey(d)); }
+function isSunday(d) { return d.getUTCDay() === 0; }
+function skipSunday(d) { return isSunday(d) ? addDays(d, 1) : d; }
+function plusSkip(d, n) { return isDate(d) ? skipSunday(addDays(startOfDay(d), n)) : null; }
+function num(v) { return typeof v === 'number' && isFinite(v) ? v : 0; }
+function str(v) { return v == null ? '' : (isDate(v) ? ymd(v) : String(v)); }
+function ymd(d) { return isDate(d) ? d.toISOString().slice(0, 10) : ''; }
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function mmmyy(d) { return isDate(d) ? MON[d.getUTCMonth()] + "'" + String(d.getUTCFullYear()).slice(2) : null; }
+function fmtDate(d) { return isDate(d) ? String(d.getUTCDate()).padStart(2, '0') + ' ' + MON[d.getUTCMonth()] + ' ' + String(d.getUTCFullYear()).slice(2) : ''; }
+function fmtDateShort(d) { return isDate(d) ? d.getUTCDate() + ' ' + MON[d.getUTCMonth()] : ''; }
+function parseYmd(s) { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s || '').trim()); return m ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])) : null; }
+function monthKey(d) { return isDate(d) ? d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0') : null; }
+function weekKey(d) { // Saturday-ending week like the sheet (WEEK = d + 7 - WEEKDAY(d,1)) → returns key of that Saturday
+  if (!isDate(d)) return null; const k = dayKey(d); const wd = keyToDate(k).getUTCDay(); return k + (6 - wd);
+}
+function colToIdx(L) { let n = 0; for (let i = 0; i < L.length; i++) n = n * 26 + (L.charCodeAt(i) - 64); return n - 1; }
+function idxToCol(i) { let s = ''; i = i + 1; while (i > 0) { const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); } return s; }
+const XML_ENT = { lt: '<', gt: '>', amp: '&', quot: '"', apos: "'" };
+function unescapeXml(s) {
+  if (s.indexOf('&') < 0) return s;
+  return s.replace(/&(lt|gt|amp|quot|apos|#x[0-9a-fA-F]+|#\d+);/g, (m, c) => {
+    if (c[0] === '#') return String.fromCodePoint(c[1] === 'x' ? parseInt(c.slice(2), 16) : parseInt(c.slice(1), 10));
+    return XML_ENT[c];
+  });
+}
+function escapeXml(s) { return String(s).replace(/[<>&"]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c])); }
+function attr(a, name) { const m = new RegExp('(?:^|\\s)' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '="([^"]*)"').exec(a); return m ? m[1] : undefined; }
+function normKey(s) { return String(s || '').toUpperCase().replace(/[^A-Z0-9#%&/()+-]+/g, ' ').replace(/\s+/g, ' ').trim(); }
+function yieldToUI() { return new Promise(r => setTimeout(r, 0)); }
+
+// ---------- OOXML parsing ----------
+function parseSharedStrings(xml) {
+  const out = [];
+  if (!xml) return out;
+  const re = /<si>([\s\S]*?)<\/si>/g; let m;
+  while ((m = re.exec(xml))) {
+    const body = m[1].replace(/<rPh[\s\S]*?<\/rPh>/g, '');
+    let t = '';
+    const tr = /<t(?:\s[^>]*)?>([\s\S]*?)<\/t>/g; let tm;
+    while ((tm = tr.exec(body))) t += tm[1];
+    out.push(unescapeXml(t));
+  }
+  return out;
+}
+const BUILTIN_DATE_FMT = new Set([14,15,16,17,18,19,20,21,22,27,28,29,30,31,32,33,34,35,36,45,46,47,50,51,52,53,54,55,56,57,58]);
+function isDateFmt(id, code) {
+  if (code == null) return BUILTIN_DATE_FMT.has(id);
+  const s = code.replace(/"[^"]*"/g, '').replace(/\[[^\]]*\]/g, '').replace(/\\./g, '');
+  if (/general/i.test(s)) return false;
+  return /[ymdhs]/i.test(s);
+}
+function parseDateStyles(xml) {
+  const fmts = {};
+  const nf = /<numFmt\b([^>]*)\/?>/g; let m;
+  while ((m = nf.exec(xml))) { const id = +attr(m[1], 'numFmtId'); fmts[id] = unescapeXml(attr(m[1], 'formatCode') || ''); }
+  const block = /<cellXfs[^>]*>([\s\S]*?)<\/cellXfs>/.exec(xml);
+  const out = [];
+  if (!block) return out;
+  const xf = /<xf\b([^>]*?)(?:\/>|>)/g;
+  while ((m = xf.exec(block[1]))) { const id = +(attr(m[1], 'numFmtId') || 0); out.push(isDateFmt(id, fmts[id])); }
+  return out;
+}
+function innerText(inner) { let t = ''; const tr = /<t(?:\s[^>]*)?>([\s\S]*?)<\/t>/g; let m; while ((m = tr.exec(inner))) t += m[1]; return unescapeXml(t); }
+
+async function parseSheetXml(xml, sst, dateStyles, onProgress) {
+  const rows = [];            // rows[r] = sparse array of values
+  const frows = [];           // frows[r] = sparse array of 1 where formula
+  const formulaCount = [];
+  const colDateStyle = [];
+  let maxCol = 0, count = 0;
+  const sdStart = Math.max(0, xml.indexOf('<sheetData'));
+  let sdEnd = xml.indexOf('</sheetData>'); if (sdEnd < 0) sdEnd = xml.length;
+  const cellRe = /<c r="([A-Z]+)(\d+)"([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g;
+  let pos = sdStart;
+  for (;;) {
+    const rs = xml.indexOf('<row ', pos); if (rs < 0 || rs > sdEnd) break;
+    const tagEnd = xml.indexOf('>', rs);
+    const rm = /\br="(\d+)"/.exec(xml.slice(rs, tagEnd)); const rnum = rm ? +rm[1] : 0;
+    if (xml[tagEnd - 1] === '/') { pos = tagEnd + 1; continue; }
+    const re = xml.indexOf('</row>', tagEnd);
+    const body = xml.slice(tagEnd + 1, re < 0 ? sdEnd : re);
+    const arr = [], farr = [];
+    cellRe.lastIndex = 0; let m;
+    while ((m = cellRe.exec(body))) {
+      const c = colToIdx(m[1]); const attrs = m[3]; const inner = m[4];
+      if (c + 1 > maxCol) maxCol = c + 1;
+      if (inner === undefined) continue;
+      const sM = /\bs="(\d+)"/.exec(attrs); const s = sM ? +sM[1] : 0;
+      const tM = /\bt="(\w+)"/.exec(attrs); const t = tM ? tM[1] : 'n';
+      if (inner.indexOf('<f') >= 0) { formulaCount[c] = (formulaCount[c] || 0) + 1; farr[c] = 1; }
+      let v = null;
+      if (t === 'inlineStr') v = innerText(inner);
+      else {
+        const vM = /<v>([^<]*)<\/v>/.exec(inner);
+        if (vM && vM[1] !== '') {
+          const raw = vM[1];
+          if (t === 's') { const sv = sst[+raw]; v = sv == null ? null : sv; }
+          else if (t === 'str') v = unescapeXml(raw);
+          else if (t === 'e') v = null;
+          else if (t === 'b') v = raw === '1';
+          else { const n = Number(raw); if (isNaN(n)) v = null; else if (dateStyles[s]) { v = serialToDate(n); if (colDateStyle[c] === undefined) colDateStyle[c] = s; } else v = n; }
+        }
+      }
+      if (typeof v === 'string') { v = v.trim(); if (v === '') v = null; }
+      if (v !== null) arr[c] = v;
+    }
+    rows[rnum] = arr; frows[rnum] = farr;
+    pos = (re < 0 ? sdEnd : re) + 6; count++;
+    if ((count & 127) === 0) { if (onProgress) onProgress('Reading rows', 0.3 + 0.6 * (rs - sdStart) / Math.max(1, sdEnd - sdStart)); await yieldToUI(); }
+  }
+  return { rows, frows, maxCol, formulaCount, colDateStyle };
+}
+
+// ---------- field registry (letter + header name; header wins when the letter disagrees) ----------
+const FIELD_DEFS = {
+  po:['A','SAITEX PO'], blk:['B','BLK'], oldBlk:['C','OLD BLK'], ldrLine:['D','LDR LINE'], season:['E','SEASON'], inout:['F','Factory'], status:['G','STATUS'], factoryNo:['H','FACTORY'],
+  line:['I','SEWING LINE NO'], customer:['J','CUSTOMER'], customerPlan:['K','CUSTOMER PLAN'], productType:['L','PRODUCT TYPE'], groupProduct:['M','GROUP PRODUCT'], style:['N','STYLE NO'], desc:['O','ORDER DESCRIPTION'],
+  afterWash:['P','AFTER WASH OPERATION'], closePlacket:['Q','Close Placket'], desc2:['R','DESCRIPTION'], orderConfDate:['S','ORDER CONFIRMATION DATE'], sysDelivery:['T','SYSTEM DELIVERY'], shipMonth:['U','SHIPMENT MONTH'], cusFinalDly:['V','CUS FINAL DLY'],
+  ppcdToDly:['W','PPCD To SYSTEM DLY'], saitexDelivery:['X','SAITEX DELIVERY'], otd:['Y','OTD'], orderConfToDel:['Z','ORDER CONFIRMATION TO DEL'], delayBucket:['AA','Delay'], custPo:['AB','CUST PO'], orderRec:['AC','ORDER REC'], moCreate:['AD','MO Create'], sampleType:['AE','SampleType'],
+  fabric:['AF','FABRIC NAME'], wash:['AG','WASH NAME'], qty:['AH','PLANNED QTY'], target:['AI','TARGET'], days:['AJ','NO OF DAYS'], sundays:['AK','# OF SUNDAY'], adjDays:['AL','ADJUSTMENT'],
+  fitStatus:['AM','FIT STATUS'], fitSubmit:['AN','FIT SUBMIT DATE'], fitApproved:['AO','FIT APPROVED DATE'], ppStatus:['AP','PP STATUS'], ppSubmit:['AQ','PP SUBMIT DATE'], ppApproved:['AR','PP APP DATE'], washAppStatus:['AS','WASH APP STATUS'], washAppDate:['AT','WASH APP DATE'],
+  fabReqIH:['AU','FABRIC REQ IH'], fabActIH:['AV','ACTUAL IH DATE'], fabEstIH:['AW','EST FAB IH'], fabArticle:['AX','FABRIC ARTICLE #'], remark:['AY','REMARK'], consumption:['AZ','CONSUMSION'], yds:['BA','Qty(Yds)'], fabPkc:['BB','FABRIC PKC NO'], mill:['BC','MILL NAME'], fabIHStatus:['BD','ACT IH STATUS'], fabMerchConfirm:['BE','FABRIC MERCH CONFIRM'],
+  shrinkSendLR:['BF','SHRINKAGE SEND TO LAUNDRY ACT'], shrinkLabPlan:['BH','SHRINKAGE LAUNDRY TO LAB PLAN'], shrinkLabAct:['BI','SHRINKAGE LAUNDRY TO LAB ACTUAL'], shrinkReleasePlan:['BK','LAB RELEASE SHRINKAGE PLAN'], shrinkReleaseAct:['BL','LAB RELEASE SHRINKAGE ACTUAL'],
+  pocketing:['BN','POCKETING'], interlining:['BO','INTERLINING'], thread:['BP','THREAD'], zipper:['BQ','ZIPPER'], label:['BR','LABEL'], hookBar:['BS','HOOK & BAR'], trimStatus:['BT','TRIM STATUS'], trimMax:['BU','TRIM MAX DATE'], finTrim:['BV','FINAL FIN TRIM'],
+  qcfPlan:['BW','QCF Plan to release date'], marker1stPlan:['BX','MARKER PLAN DATE 1st BULK'], sew1stPlan:['BY','1st bulk sewing plan to complete date'], wash1stPlan:['BZ','1st bulk washing plan to complete date'], qa1stPlan:['CA','1st bulk QA repost plan to release date'],
+  skPlanLR:['CB','SK PLAN SEND LR'], skPlanLab:['CC','SK PLAN SEND LAB'], labReleasePlan:['CD','PLAN LAB RELEASE REPORT'], markerBulkPlan:['CE','MARKER PLAN DATE BULK'],
+  ppm1stAct:['CF','1ST BULK ACTUAL PPM/QC File DATE'], marker1stAct:['CG','MARKER ACT DATE 1st BULK'], sew1stAct:['CH','1st Bulk sewing actual release date'], wash1stAct:['CI','1st bulk washing actual release date'], qa1stAct:['CJ','1st bulk QA repost actual release date'],
+  shrinkActLR:['CK','SHRINKAGE ACT SEND LR'], shrinkActLab:['CL','SHRINKAGE ACT LR SEND LAB'], shrinkStatus:['CM','SHRINKAGE STATUS'], shrinkActDate:['CN','SHRINKAGE Act Date'], shadeStatus:['CO','SHADE STATUS'], bulkPpmAct:['CP','ACT BULK PPM'], markerAct:['CQ','MARKER ACT DATE'],
+  preStatus:['CR','PRE STATUS'], repeatNew:['CS','REPEAT/NEW'], preStatusSubcon:['CT','PRE STATUS SUBCON'], ppcd:['CU','PPCD'], ppcMax:['CV','PPC Max'], delayReason:['CW','REASON FOR DELAYING'],
+  planMk:['DH','PLAN MK DATE'], first:['DI','1st'], pcdBook:['DJ','PCD TO BOOK MATERIAL'], markerDiff:['DK','MARKER PLAN VS ACT DIFF'], markerRelease:['DL','MARKER RELEASE DATE'], pcd:['DM','MASTER PLANNED PCD'], cutQty:['DN','CUT QTY'],
+  inputDate:['DO','INPUT DATE'], inputQty:['DP','IN PUT QTY'], wipInput:['DQ','WIP INPUT'], sew1:['DR','SEWING 1ST OUTPUT TARGET'], sew2:['DS','SEWING LAST OUTPUT TARGET'], planPrev:['DT','Plan'], factoryConfirm:['DU','FACTORY CONFIRM DATE'], output:['DV','Output'], wipSewing:['DW','WIP SEWING'],
+  dispatched:['DX','DISPATCHED'], wipDispatch:['DY','WIP DISPATCH'], wipForSewing:['DZ','WIP FOR SEWING'], wipToDispatch:['EA','WIP qty to dispatch'], ldLine:['EB','LD LINE'], laundryWip:['EC','LAUNDRY WIP'], rinse:['ED','RINSE'], dyeing:['EE','DYEING'], towel:['EF','Towel'], booster:['EG','Booster'], awStitch:['EH','After Wash stitc op'],
+  coating:['EI','COATING'], resin:['EJ','RESIN'], w1:['EK','W1'], wash2:['EL','2 WASH'], lrCompletion:['EM','LR COMPLETION DATE'], lrConfirm:['EN','LR CONFIRM COMPLETION DATE'], washOutput:['EO','WASH OUTPUT'], wipForWashing:['EP','WIP FOR WASHING'],
+  finLine:['EQ','FINISHING LINE'], finWip:['ER','FINISHING WIP'], finCompletion:['ES','FINISHING COMPLETION DATE'], packWip:['ET','PACKING WIP'], finConfirm:['EU','FINISHING CONFIRM COMPLETION DATE'], packCompletion:['EV','PACKING COMPLETION DATE'], packConfirm:['EW','PACKING CONFIRM COMPLETION DATE'],
+  inspection:['EX','INSPECTION'], inspectionConfirm:['EY','INSPECTION CONFIRM COMPLETION DATE'], exFactory:['EZ','DELIVERY/EX FACTORY'], handover:['FA','HANDOVER DATE'], sailing:['FB','SAILING DATE'], shipMode:['FC','SHIP MODE'], onTimeLate:['FD','ONTIME OR LATE'],
+  ltOrderToPcd:['FE','ORDER CONFIRM TO PCD'], ltPcdToSew:['FF','PCD TO LAST SEWING'], ltPcdToExF:['FG','LT PCD TO READY EX F'], ltPcdToDly:['FH','PCD TO DLY'], ltSewToWash:['FI','LAST SEW TO LAST WASH'], ltWashToExF:['FJ','WASH TO EX F'], ltStitchToExF:['FK','STITCHING TO EX FACTORY'], ltSewToDly:['FL','SEWING TO DLY'],
+  sewMonth:['FQ','SEWING MONTH'], sewQuality:['FR','SEWING QUALITY'], washMonth:['FV','MONTH DISPATCH TO FINISHING'], washFirstOut:['FW','MASTER PLAN WASH 1ST OUT'], finPackTrim:['FX','FIN/PACK TRIM MAIN DATE'], washLastOut:['FY','MASTER PLAN WASH LAST OUT'], washQuality:['FZ','WASHING QUALITY'], washLT:['GA','Wash LT'], washDispatch:['GC','WASH DISPATCH'], wipInLR:['GD','WIP IN LR'],
+  finMonth:['GH','MONTH FINISHING'], finFirstOut:['GI','MASTER PLAN FINISHING 1ST OUT'], finLastOut:['GJ','MASTER PLAN FINISHING LAST OUT'], finQuality:['GK','FINISHING QUALITY'], finOut:['GL','FINISHING OUT'], wipInFin:['GM','WIP IN FINISHING'], packFirstOut:['GN','MASTER PLAN PACKIGN 1ST OUT'], packLastOut:['GO','MASTER PLAN PACKIG LAST'],
+  bChoice:['GP','% BCHOICE'], preFinalInsp:['GQ','PRE-FINAL INSPECTION'], finalInsp:['GR','FINAL INSPECTION'], packedQty:['GS','PACKED QTY'], wipForPacking:['GT','WIP FOR PACKING'], preFinal:['GU','PRE FINAL'], planInspection:['GV','MAST PLAN INSPECTION'], planExFactory:['GW','MASTER PLAN EX FACTORY'],
+  whWip:['GX','WH WIP'], shippedQty:['GY','SHIPPED QTY'], wipForShipping:['GZ','WIP FOR SHIPPING'], fob:['HA','FOB VALUE'], dlyMonth:['HD','DLY PREDIC MONTH'], merchConfirm:['HF','MERCHANT CONFIRM'], merchComment:['HG','Merch comment'], dlyRevision:['HH','Delivery revision given to customer'], delMax:['HI','DEL MAX()'],
+  xCountry:['HJ','X-CONTRY DATE(Shipping Plan)'], stxFinalDly:['HK','STX FINAL DLY'], finalWeek:['HM','FINALWEEKLY'], shipMonthFinal:['HN','Shipment Month'], packBal:['HQ','PACKING BAL'], cutBal:['HR','CUT BALANCE'], finBal:['HS','FINISHING BAL'], washBal:['HT','WASHING BAL'], sewBal:['HU','SEWING BAL'], shipBal:['HV','SHIP BAL'],
+  recipe:['HX','Recipe'], diff:['HY','diff'], dailyTotal:['JE','TTL'],
+};
+function resolveFields(cols) {
+  const F = {};
+  const byKey = new Map(); cols.forEach(c => { if (!byKey.has(c.nkey)) byKey.set(c.nkey, c.i); });
+  for (const key in FIELD_DEFS) {
+    const [letter, name] = FIELD_DEFS[key]; const want = normKey(name);
+    const li = colToIdx(letter); const at = cols[li];
+    if (at && (at.nkey === want || at.nkey.indexOf(want) >= 0 || want.indexOf(at.nkey) >= 0 && at.nkey.length > 3)) { F[key] = li; continue; }
+    if (byKey.has(want)) { F[key] = byKey.get(want); continue; }
+    const fuzzy = cols.find(c => c.nkey.indexOf(want) >= 0);
+    F[key] = fuzzy ? fuzzy.i : (at ? li : -1);
+  }
+  return F;
+}
+
+// ---------- model ----------
+async function loadWorkbook(buffer, opts = {}) {
+  const onProgress = opts.onProgress || (() => {});
+  onProgress('Opening workbook', 0.02);
+  const zip = await JSZip.loadAsync(buffer);
+  const wbXml = await zip.file('xl/workbook.xml').async('string');
+  const relsXml = await zip.file('xl/_rels/workbook.xml.rels').async('string');
+  const sheets = []; { const re = /<sheet\b([^>]*?)\/?>/g; let m; while ((m = re.exec(wbXml))) sheets.push({ name: unescapeXml(attr(m[1], 'name') || ''), rid: attr(m[1], 'r:id'), state: attr(m[1], 'state') }); }
+  const rels = {}; { const re = /<Relationship\b([^>]*?)\/?>/g; let m; while ((m = re.exec(relsXml))) rels[attr(m[1], 'Id')] = attr(m[1], 'Target'); }
+  const sheet = sheets.find(s => /master\s*plan/i.test(s.name)) || sheets.find(s => s.state !== 'hidden') || sheets[0];
+  if (!sheet) throw new Error('No worksheet found in this file.');
+  let target = rels[sheet.rid] || 'worksheets/sheet1.xml';
+  target = target.replace(/^\//, ''); if (!/^xl\//.test(target)) target = 'xl/' + target;
+  if (!zip.file(target)) throw new Error('Sheet part not found: ' + target);
+  onProgress('Reading shared strings', 0.08);
+  const sst = parseSharedStrings(zip.file('xl/sharedStrings.xml') ? await zip.file('xl/sharedStrings.xml').async('string') : '');
+  const dateStyles = parseDateStyles(zip.file('xl/styles.xml') ? await zip.file('xl/styles.xml').async('string') : '');
+  onProgress('Inflating sheet', 0.15);
+  const xml = await zip.file(target).async('string');
+  onProgress('Reading rows', 0.3);
+  const g = await parseSheetXml(xml, sst, dateStyles, onProgress);
+  onProgress('Building model', 0.92);
+  // header row: first row (within 20) whose column A mentions SAITEX PO, else the row with most strings
+  let headerRow = 0;
+  for (let r = 1; r <= 25 && !headerRow; r++) { const a = g.rows[r]; if (a && typeof a[0] === 'string' && /saitex\s*po/i.test(a[0])) headerRow = r; }
+  if (!headerRow) { let best = 0; for (let r = 1; r <= 25; r++) { const a = g.rows[r]; if (!a) continue; const n = a.reduce((k, v) => k + (typeof v === 'string' ? 1 : 0), 0); if (n > best) { best = n; headerRow = r; } } }
+  const headers = g.rows[headerRow] || [], owners = g.rows[headerRow - 1] || [];
+  const ncols = g.maxCol; const cols = []; const seen = new Map();
+  for (let c = 0; c < ncols; c++) {
+    let h = headers[c]; if (isDate(h)) h = ymd(h);
+    let name = String(h == null ? '' : h).replace(/\s+/g, ' ').trim(); if (!name) name = 'Column ' + idxToCol(c);
+    const isDaily = isDate(headers[c]);
+    if (seen.has(name)) name = name + ' (' + idxToCol(c) + ')'; seen.set(name, c);
+    const owner = typeof owners[c] === 'string' ? owners[c].trim() : '';
+    cols.push({ i: c, letter: idxToCol(c), name, nkey: normKey(name), owner, isDaily, dailyDate: isDaily ? headers[c] : null, formulaCount: g.formulaCount[c] || 0, dateStyle: g.colDateStyle[c], type: 'text' });
+  }
+  const F = resolveFields(cols);
+  // orders = rows after header with an identity or a quantity
+  const orders = [];
+  for (let r = headerRow + 1; r < g.rows.length; r++) {
+    const a = g.rows[r]; if (!a) continue;
+    const id = a[F.po] != null || a[F.blk] != null || a[F.style] != null || num(a[F.qty]) > 0;
+    if (!id) continue;
+    const v = new Array(ncols); for (let c = 0; c < ncols; c++) v[c] = a[c] === undefined ? null : a[c];
+    const f = new Uint8Array(ncols); const fa = g.frows[r] || []; for (let c = 0; c < ncols; c++) if (fa[c]) f[c] = 1;
+    orders.push({ r, v, f, idx: orders.length, dirty: false });
+  }
+  // column types by majority of non-null values
+  for (const col of cols) {
+    let d = 0, n = 0, s = 0;
+    for (const o of orders) { const v = o.v[col.i]; if (v == null) continue; if (isDate(v)) d++; else if (typeof v === 'number') n++; else s++; }
+    const tot = d + n + s; col.nonEmpty = tot;
+    col.type = tot === 0 ? (col.dateStyle !== undefined ? 'date' : 'text') : (d >= n && d >= s ? 'date' : (n >= s ? 'number' : 'text'));
+    col.mixed = tot > 0 && Math.max(d, n, s) / tot < 0.85;
+    col.formula = col.formulaCount >= Math.max(1, orders.length * 0.4);
+  }
+  const model = { fileName: opts.fileName || 'Production Plan.xlsx', sheetName: sheet.name, sheetPath: target, headerRow, cols, F, orders, ncols, buffer, edits: new Map(), undo: [], redo: [] };
+  model.dailyCols = cols.filter(c => c.isDaily).map(c => c.i);
+  model.historyCols = cols.filter(c => /^main date/i.test(c.name)).map(c => c.i);
+  model.asOf = detectAsOf(model);
+  buildLines(model);
+  onProgress('Ready', 1);
+  return model;
+}
+function detectAsOf(model) {
+  // "as of" = the newest date recorded in strictly-actual columns (things that only get filled in once they happen)
+  const F = model.F; const keys = ['fabActIH', 'markerAct', 'shrinkActLR', 'shrinkActLab', 'shrinkActDate', 'bulkPpmAct', 'marker1stAct', 'sew1stAct', 'wash1stAct', 'qa1stAct'];
+  const seen = [];
+  const cap = Date.UTC(2100, 0, 1), floor = Date.UTC(2000, 0, 1);
+  for (const k of keys) { const c = F[k]; if (c < 0) continue; for (const o of model.orders) { const v = o.v[c]; if (isDate(v)) { const t = v.getTime(); if (t > floor && t < cap) seen.push(t); } } }
+  if (!seen.length) return startOfDay(new Date());
+  seen.sort((a, b) => a - b);
+  return startOfDay(new Date(seen[Math.floor(seen.length * 0.999)]));
+}
+function mode(counter) { let best = null, bn = -1; for (const [k, n] of counter) if (n > bn) { bn = n; best = k; } return best; }
+// "A2- Line 02" -> site A2, unit "Line 02".  "STX-TT 1" -> site STX-TT, unit "TT 1".  "STX-VS2" -> site STX-VS, unit "VS2".
+function parseLineName(raw) {
+  const name = String(raw == null ? '' : raw).replace(/\s+/g, ' ').trim();
+  if (!name) return { site: '', unit: '', label: '', sort: '' };
+  let m = /^([A-Za-z0-9]+)\s*[-–]\s*Line\s*0*(\d+)$/i.exec(name);
+  if (m) return { site: m[1].toUpperCase(), unit: 'Line ' + String(m[2]).padStart(2, '0'), label: 'Line ' + String(m[2]).padStart(2, '0'), sort: String(m[2]).padStart(3, '0') };
+  m = /^(STX)\s*[-–]\s*([A-Za-z]+)\s*0*(\d+)$/i.exec(name);
+  if (m) return { site: 'STX-' + m[2].toUpperCase(), unit: m[2].toUpperCase() + ' ' + m[3], label: m[2].toUpperCase() + ' ' + m[3], sort: String(m[3]).padStart(3, '0') };
+  m = /^(STX)\s*[-–]\s*([A-Za-z]+)$/i.exec(name);
+  if (m) return { site: 'STX-' + m[2].toUpperCase(), unit: '(unnumbered)', label: '(unnumbered)', sort: 'zzz' };
+  m = /^([A-Za-z0-9]+)\s*[-–]\s*(.+)$/.exec(name);
+  if (m) return { site: m[1].toUpperCase(), unit: m[2].trim(), label: m[2].trim(), sort: m[2].trim() };
+  m = /^(A2)\s+(.+)$/i.exec(name);
+  if (m) return { site: 'A2', unit: m[2].trim(), label: m[2].trim(), sort: m[2].trim() };
+  return { site: name.toUpperCase(), unit: name, label: name, sort: name };
+}
+function buildLines(model) {
+  const F = model.F; const lines = new Map();
+  for (const o of model.orders) {
+    const ln = str(o.v[F.line]).trim(); if (!ln) continue;
+    let L = lines.get(ln); if (!L) { L = { name: ln, n: 0, qty: 0, targets: new Map(), inout: new Map(), factories: new Map() }; lines.set(ln, L); }
+    L.n++; L.qty += num(o.v[F.qty]);
+    const t = o.v[F.target]; if (typeof t === 'number' && t > 0) L.targets.set(t, (L.targets.get(t) || 0) + 1);
+    const io = str(o.v[F.inout]); if (io) L.inout.set(io, (L.inout.get(io) || 0) + 1);
+    const fn = o.v[F.factoryNo]; if (fn != null) L.factories.set(String(fn), (L.factories.get(String(fn)) || 0) + 1);
+  }
+  const arr = [...lines.values()].map(L => { const p = parseLineName(L.name); return { name: L.name, site: p.site, unit: p.unit, label: p.label, sort: p.sort, n: L.n, qty: L.qty, target: mode(L.targets) || 0, inout: mode(L.inout) || (/^A2/i.test(L.name) ? 'Inside' : 'Outside'), factory: mode(L.factories) || '' }; });
+  arr.sort((a, b) => (a.inout === b.inout ? 0 : a.inout === 'Inside' ? -1 : 1) || a.site.localeCompare(b.site) || a.sort.localeCompare(b.sort, undefined, { numeric: true }));
+  model.lines = arr; model.lineMap = new Map(arr.map(l => [l.name, l]));
+  const sites = new Map();
+  for (const l of arr) { let S = sites.get(l.site); if (!S) { S = { site: l.site, inout: l.inout, lines: [], n: 0, qty: 0, capacity: 0 }; sites.set(l.site, S); } S.lines.push(l); S.n += l.n; S.qty += l.qty; S.capacity += l.target; }
+  model.sites = [...sites.values()];
+  model.ldLines = distinctOf(model, F.ldLine); model.finLines = distinctOf(model, F.finLine);
+}
+function distinctOf(model, c) { const m = new Map(); if (c < 0) return []; for (const o of model.orders) { const v = str(o.v[c]).trim(); if (!v || /^#/.test(v)) continue; m.set(v, (m.get(v) || 0) + 1); } return [...m.entries()].sort((a, b) => a[0].localeCompare(b[0], undefined, { numeric: true })).map(([name, n]) => ({ name, n })); }
+
+// ---------- derivation (mirrors the sheet's formula chain; only touches cells that are formulas in the sheet) ----------
+function recompute(model, o) {
+  const F = model.F, v = o.v, f = o.f;
+  const g = k => (F[k] >= 0 ? v[F[k]] : null);
+  const set = (k, val) => { const c = F[k]; if (c >= 0 && f[c]) v[c] = val; };
+  const sew1 = g('sew1'), sew2 = g('sew2');
+  set('pcd', plusSkip(sew1, -12)); set('inputDate', plusSkip(sew1, -4)); set('washFirstOut', plusSkip(sew1, 3));
+  const pcd = g('pcd');
+  set('markerRelease', plusSkip(pcd, -7)); set('fabReqIH', plusSkip(pcd, -10));
+  const otd = g('otd'); set('pcdBook', isDate(pcd) ? (typeof otd === 'number' && otd < 0 ? addDays(pcd, otd) : addDays(pcd, -10)) : null);
+  set('laundryWip', plusSkip(sew2, 7)); set('washLastOut', plusSkip(sew2, 15));
+  set('lrCompletion', plusSkip(g('laundryWip'), 5)); set('finWip', plusSkip(g('lrCompletion'), 3)); set('finCompletion', plusSkip(g('finWip'), 2)); set('packWip', plusSkip(g('finCompletion'), 3));
+  set('finFirstOut', plusSkip(g('washFirstOut'), 3)); set('finLastOut', plusSkip(g('washLastOut'), 3));
+  set('packFirstOut', plusSkip(g('finFirstOut'), 1)); set('packLastOut', plusSkip(g('finLastOut'), 2));
+  set('planInspection', plusSkip(g('packLastOut'), 1)); const insp = g('planInspection');
+  set('preFinal', isDate(insp) ? addDays(insp, -2) : null); set('planExFactory', plusSkip(insp, 1));
+  const qty = num(g('qty')), tgt = num(g('target'));
+  if (tgt > 0) { const d = qty / tgt; set('days', d); set('sundays', d / 7); set('adjDays', d + d / 7); }
+  set('yds', qty * num(g('consumption')) || null);
+  const cut = num(g('cutQty')), inp = num(g('inputQty')), out = num(g('output')), disp = num(g('dispatched')), washOut = num(g('washOutput')), finOut = num(g('finOut')), packed = num(g('packedQty')), shipped = num(g('shippedQty')), washDisp = num(g('washDispatch'));
+  set('wipInput', cut - inp); set('wipSewing', inp - out); set('wipDispatch', out - disp); set('wipForSewing', out > qty ? 0 : qty - out); set('wipToDispatch', (qty - disp) <= 1 ? 0 : qty - disp);
+  set('wipInLR', disp - washDisp); set('wipInFin', qty - finOut); set('wipForPacking', qty - packed); set('whWip', packed - shipped); set('wipForShipping', shipped > qty ? 0 : qty - shipped);
+  set('packBal', packed > qty ? 0 : qty - packed); set('cutBal', cut > qty ? 0 : qty - cut); set('finBal', finOut > qty ? 0 : qty - finOut); set('washBal', washOut > qty ? 0 : qty - washOut); set('sewBal', out > qty ? 0 : qty - out);
+  set('shipBal', String(otd).toLowerCase() === 'shipped' ? 0 : (shipped > qty ? 0 : qty - shipped));
+  set('sewMonth', mmmyy(sew2)); set('washMonth', mmmyy(g('washLastOut'))); set('finMonth', mmmyy(g('finLastOut'))); set('dlyMonth', mmmyy(g('planExFactory'))); set('shipMonth', mmmyy(g('sysDelivery')));
+  set('ldrLine', g('ldLine')); set('ppcMax', g('ppcd')); set('planMk', g('markerAct'));
+  const ey = g('inspectionConfirm'); set('exFactory', ey); set('saitexDelivery', ey);
+  set('delMax', g('dlyRevision')); const hj = g('xCountry'); set('stxFinalDly', isDate(hj) ? hj : g('delMax')); set('cusFinalDly', g('stxFinalDly'));
+  const V = g('cusFinalDly'), EZ = g('exFactory'); set('onTimeLate', isDate(V) && isDate(EZ) ? (dayKey(V) - dayKey(EZ)) : null);
+  const T = g('sysDelivery'), CV = g('ppcMax'); set('ppcdToDly', isDate(T) && isDate(CV) ? dayKey(T) - dayKey(CV) : null);
+  const DM = g('pcd'), AD = g('moCreate'); set('ltOrderToPcd', isDate(DM) && isDate(AD) ? dayKey(DM) - dayKey(AD) : null);
+  set('ltPcdToSew', isDate(sew2) && isDate(DM) ? dayKey(sew2) - dayKey(DM) : null); set('ltPcdToDly', isDate(T) && isDate(DM) ? dayKey(T) - dayKey(DM) : null);
+  set('ltSewToWash', isDate(g('lrCompletion')) && isDate(sew2) ? dayKey(g('lrCompletion')) - dayKey(sew2) : null); set('ltSewToDly', isDate(T) && isDate(sew2) ? dayKey(T) - dayKey(sew2) : null);
+  set('ltPcdToExF', isDate(EZ) && isDate(DM) ? dayKey(EZ) - dayKey(DM) : null); set('ltStitchToExF', isDate(EZ) && isDate(sew2) ? dayKey(EZ) - dayKey(sew2) : null);
+  set('markerDiff', isDate(g('markerRelease')) && isDate(g('planMk')) ? dayKey(g('markerRelease')) - dayKey(g('planMk')) : null);
+  set('ltWashToExF', isDate(g('saitexDelivery')) && isDate(g('lrCompletion')) ? dayKey(g('saitexDelivery')) - dayKey(g('lrCompletion')) : null);
+  set('washLT', null);
+  if (F.dailyTotal >= 0 && f[F.dailyTotal]) { let s = 0; for (const c of model.dailyCols) s += num(v[c]); v[F.dailyTotal] = s; }
+  set('diff', qty - disp - num(g('dailyTotal')));
+}
+
+// ---------- edits / undo / persistence ----------
+function sameVal(a, b) { if (a == null && b == null) return true; if (isDate(a) && isDate(b)) return a.getTime() === b.getTime(); return a === b; }
+// One user action (a drag, a re-fit) can touch several cells; they share a group id so
+// a single undo reverses the whole action.
+let GROUP = 0, groupDepth = 0;
+function beginGroup(model) { if (groupDepth++ === 0) GROUP++; return GROUP; }
+function endGroup() { if (groupDepth > 0) groupDepth--; }
+function setCell(model, o, c, value, opts = {}) {
+  const old = o.v[c]; if (sameVal(old, value)) return false;
+  const key = o.r + ':' + c;
+  const wasFormula = o.f[c];
+  if (!model.edits.has(key)) model.edits.set(key, { r: o.r, c, orig: old, origFormula: wasFormula });
+  const e = model.edits.get(key); e.value = value;
+  if (sameVal(e.orig, value) && !e.origFormula) model.edits.delete(key);
+  o.v[c] = value; o.f[c] = 0; o.dirty = true;
+  if (!opts.silent) {
+    model.undo.push({ r: o.r, c, before: old, after: value, beforeFormula: wasFormula, g: groupDepth > 0 ? GROUP : ++GROUP });
+    if (model.undo.length > 800) model.undo.shift();
+    model.redo.length = 0;
+  }
+  recompute(model, o);
+  return true;
+}
+function undoOne(model, u) {
+  const o = orderByRow(model, u.r); if (!o) return;
+  const key = u.r + ':' + u.c;
+  o.v[u.c] = u.before; o.f[u.c] = u.beforeFormula;
+  const e = model.edits.get(key);
+  if (e) { if (sameVal(e.orig, u.before) && e.origFormula === u.beforeFormula) model.edits.delete(key); else e.value = u.before; }
+  recompute(model, o);
+}
+function undo(model) {
+  const top = model.undo[model.undo.length - 1]; if (!top) return null;
+  const batch = [];
+  while (model.undo.length && model.undo[model.undo.length - 1].g === top.g) batch.push(model.undo.pop());
+  for (const u of batch) undoOne(model, u);
+  model.redo.push(batch.reverse());
+  return top;
+}
+function redo(model) {
+  const batch = model.redo.pop(); if (!batch) return null;
+  for (const u of batch) { const o = orderByRow(model, u.r); if (o) setCell(model, o, u.c, u.after, { silent: true }); }
+  model.undo.push(...batch);
+  return batch[batch.length - 1];
+}
+function orderByRow(model, r) { if (!model._byRow) { model._byRow = new Map(model.orders.map(o => [o.r, o])); } return model._byRow.get(r); }
+function serializeValue(v) { return isDate(v) ? { d: v.toISOString() } : v; }
+function deserializeValue(v) { return v && typeof v === 'object' && v.d ? new Date(v.d) : v; }
+function exportEdits(model) { return [...model.edits.values()].map(e => ({ r: e.r, c: e.c, letter: idxToCol(e.c), col: model.cols[e.c].name, value: serializeValue(e.value), orig: serializeValue(e.orig) })); }
+function importEdits(model, list) { let n = 0; for (const e of list || []) { const o = orderByRow(model, e.r); if (!o || e.c == null || e.c >= model.ncols) continue; if (setCell(model, o, e.c, deserializeValue(e.value), { silent: true })) n++; } return n; }
+
+// ---------- stage engine ----------
+const STAGES = [
+  { key: 'cut',  name: 'Cutting',    short: 'Cut',   start: 'pcd',          end: 'inputDate',     resource: 'site',      done: 'cutQty',     actual: 'markerAct' },
+  { key: 'sew',  name: 'Sewing',     short: 'Sew',   start: 'sew1',         end: 'sew2',          resource: 'line',      done: 'output',     actual: 'factoryConfirm' },
+  { key: 'wash', name: 'Washing',    short: 'Wash',  start: 'washFirstOut', end: 'washLastOut',   resource: 'ldLine',    done: 'washOutput', actual: 'lrConfirm' },
+  { key: 'fin',  name: 'Finishing',  short: 'Fin',   start: 'finFirstOut',  end: 'finLastOut',    resource: 'finLine',   done: 'finOut',     actual: 'finConfirm' },
+  { key: 'pack', name: 'Packing',    short: 'Pack',  start: 'packFirstOut', end: 'packLastOut',   resource: 'finLine',   done: 'packedQty',  actual: 'packConfirm' },
+  { key: 'ship', name: 'Inspection & ex-factory', short: 'Ship', start: 'preFinal', end: 'planExFactory', resource: 'site',      done: 'shippedQty', actual: 'exFactory' },
+];
+const STAGE_INDEX = Object.fromEntries(STAGES.map((s, i) => [s.key, i]));
+function stageWindow(model, o, stage) {
+  const F = model.F; let s = o.v[F[stage.start]], e = o.v[F[stage.end]];
+  if (!isDate(s) || !isDate(e)) return null;
+  if (s.getUTCFullYear() < 2000 || e.getUTCFullYear() < 2000) return null;
+  let a = dayKey(s), b = dayKey(e); if (b < a) b = a; if (b - a > 400) return null;
+  return [a, b];
+}
+// No laundry line is allocated when the style is not washed. The wash recipe (HX)
+// is the ground truth: an empty recipe means no wash at all.
+function isNonWash(model, o) {
+  const F = model.F;
+  const recipe = str(o.v[F.recipe]).trim();
+  if (F.recipe >= 0 && (!recipe || /non\s*wash/i.test(recipe))) return true;
+  if (str(o.v[F.ldLine]).toLowerCase().indexOf('non') >= 0) return true;
+  if (str(o.v[F.ldrLine]).toLowerCase().indexOf('non') >= 0) return true;
+  if (/non\s*wash/i.test(str(o.v[F.wash]))) return true;
+  if (/non\s*wash/i.test(str(o.v[F.washAppStatus]))) return true;
+  return false;
+}
+// The sheet only writes "shipped" into OTD sometimes. An order is finished once it is
+// fully packed, once OTD says shipped or ready, or once ex-factory is already in the past.
+function productionComplete(model, o) {
+  const F = model.F, qty = num(o.v[F.qty]);
+  if (qty > 0 && num(o.v[F.packedQty]) >= qty) return true;
+  if (/^(shipped|ready)$/i.test(str(o.v[F.otd]).trim())) return true;
+  const ex = o.v[F.exFactory];
+  return isDate(ex) && ex.getUTCFullYear() > 2000 && dayKey(ex) <= dayKey(model.asOf);
+}
+function orderProgress(model, o) {
+  const F = model.F, qty = num(o.v[F.qty]);
+  const done = STAGES.map(s => num(o.v[F[s.done]]));
+  const shipped = productionComplete(model, o) || (qty > 0 && done[5] >= qty);
+  let stage = -1; // -1 = not started, 6 = shipped
+  if (shipped) stage = 6;
+  else {
+    // furthest stage with any quantity; if that stage is complete, the next one is "current"
+    let furthest = -1; for (let i = 0; i < STAGES.length; i++) if (done[i] > 0) furthest = i;
+    if (furthest < 0) stage = -1;
+    else if (qty > 0 && done[furthest] >= qty && furthest < 5) { stage = furthest + 1; if (stage === 2 && isNonWash(model, o)) stage = 3; }
+    else stage = furthest;
+  }
+  return { qty, done, stage, shipped, remaining: STAGES.map((s, i) => Math.max(0, qty - done[i])) };
+}
+const STAGE_NAMES = ['Not started', ...STAGES.map(s => s.name), 'Shipped'];
+function stageLabel(i) { return STAGE_NAMES[i + 1]; }
+function resourceOf(model, o, stage) {
+  if (stage.resource === 'site') { const L = model.lineMap.get(str(o.v[model.F.line]).trim()); return L ? L.site : (parseLineName(o.v[model.F.line]).site || ''); }
+  const c = model.F[stage.resource]; const v = c >= 0 ? o.v[c] : null; const s = str(v).trim(); return s && !/^#/.test(s) ? s : '';
+}
+function workdayCount(a, b) { let n = 0; for (let k = a; k <= b; k++) if (keyToDate(k).getUTCDay() !== 0) n++; return n; }
+// Distribute an order's stage quantity over its window. mode: 'planned' (full qty over full window) | 'remaining' (remaining qty from max(asOf,start) to end; overdue lands on asOf)
+function spreadLoad(model, o, stage, mode, asOfKey, out /* Map res→Map dayKey→pcs */, meta) {
+  const w = stageWindow(model, o, stage); if (!w) return false;
+  const prog = orderProgress(model, o); const si = STAGE_INDEX[stage.key];
+  if (stage.key === 'wash' && isNonWash(model, o)) return false;
+  let qty = prog.qty; let [a, b] = w;
+  if (mode === 'remaining') { qty = prog.remaining[si]; if (prog.shipped || qty <= 0) return false; if (a < asOfKey) a = asOfKey; if (b < a) b = a; }
+  if (qty <= 0) return false;
+  const res = resourceOf(model, o, stage) || '(unassigned)';
+  let m = out.get(res); if (!m) { m = new Map(); out.set(res, m); }
+  const nd = workdayCount(a, b) || 1; const per = qty / nd;
+  for (let k = a; k <= b; k++) { if (nd > 1 && keyToDate(k).getUTCDay() === 0 && workdayCount(a, b) > 0) continue; m.set(k, (m.get(k) || 0) + per); }
+  if (meta) { let mm = meta.get(res); if (!mm) { mm = new Map(); meta.set(res, mm); } for (let k = a; k <= b; k++) { let arr = mm.get(k); if (!arr) { arr = []; mm.set(k, arr); } arr.push(o.idx); } }
+  return true;
+}
+function capacityOf(model, stage, res, caps) {
+  const ov = caps && caps[stage.key] && caps[stage.key][res]; if (typeof ov === 'number' && ov > 0) return ov;
+  if (stage.key === 'sew') { const L = model.lineMap.get(res); return L && L.target ? L.target : 0; }
+  return 0;
+}
+// percentile helper for auto-capacity of laundry/finishing lines
+function autoCapacity(loadMap, p = 0.8) { const vals = [...loadMap.values()].filter(x => x > 0).sort((a, b) => a - b); if (!vals.length) return 0; return Math.round(vals[Math.min(vals.length - 1, Math.floor(vals.length * p))]); }
+
+// ---------- filtering ----------
+function textOf(model, o) { if (o._text === undefined || o.dirty) { const F = model.F; const parts = []; for (const k of ['po', 'blk', 'oldBlk', 'style', 'desc', 'customer', 'custPo', 'fabric', 'wash', 'line', 'season', 'mill', 'remark', 'delayReason', 'preStatus', 'merchComment']) { const c = F[k]; if (c >= 0 && o.v[c] != null) parts.push(str(o.v[c]).toLowerCase()); } o._text = parts.join(' | '); } return o._text; }
+function cellString(v) { return v == null ? '' : isDate(v) ? ymd(v) : String(v); }
+function matchesCustom(model, o, cf) {
+  const v = o.v[cf.col]; const col = model.cols[cf.col];
+  switch (cf.op) {
+    case 'empty': return v == null; case 'notEmpty': return v != null;
+    case 'contains': return cellString(v).toLowerCase().indexOf(String(cf.value).toLowerCase()) >= 0;
+    case 'notContains': return cellString(v).toLowerCase().indexOf(String(cf.value).toLowerCase()) < 0;
+    case 'eq': return isDate(v) ? ymd(v) === String(cf.value) : cellString(v).toLowerCase() === String(cf.value).toLowerCase();
+    case 'gt': case 'lt': case 'gte': case 'lte': {
+      let a, b; if (isDate(v)) { a = dayKey(v); const d = parseYmd(cf.value); if (!d) return false; b = dayKey(d); } else if (typeof v === 'number') { a = v; b = Number(cf.value); if (isNaN(b)) return false; } else return false;
+      return cf.op === 'gt' ? a > b : cf.op === 'lt' ? a < b : cf.op === 'gte' ? a >= b : a <= b;
+    }
+    case 'between': { let a, lo, hi; if (isDate(v)) { a = dayKey(v); const d1 = parseYmd(cf.value), d2 = parseYmd(cf.value2); if (!d1 || !d2) return false; lo = dayKey(d1); hi = dayKey(d2); } else if (typeof v === 'number') { a = v; lo = Number(cf.value); hi = Number(cf.value2); } else return false; return a >= lo && a <= hi; }
+    default: return true;
+  }
+}
+// facets: {key: Set of string values}; ranges: {fieldKey:[fromYmd,toYmd]}; quick: {late:true,...}
+function buildPredicate(model, fs, skipFacet) {
+  const F = model.F; const tokens = (fs.search || '').toLowerCase().split(/\s+/).filter(Boolean);
+  const facetKeys = Object.keys(fs.facets || {}).filter(k => k !== skipFacet && fs.facets[k] && fs.facets[k].size);
+  const rangeKeys = Object.keys(fs.ranges || {}).filter(k => fs.ranges[k] && (fs.ranges[k][0] || fs.ranges[k][1]));
+  const custom = (fs.custom || []).filter(c => c && c.col >= 0);
+  const quick = fs.quick || {};
+  return function (o) {
+    if (tokens.length) { const t = textOf(model, o); for (const tok of tokens) if (t.indexOf(tok) < 0) return false; }
+    for (const k of facetKeys) { const val = facetValue(model, o, k); if (!fs.facets[k].has(val)) return false; }
+    for (const k of rangeKeys) { const c = F[k]; if (c < 0) continue; const v = o.v[c]; const [from, to] = fs.ranges[k]; if (!isDate(v)) return false; const dk = dayKey(v); if (from && dk < dayKey(parseYmd(from))) return false; if (to && dk > dayKey(parseYmd(to))) return false; }
+    for (const cf of custom) if (!matchesCustom(model, o, cf)) return false;
+    if (quick.late && !isLate(model, o)) return false;
+    if (quick.unconfirmed && !/un[\s-]?confirmed/i.test(str(o.v[F.status]))) return false;
+    if (quick.dirty && !o.dirty) return false;
+    if (quick.wip) { const st = orderProgress(model, o).stage; if (st < 0 || st > 5) return false; }
+    if (quick.unassigned && str(o.v[F.line]).trim()) return false;
+    if (quick.fabricPending && isDate(o.v[F.fabActIH])) return false;
+    if (quick.approvalPending && !approvalPending(model, o)) return false;
+    return true;
+  };
+}
+// What still has to land before this order can start. A blank cell is not a blocker:
+// the planners leave columns empty for order types the gate does not apply to.
+const TRIM_KEYS = ['pocketing', 'interlining', 'thread', 'zipper', 'label', 'hookBar'];
+function trimsPending(model, o) {
+  const F = model.F, asOf = dayKey(model.asOf);
+  return TRIM_KEYS.some(k => {
+    const c = F[k]; if (c < 0) return false;
+    const v = o.v[c]; if (v == null) return false;
+    if (isDate(v)) return dayKey(v) > asOf;                 // booked to arrive later
+    const t = str(v).trim();
+    if (/^(IH|N\/A|na|stock|AW)$/i.test(t)) return false;    // in house, or not needed
+    return /TBC|NY UPDATE|LATE|PENDING|NOT/i.test(t);
+  });
+}
+function openGates(model, o) {
+  const F = model.F, out = [];
+  if (!isDate(o.v[F.fabActIH])) out.push('fabric');
+  if (approvalPending(model, o)) out.push('approval');
+  if (trimsPending(model, o)) out.push('trims');
+  const shrink = str(o.v[F.shrinkStatus]).trim();
+  const shrinkDup = /^wt fab$/i.test(shrink) && out.indexOf('fabric') >= 0;   // same fact, already listed
+  if (!/^(done|na)$/i.test(shrink) && !shrinkDup) out.push('shrinkage');
+  return out;
+}
+const READY_WINDOW_DAYS = 14;
+// running = a process has produced pieces, or the marker is already cut
+// ready   = nothing produced, nothing holding it up, and sewing starts within the window
+// clear   = nothing holding it up but the start is still far off
+// waiting = at least one gate is open
+// done    = production finished
+function runState(model, o) {
+  const F = model.F, p = orderProgress(model, o);
+  if (p.shipped) return 'done';
+  if (p.done.some(d => d > 0)) return 'running';
+  const mk = o.v[F.markerAct];
+  if (isDate(mk) && mk.getUTCFullYear() > 2000 && dayKey(mk) <= dayKey(model.asOf)) return 'running';
+  if (openGates(model, o).length) return 'waiting';
+  const s1 = o.v[F.sew1];
+  const lead = isDate(s1) ? dayKey(s1) - dayKey(model.asOf) : 9999;
+  return lead <= READY_WINDOW_DAYS ? 'ready' : 'clear';
+}
+function leadDays(model, o) { const s1 = o.v[model.F.sew1]; return isDate(s1) ? dayKey(s1) - dayKey(model.asOf) : null; }
+const APPROVAL_CLEAR = /^(approved|repeat|not\s*req(uired|'?d)?|non\s*wash|n\/?a)$/i;
+function approvalPending(model, o) {
+  const F = model.F;
+  return ['fitStatus', 'ppStatus', 'washAppStatus'].some(k => {
+    const v = str(o.v[F[k]]).trim();
+    return v !== '' && !APPROVAL_CLEAR.test(v);   // blank = the column does not apply, not a blocker
+  });
+}
+// OTD (column Y) is on-time delivery in days: a negative number means the order is late.
+function otdDays(model, o) { const v = o.v[model.F.otd]; return typeof v === 'number' && isFinite(v) && Math.abs(v) < 400 ? v : null; }
+function isLate(model, o) {
+  const F = model.F; const prog = orderProgress(model, o);
+  const otd = otdDays(model, o);
+  if (prog.shipped) return otd != null && otd < 0;
+  if (otd != null && otd < 0) return true;
+  const dly = o.v[F.cusFinalDly]; const ex = o.v[F.planExFactory]; const asOf = model.asOf;
+  if (isDate(dly) && dly.getUTCFullYear() > 2000) { if (dayKey(dly) < dayKey(asOf)) return true; if (isDate(ex) && ex.getUTCFullYear() > 2000 && dayKey(ex) > dayKey(dly)) return true; }
+  return false;
+}
+function facetValue(model, o, k) {
+  const F = model.F;
+  switch (k) {
+    case 'stage': return stageLabel(orderProgress(model, o).stage);
+    case 'late': return isLate(model, o) ? 'Late / at risk' : 'On plan';
+    case 'sewMonthKey': return monthKey(o.v[F.sew2]) || '(none)';
+    case 'dlyMonthKey': return monthKey(o.v[F.cusFinalDly]) || '(none)';
+    case 'pcdMonthKey': return monthKey(o.v[F.pcd]) || '(none)';
+    case 'site': { const L = model.lineMap.get(str(o.v[F.line]).trim()); return L ? L.site : (parseLineName(o.v[F.line]).site || '(none)'); }
+    case 'lineUnit': { const L = model.lineMap.get(str(o.v[F.line]).trim()); return L ? L.label : '(none)'; }
+    default: { const c = F[k]; if (c < 0) return '(none)'; const v = o.v[c]; if (v == null) return '(none)'; if (isDate(v)) return ymd(v); const s = String(v).trim(); return s === '' || /^#/.test(s) ? '(none)' : s; }
+  }
+}
+function facetCounts(model, orders, fs, key) { const pred = buildPredicate(model, fs, key); const m = new Map(); for (const o of orders) { if (!pred(o)) continue; const v = facetValue(model, o, key); m.set(v, (m.get(v) || 0) + 1); } return m; }
+function applyFilter(model, fs) { const pred = buildPredicate(model, fs, null); return model.orders.filter(pred); }
+
+// ---------- Excel write-back ----------
+function shiftFormula(text, dr, dc) {
+  // shift relative refs; leave quoted strings alone
+  const parts = text.split('"'); // even indexes = code, odd = string literal
+  for (let i = 0; i < parts.length; i += 2) {
+    parts[i] = parts[i].replace(/(\$?)([A-Z]{1,3})(\$?)(\d+)(?![\d(])/g, (m, ac, col, ar, row, off, s) => {
+      const prev = off > 0 ? s[off - 1] : ''; if (/[A-Za-z0-9_.]/.test(prev)) return m; // part of a name
+      let ci = colToIdx(col), ri = +row; if (!ac) ci += dc; if (!ar) ri += dr; if (ci < 0 || ri < 1) return m;
+      return ac + idxToCol(ci) + ar + ri;
+    });
+  }
+  return parts.join('"');
+}
+function cellXml(ref, s, value, dateStyleForCol) {
+  const sv = s != null ? ' s="' + s + '"' : '';
+  if (value == null) return '<c r="' + ref + '"' + sv + '/>';
+  if (typeof value === 'boolean') return '<c r="' + ref + '"' + sv + ' t="b"><v>' + (value ? 1 : 0) + '</v></c>';
+  if (isDate(value)) { const st = dateStyleForCol != null ? ' s="' + dateStyleForCol + '"' : sv; return '<c r="' + ref + '"' + st + '><v>' + dateToSerial(value) + '</v></c>'; }
+  if (typeof value === 'number') return '<c r="' + ref + '"' + sv + '><v>' + value + '</v></c>';
+  return '<c r="' + ref + '"' + sv + ' t="inlineStr"><is><t xml:space="preserve">' + escapeXml(String(value)) + '</t></is></c>';
+}
+async function buildEditedWorkbook(model, opts = {}) {
+  const onProgress = opts.onProgress || (() => {});
+  const edits = [...model.edits.values()].filter(e => !(sameVal(e.orig, e.value) && !e.origFormula) || true);
+  onProgress('Opening original workbook', 0.05);
+  const zip = await JSZip.loadAsync(model.buffer);
+  let xml = await zip.file(model.sheetPath).async('string');
+  onProgress('Locating rows', 0.2);
+  // row index
+  const rowPos = new Map(); { const re = /<row r="(\d+)"/g; let m; while ((m = re.exec(xml))) rowPos.set(+m[1], m.index); }
+  const sdEnd = xml.indexOf('</sheetData>');
+  const rowSpan = r => { const s = rowPos.get(r); if (s == null) return null; let e = xml.indexOf('</row>', s); const selfEnd = xml.indexOf('>', s); if (xml[selfEnd - 1] === '/') e = selfEnd + 1; else e = e + 6; return [s, e]; };
+  const editedKeys = new Set(edits.map(e => e.r + ':' + e.c));
+  // ops: Map row → Map col → newCellXml
+  const ops = new Map(); const addOp = (r, c, cx) => { let m = ops.get(r); if (!m) { m = new Map(); ops.set(r, m); } m.set(c, cx); };
+  const cellRegex = (ref) => new RegExp('<c r="' + ref + '"(?:\\s[^>]*?)?(?:/>|>[\\s\\S]*?</c>)');
+  const findCell = (r, c) => { const sp = rowSpan(r); if (!sp) return null; const seg = xml.slice(sp[0], sp[1]); const m = cellRegex(idxToCol(c) + r).exec(seg); return m ? m[0] : null; };
+  const rehome = []; // shared formula masters that need a new home
+  let i = 0;
+  for (const e of edits) {
+    const ref = idxToCol(e.c) + e.r; const old = findCell(e.r, e.c);
+    let s = null; if (old) { const sm = /\bs="(\d+)"/.exec(old); if (sm) s = +sm[1]; }
+    if (s == null) { // borrow style from a neighbour row in the same column
+      for (const dr of [-1, 1, -2, 2, -3, 3]) { const nb = findCell(e.r + dr, e.c); if (nb) { const sm = /\bs="(\d+)"/.exec(nb); if (sm) { s = +sm[1]; break; } } }
+    }
+    const col = model.cols[e.c]; const dateStyle = col && col.dateStyle != null ? col.dateStyle : null;
+    addOp(e.r, e.c, cellXml(ref, s, e.value, isDate(e.value) ? (dateStyle != null ? dateStyle : s) : null));
+    if (old) { const fm = /<f\b([^>]*)>([\s\S]*?)<\/f>/.exec(old); if (fm && /t="shared"/.test(fm[1]) && /\bref="/.test(fm[1])) rehome.push({ r: e.r, c: e.c, attrs: fm[1], text: unescapeXml(fm[2]) }); }
+    if ((++i & 63) === 0) { onProgress('Applying edits', 0.2 + 0.4 * i / edits.length); await yieldToUI(); }
+  }
+  // re-home shared formula masters: the next dependent cell in the ref range becomes the master
+  for (const rh of rehome) {
+    const si = attr(rh.attrs, 'si'); const ref = attr(rh.attrs, 'ref'); const mm = /^([A-Z]+)(\d+):([A-Z]+)(\d+)$/.exec(ref); if (!mm) continue;
+    const c1 = colToIdx(mm[1]), r1 = +mm[2], c2 = colToIdx(mm[3]), r2 = +mm[4];
+    let found = null;
+    outer: for (let r = r1; r <= r2 && !found; r++) for (let c = c1; c <= c2; c++) {
+      if (r === rh.r && c === rh.c) continue; if (editedKeys.has(r + ':' + c)) continue;
+      const cell = findCell(r, c); if (!cell) continue;
+      const fm = /<f\b([^>]*?)\/>/.exec(cell); if (fm && attr(fm[1], 'si') === si && /t="shared"/.test(fm[1])) { found = { r, c, cell }; break outer; }
+    }
+    if (!found) continue;
+    const newRef = idxToCol(found.c) + found.r + ':' + mm[3] + mm[4];
+    const shifted = shiftFormula(rh.text, found.r - rh.r, found.c - rh.c);
+    const newCell = found.cell.replace(/<f\b[^>]*?\/>/, '<f t="shared" ref="' + newRef + '" si="' + si + '">' + escapeXml(shifted) + '</f>');
+    addOp(found.r, found.c, newCell);
+  }
+  onProgress('Writing sheet', 0.65);
+  // rebuild xml: process rows in ascending order
+  const rowsToPatch = [...ops.keys()].sort((a, b) => a - b);
+  const out = []; let cursor = 0;
+  for (const r of rowsToPatch) {
+    const sp = rowSpan(r); const cmap = ops.get(r);
+    if (!sp) { // row missing entirely → insert before the next row or before </sheetData>
+      let insertAt = sdEnd; for (const [rr, p] of rowPos) if (rr > r && p < insertAt) insertAt = p;
+      const cells = [...cmap.keys()].sort((a, b) => a - b).map(c => cmap.get(c)).join('');
+      out.push(xml.slice(cursor, insertAt)); out.push('<row r="' + r + '">' + cells + '</row>'); cursor = insertAt; continue;
+    }
+    let seg = xml.slice(sp[0], sp[1]);
+    const missing = [];
+    for (const [c, cx] of cmap) {
+      const re = cellRegex(idxToCol(c) + r);
+      if (re.test(seg)) seg = seg.replace(re, () => cx); else missing.push(c);
+    }
+    if (missing.length) { // insert cells at the right column position
+      for (const c of missing.sort((a, b) => a - b)) {
+        const cx = cmap.get(c); let inserted = false;
+        const cr = /<c r="([A-Z]+)(\d+)"/g; let m; let lastIdx = -1;
+        while ((m = cr.exec(seg))) { if (colToIdx(m[1]) > c) { seg = seg.slice(0, m.index) + cx + seg.slice(m.index); inserted = true; break; } lastIdx = m.index; }
+        if (!inserted) { if (/\/>$/.test(seg.trim()) && seg.indexOf('</row>') < 0) { seg = seg.replace(/\/>\s*$/, '>' + cx + '</row>'); } else seg = seg.replace(/<\/row>\s*$/, cx + '</row>'); }
+      }
+    }
+    out.push(xml.slice(cursor, sp[0])); out.push(seg); cursor = sp[1];
+  }
+  out.push(xml.slice(cursor)); xml = out.join('');
+  zip.file(model.sheetPath, xml);
+  onProgress('Updating workbook settings', 0.85);
+  let wb = await zip.file('xl/workbook.xml').async('string');
+  if (/<calcPr\b[^>]*fullCalcOnLoad=/.test(wb)) wb = wb.replace(/fullCalcOnLoad="[^"]*"/, 'fullCalcOnLoad="1"');
+  else if (/<calcPr\b/.test(wb)) wb = wb.replace(/<calcPr\b/, '<calcPr fullCalcOnLoad="1"');
+  else wb = wb.replace(/<\/workbook>/, '<calcPr fullCalcOnLoad="1"/></workbook>');
+  zip.file('xl/workbook.xml', wb);
+  if (zip.file('xl/calcChain.xml')) {
+    zip.remove('xl/calcChain.xml');
+    const ct = await zip.file('[Content_Types].xml').async('string'); zip.file('[Content_Types].xml', ct.replace(/<Override[^>]*calcChain[^>]*\/>/g, ''));
+    const rels = await zip.file('xl/_rels/workbook.xml.rels').async('string'); zip.file('xl/_rels/workbook.xml.rels', rels.replace(/<Relationship[^>]*calcChain[^>]*\/>/g, ''));
+  }
+  onProgress('Compressing', 0.9);
+  const blob = await zip.generateAsync({ type: typeof Blob !== 'undefined' ? 'blob' : 'nodebuffer', compression: 'DEFLATE', compressionOptions: { level: 6 }, mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }, meta => onProgress('Compressing', 0.9 + 0.1 * meta.percent / 100));
+  onProgress('Done', 1);
+  return blob;
+}
+
+return { loadWorkbook, recompute, setCell, undo, redo, beginGroup, endGroup, orderByRow, exportEdits, importEdits, buildEditedWorkbook, shiftFormula, parseLineName, buildLines,
+  STAGES, STAGE_INDEX, STAGE_NAMES, stageLabel, stageWindow, orderProgress, resourceOf, spreadLoad, capacityOf, autoCapacity, workdayCount, isNonWash, isLate, approvalPending,
+  buildPredicate, applyFilter, facetCounts, facetValue, textOf, FIELD_DEFS, otdDays, openGates, runState, trimsPending, productionComplete, leadDays, READY_WINDOW_DAYS,
+  util: { serialToDate, dateToSerial, isDate, dayKey, keyToDate, addDays, startOfDay, isSunday, skipSunday, plusSkip, num, str, ymd, fmtDate, fmtDateShort, parseYmd, monthKey, weekKey, mmmyy, colToIdx, idxToCol, normKey, MON } };
+});
+
+</script>
+
+<script>
+/* ui.js — Saitex Line Board */
+(function () {
+'use strict';
+const PC = window.PlanCore, U = PC.util;
+const { isDate, dayKey, keyToDate, addDays, ymd, fmtDate, fmtDateShort, num, str, parseYmd, monthKey, idxToCol, MON } = U;
+const $ = id => document.getElementById(id);
+const h = (tag, attrs, ...kids) => {
+  const e = document.createElement(tag);
+  if (attrs) for (const k in attrs) {
+    const v = attrs[k];
+    if (k.startsWith('aria-')) { if (v != null) e.setAttribute(k, String(v)); continue; }
+    if (v == null || v === false) continue;
+    if (k === 'class') e.className = v;
+    else if (k === 'style') e.style.cssText = v;
+    else if (k === 'text') e.textContent = v;
+    else if (k === 'html') e.innerHTML = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+    else e.setAttribute(k, v === true ? '' : v);
+  }
+  for (const k of kids.flat(3)) { if (k == null || k === false) continue; e.appendChild(typeof k === 'object' ? k : document.createTextNode(String(k))); }
+  return e;
+};
+const clear = n => { while (n.firstChild) n.removeChild(n.firstChild); return n; };
+const fmt = n => !isFinite(n) ? '—' : Math.round(n).toLocaleString('en-US');
+const fmtK = n => !isFinite(n) ? '—' : Math.abs(n) >= 1e6 ? (n / 1e6).toFixed(2) + 'M' : Math.abs(n) >= 10000 ? Math.round(n / 1000) + 'k' : fmt(n);
+const pct = n => !isFinite(n) ? '—' : Math.round(n * 100) + '%';
+const SVGNS = 'http://www.w3.org/2000/svg';
+const sv = (tag, attrs, ...kids) => { const e = document.createElementNS(SVGNS, tag); for (const k in attrs || {}) { const v = attrs[k]; if (v == null || v === false) continue; if (k === 'text') e.textContent = v; else if (k.startsWith('on')) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v); } for (const k of kids.flat(2)) if (k) e.appendChild(k); return e; };
+const STAGES = PC.STAGES;
+const stageColor = i => `var(--st${i + 1})`;
+const RUN_LABEL = { running: 'Running', ready: 'Ready to run', clear: 'Cleared, not due yet', waiting: 'Waiting', done: 'Finished' };
+
+const stageInk = i => `var(--st${i + 1}-ink)`;
+
+/* ================= state ================= */
+const S = {
+  model: null, sample: false, view: 'overview',
+  filters: { search: '', facets: {}, ranges: {}, custom: [], quick: {} },
+  filtered: [], sel: null,
+  board: { stage: 'sew', dayW: 30, from: null, days: 119, refitOnDrop: false, others: true, collapsed: new Set() },
+  cap: { stage: 'all', grain: 'week', weeks: 14 },
+  table: { preset: 'planner', sort: null, dir: 1 },
+  caps: {}, storeKey: null, savedViews: [], railHidden: false,
+};
+const VIEWS = [['overview', 'Overview'], ['board', 'Line board'], ['capacity', 'Capacity'], ['orders', 'Orders'], ['changes', 'Changes']];
+
+/* ================= boot ================= */
+function boot() {
+  const t = localStorage.getItem('sxplan:theme'); if (t) document.documentElement.setAttribute('data-theme', t);
+  $('themebtn').onclick = () => {
+    const cur = document.documentElement.getAttribute('data-theme') ||
+      (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const nxt = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', nxt); localStorage.setItem('sxplan:theme', nxt);
+    if (S.view === 'overview' || S.view === 'capacity') render();
+  };
+  const tabs = $('tabs');
+  for (const [id, label] of VIEWS) tabs.appendChild(h('button', { role: 'tab', 'data-v': id, 'aria-selected': id === S.view, onclick: () => setView(id) }, label));
+  $('search').addEventListener('input', debounce(e => { S.filters.search = e.target.value.trim(); applyFilters(); }, 160));
+  $('undo').onclick = () => { const u = PC.undo(S.model); if (u) afterEdit('Undo · ' + S.model.cols[u.c].name); };
+  $('redo').onclick = () => { const u = PC.redo(S.model); if (u) afterEdit('Redo · ' + S.model.cols[u.c].name); };
+  $('exportbtn').onclick = doExport;
+  const openPicker = () => $('drop').classList.remove('hide');
+  $('filechip').onclick = openPicker;
+  $('openbtn').onclick = openPicker;
+  $('pick').onclick = () => $('file').click();
+  $('file').onchange = e => { const f = e.target.files[0]; if (f) loadFile(f); };
+  const hasSample = !!window.SAMPLE;
+  $('usesample').classList.toggle('hidden', !hasSample);
+  $('usesample').onclick = () => { $('drop').classList.add('hide'); loadSample(); };
+  $('scrim').onclick = closeDrawer;
+  const drop = $('drop');
+  ['dragenter', 'dragover'].forEach(t => document.addEventListener(t, e => { if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) { e.preventDefault(); drop.classList.remove('hide'); drop.classList.add('over'); } }));
+  drop.addEventListener('dragleave', e => { if (e.target === drop) drop.classList.remove('over'); });
+  document.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('over'); const f = e.dataTransfer.files[0]; if (f) loadFile(f); else if (S.model) drop.classList.add('hide'); });
+  document.addEventListener('keydown', onKey);
+  if (hasSample) loadSample(); else $('drop').classList.remove('hide');
+}
+function debounce(fn, ms) { let t; return function (...a) { clearTimeout(t); t = setTimeout(() => fn.apply(this, a), ms); }; }
+function onKey(e) {
+  const tag = (e.target.tagName || '').toLowerCase();
+  const typing = tag === 'input' || tag === 'textarea' || tag === 'select';
+  if (e.key === 'Escape') { if (document.querySelector('.pop')) closePop(); else if ($('drawer').classList.contains('on')) closeDrawer(); else if (!$('drop').classList.contains('hide') && S.model) $('drop').classList.add('hide'); return; }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); (e.shiftKey ? $('redo') : $('undo')).click(); return; }
+  if (typing) return;
+  if (e.key === '/') { e.preventDefault(); $('search').focus(); return; }
+  const n = parseInt(e.key, 10); if (n >= 1 && n <= VIEWS.length) setView(VIEWS[n - 1][0]);
+}
+function setView(v) {
+  S.view = v;
+  for (const b of $('tabs').children) b.setAttribute('aria-selected', b.dataset.v === v);
+  render();
+}
+function toast(msg, actionLabel, action) {
+  const t = $('toast'); clear(t); t.appendChild(document.createTextNode(msg));
+  if (actionLabel) t.appendChild(h('button', { onclick: () => { t.classList.remove('on'); action(); } }, actionLabel));
+  t.classList.add('on'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('on'), 5200);
+}
+
+/* ================= loading ================= */
+function setProgress(label, frac) {
+  $('prog').classList.remove('hidden'); $('prog').firstElementChild.style.width = Math.round(frac * 100) + '%';
+  $('progtext').textContent = label;
+}
+async function loadFile(f) {
+  $('drop').classList.remove('hide'); setProgress('Reading file', 0.01);
+  try {
+    const buf = await f.arrayBuffer();
+    const model = await PC.loadWorkbook(buf, { fileName: f.name, onProgress: setProgress });
+    S.sample = false; adopt(model, f.name + ' · ' + f.size);
+    $('drop').classList.add('hide'); $('prog').classList.add('hidden'); $('progtext').textContent = '';
+  } catch (err) {
+    console.error(err);
+    $('progtext').textContent = 'Could not read that workbook: ' + (err.message || err) + '. Check it is an .xlsx saved from Excel.';
+    $('prog').classList.add('hidden');
+  }
+}
+function loadSample() {
+  const D = window.SAMPLE;
+  const cols = D.c.map((c, i) => ({ i, letter: idxToCol(i), name: c[0], nkey: U.normKey(c[0]), owner: c[1], formulaCount: c[2] ? 999 : 0, formula: !!c[2], isDaily: false, type: 'text', dateStyle: undefined }));
+  const model = { fileName: D.src, sheetName: 'MASTER PLAN ', sheetPath: null, headerRow: D.hr, cols, ncols: D.n, orders: [], edits: new Map(), undo: [], redo: [], buffer: null, dailyCols: [], historyCols: [] };
+  model.F = (function () { const f = {}; for (const k in PC.FIELD_DEFS) { const [letter, name] = PC.FIELD_DEFS[k]; const want = U.normKey(name); const at = cols[U.colToIdx(letter)]; f[k] = at && (at.nkey === want || at.nkey.indexOf(want) >= 0) ? U.colToIdx(letter) : (cols.find(c => c.nkey.indexOf(want) >= 0) || { i: -1 }).i; } return f; })();
+  D.r.forEach((row, idx) => {
+    const v = new Array(D.n).fill(null); const fl = new Uint8Array(D.n);
+    const cells = row[2];
+    for (let i = 0; i < cells.length; i += 2) {
+      let val = cells[i + 1];
+      if (typeof val === 'string' && /^d-?\d+$/.test(val)) val = keyToDate(D.base + parseInt(val.slice(1), 10));
+      v[cells[i]] = val;
+    }
+    for (const c of row[1]) fl[c] = 1;
+    model.orders.push({ r: row[0], v, f: fl, idx, dirty: false });
+  });
+  for (const col of model.cols) {
+    let d = 0, n = 0, s = 0;
+    for (const o of model.orders) { const val = o.v[col.i]; if (val == null) continue; if (isDate(val)) d++; else if (typeof val === 'number') n++; else s++; }
+    const tot = d + n + s; col.nonEmpty = tot;
+    col.type = tot === 0 ? 'text' : (d >= n && d >= s ? 'date' : (n >= s ? 'number' : 'text'));
+  }
+  model.asOf = parseYmd(D.asOf);
+  PC.buildLines(model);
+  S.sample = true; adopt(model, 'sample:' + D.src);
+}
+function adopt(model, key) {
+  S.model = model; S.storeKey = 'sxplan:v2:' + key;
+  S.filters = { search: $('search').value.trim(), facets: {}, ranges: {}, custom: [], quick: {} };
+  S.caps = {}; S.sel = null;
+  S.board.from = dayKey(model.asOf) - 7;
+  restore();
+  const chip = $('filechip'); clear(chip);
+  chip.classList.toggle('sample', S.sample);
+  chip.appendChild(h('span', { class: 'fname' }, model.fileName));
+  chip.appendChild(h('span', { class: 'sm muted' }, S.sample ? `sample ${model.orders.length}` : `${fmt(model.orders.length)} MO`));
+  chip.title = S.sample
+    ? `Sample: ${model.orders.length} real orders from ${model.fileName}. Load the workbook to plan all of it and to export.`
+    : `${model.fileName} — ${fmt(model.orders.length)} manufacturing orders, ${model.ncols} columns. Click to load a different workbook.`;
+  applyFilters();
+}
+/* ---- persistence ---- */
+function persist() {
+  if (!S.storeKey) return;
+  try {
+    localStorage.setItem(S.storeKey, JSON.stringify({ edits: PC.exportEdits(S.model), caps: S.caps, views: S.savedViews, t: Date.now() }));
+  } catch (e) { /* quota */ }
+}
+function restore() {
+  S.savedViews = [];
+  try {
+    const raw = localStorage.getItem(S.storeKey); if (!raw) return;
+    const d = JSON.parse(raw);
+    S.caps = d.caps || {}; S.savedViews = d.views || [];
+    const n = PC.importEdits(S.model, d.edits);
+    if (n) toast(`Restored ${n} unsaved edit${n > 1 ? 's' : ''} from your last session.`, 'Discard', discardAll);
+  } catch (e) { }
+}
+
+/* ================= filters ================= */
+const FACETS = [
+  { key: 'customer', label: 'Buyer' }, { key: 'site', label: 'Factory site' }, { key: 'lineUnit', label: 'Sewing line' },
+  { key: 'stage', label: 'Current stage' }, { key: 'late', label: 'Delivery risk' }, { key: 'inout', label: 'In-house / subcon' },
+  { key: 'ldLine', label: 'Laundry line' }, { key: 'finLine', label: 'Finishing line' },
+  { key: 'sewMonthKey', label: 'Sewing month' }, { key: 'dlyMonthKey', label: 'Delivery month' }, { key: 'pcdMonthKey', label: 'Cut month' },
+  { key: 'productType', label: 'Product type' }, { key: 'groupProduct', label: 'Product group' }, { key: 'season', label: 'Season' },
+  { key: 'status', label: 'Order status' }, { key: 'fitStatus', label: 'Fit approval' }, { key: 'ppStatus', label: 'PP approval' },
+  { key: 'washAppStatus', label: 'Wash approval' }, { key: 'shrinkStatus', label: 'Shrinkage' }, { key: 'trimStatus', label: 'Trims' },
+  { key: 'mill', label: 'Mill' }, { key: 'fabric', label: 'Fabric' }, { key: 'wash', label: 'Wash' }, { key: 'repeatNew', label: 'Repeat / new' },
+];
+const RANGES = [
+  { key: 'pcd', label: 'Cut date' }, { key: 'sew1', label: 'Sewing start' }, { key: 'sew2', label: 'Sewing end' },
+  { key: 'washLastOut', label: 'Wash out' }, { key: 'finLastOut', label: 'Finishing out' },
+  { key: 'planExFactory', label: 'Ex-factory' }, { key: 'cusFinalDly', label: 'Customer delivery' }, { key: 'fabReqIH', label: 'Fabric needed' },
+];
+const QUICKS = [
+  ['late', 'At risk / late'], ['wip', 'In production'], ['unassigned', 'No line yet'],
+  ['fabricPending', 'Fabric not in-house'], ['approvalPending', 'Approval pending'],
+  ['unconfirmed', 'Un-confirmed order'], ['dirty', 'Edited by me'],
+];
+function activeCount() {
+  const f = S.filters; let n = 0;
+  if (f.search) n++;
+  for (const k in f.facets) if (f.facets[k] && f.facets[k].size) n++;
+  for (const k in f.ranges) if (f.ranges[k] && (f.ranges[k][0] || f.ranges[k][1])) n++;
+  n += f.custom.filter(c => c && c.col >= 0).length;
+  for (const k in f.quick) if (f.quick[k]) n++;
+  return n;
+}
+function applyFilters() {
+  if (!S.model) return;
+  S.filtered = PC.applyFilter(S.model, S.filters);
+  renderRail(); render();
+}
+function toggleFacet(key, val) {
+  const f = S.filters.facets; if (!f[key]) f[key] = new Set();
+  if (f[key].has(val)) f[key].delete(val); else f[key].add(val);
+  if (!f[key].size) delete f[key];
+  applyFilters();
+}
+function setOnlyFacet(key, val) { S.filters.facets[key] = new Set([val]); applyFilters(); }
+function clearFilters() { S.filters = { search: '', facets: {}, ranges: {}, custom: [], quick: {} }; $('search').value = ''; applyFilters(); }
+
+function renderRail() {
+  const rail = $('rail'); const openState = new Set([...rail.querySelectorAll('details[open]')].map(d => d.dataset.k));
+  const firstRender = !rail.firstChild;
+  const scroll = rail.scrollTop;
+  clear(rail);
+  const n = activeCount();
+  rail.appendChild(h('div', { class: 'railhead' },
+    h('span', { class: 'count' }, fmt(S.filtered.length), h('small', {}, ' / ' + fmt(S.model.orders.length))),
+    h('span', { class: 'sm muted' }, fmtK(S.filtered.reduce((a, o) => a + num(o.v[S.model.F.qty]), 0)) + ' pcs'),
+    n ? h('button', { class: 'clearall', onclick: clearFilters }, 'Clear ' + n) : null));
+
+  // quick filters
+  const qs = h('div', { class: 'qgrid' });
+  for (const [k, label] of QUICKS) qs.appendChild(h('button', { class: 'chip', 'aria-pressed': !!S.filters.quick[k], onclick: () => { S.filters.quick[k] = !S.filters.quick[k]; if (!S.filters.quick[k]) delete S.filters.quick[k]; applyFilters(); } }, label));
+  rail.appendChild(sec('quick', 'Quick filters', qs, true));
+
+  // facets
+  for (const F of FACETS) {
+    const isOpen = firstRender ? ['customer', 'site', 'stage'].includes(F.key) : openState.has('f:' + F.key);
+    const sel = S.filters.facets[F.key];
+    const body = h('div');
+    if (isOpen) {
+      const counts = PC.facetCounts(S.model, S.model.orders, S.filters, F.key);
+      let entries = [...counts.entries()].sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0]), undefined, { numeric: true }));
+      if (F.key === 'stage') entries.sort((a, b) => PC.STAGE_NAMES.indexOf(a[0]) - PC.STAGE_NAMES.indexOf(b[0]));
+      if (/Month|month/.test(F.key)) entries.sort((a, b) => String(a[0]).localeCompare(String(b[0])));
+      if (sel) for (const v of sel) if (!counts.has(v)) entries.unshift([v, 0]);
+      const list = h('div', { class: 'facet' });
+      if (entries.length > 12) body.appendChild(h('input', {
+        class: 'fsearch', type: 'search', placeholder: 'Filter ' + F.label.toLowerCase(),
+        oninput: e => { const q = e.target.value.toLowerCase(); for (const r of list.children) r.classList.toggle('hidden', q && !r.dataset.v.toLowerCase().includes(q)); }
+      }));
+      for (const [val, cnt] of entries.slice(0, 400)) {
+        const on = sel && sel.has(val);
+        list.appendChild(h('button', { class: 'frow', role: 'checkbox', 'aria-checked': !!on, 'data-v': String(val), onclick: () => toggleFacet(F.key, val) },
+          h('i', { class: 'box' }),
+          F.key === 'stage' ? h('i', { class: 'swatch', style: 'background:' + stageSwatch(val) }) : null,
+          F.key === 'late' ? h('i', { class: 'swatch', style: 'background:' + (val === 'On plan' ? 'var(--sx-intent-success)' : 'var(--sx-intent-danger)') }) : null,
+          h('span', { class: 'lbl' }, prettyFacet(F.key, val)), h('span', { class: 'cnt' }, fmt(cnt))));
+      }
+      body.appendChild(list);
+    }
+    rail.appendChild(sec('f:' + F.key, F.label, body, isOpen, sel ? sel.size : 0));
+  }
+
+  // date ranges
+  const rOpen = firstRender ? false : openState.has('ranges');
+  const rb = h('div');
+  for (const R of RANGES) {
+    const cur = S.filters.ranges[R.key] || ['', ''];
+    rb.appendChild(h('div', { class: 'daterow' }, h('label', {}, R.label),
+      h('input', { class: 'inp', type: 'date', value: cur[0], 'aria-label': R.label + ' from', onchange: e => { S.filters.ranges[R.key] = [e.target.value, (S.filters.ranges[R.key] || [])[1] || '']; applyFilters(); } }),
+      h('input', { class: 'inp', type: 'date', value: cur[1], 'aria-label': R.label + ' to', onchange: e => { S.filters.ranges[R.key] = [(S.filters.ranges[R.key] || [])[0] || '', e.target.value]; applyFilters(); } })));
+  }
+  rail.appendChild(sec('ranges', 'Date ranges', rb, rOpen, Object.values(S.filters.ranges).filter(v => v && (v[0] || v[1])).length));
+
+  // column rules
+  const cOpen = firstRender ? false : openState.has('rules');
+  const cb = h('div');
+  if (cOpen) {
+    S.filters.custom.forEach((rule, i) => {
+      const col = S.model.cols[rule.col];
+      const colSel = h('select', { onchange: e => { rule.col = +e.target.value; applyFilters(); } },
+        ...S.model.cols.map(c => h('option', { value: c.i, selected: c.i === rule.col }, c.letter + ' · ' + c.name.slice(0, 40))));
+      const ops = [['contains', 'contains'], ['notContains', 'does not contain'], ['eq', 'is'], ['gt', '>'], ['gte', '≥'], ['lt', '<'], ['lte', '≤'], ['between', 'between'], ['empty', 'is blank'], ['notEmpty', 'is not blank']];
+      const opSel = h('select', { onchange: e => { rule.op = e.target.value; renderRail(); applyFilters(); } }, ...ops.map(([v, l]) => h('option', { value: v, selected: v === rule.op }, l)));
+      const needs2 = rule.op === 'between'; const needsV = !['empty', 'notEmpty'].includes(rule.op);
+      const type = col && col.type === 'date' && !['contains', 'notContains'].includes(rule.op) ? 'date' : 'text';
+      const row2 = h('div', { class: 'row2' },
+        needsV ? h('input', { type, value: rule.value || '', placeholder: 'value', oninput: debounce(e => { rule.value = e.target.value; applyFilters(); }, 250) }) : null,
+        needs2 ? h('input', { type, value: rule.value2 || '', placeholder: 'and', oninput: debounce(e => { rule.value2 = e.target.value; applyFilters(); }, 250) }) : null);
+      cb.appendChild(h('div', { class: 'rule' }, colSel, h('button', { class: 'x', title: 'Remove rule', onclick: () => { S.filters.custom.splice(i, 1); renderRail(); applyFilters(); } }, '×'), opSel, h('span'), row2));
+    });
+    cb.appendChild(h('button', { class: 'btn', onclick: () => { S.filters.custom.push({ col: S.model.F.qty, op: 'gte', value: '' }); renderRail(); } }, '+ Add rule on any column'));
+  }
+  rail.appendChild(sec('rules', 'Column rules', cb, cOpen, S.filters.custom.length));
+
+  // saved views
+  const vOpen = openState.has('views');
+  const vb = h('div');
+  if (vOpen) {
+    const g = h('div', { class: 'qgrid' });
+    S.savedViews.forEach((v, i) => g.appendChild(h('button', { class: 'chip', title: 'Apply saved view', onclick: () => { applySaved(v); } }, v.name,
+      h('span', { class: 'cn', onclick: e => { e.stopPropagation(); S.savedViews.splice(i, 1); persist(); renderRail(); } }, '×'))));
+    vb.appendChild(g);
+    vb.appendChild(h('button', { class: 'btn', style: 'margin-top:6px', onclick: saveCurrentView }, 'Save current filters'));
+  }
+  rail.appendChild(sec('views', 'Saved views', vb, vOpen, S.savedViews.length));
+  rail.scrollTop = scroll;
+}
+function sec(key, label, body, open, badge) {
+  const d = h('details', { class: 'fsec', 'data-k': key, open: !!open },
+    h('summary', { onclick: () => setTimeout(renderRail, 0) }, label, badge ? h('span', { class: 'n' }, badge) : null),
+    h('div', { class: 'fbody' }, body));
+  return d;
+}
+function prettyFacet(key, val) {
+  if (/MonthKey$/.test(key) && /^\d{4}-\d{2}$/.test(val)) return MON[+val.slice(5) - 1] + " '" + val.slice(2, 4);
+  return String(val);
+}
+function stageSwatch(label) { const i = PC.STAGE_NAMES.indexOf(label); if (i <= 0) return 'var(--sx-border-strong)'; if (i > 6) return 'var(--sx-intent-success)'; return stageColor(i - 1); }
+function saveCurrentView() {
+  const name = prompt('Name this view'); if (!name) return;
+  S.savedViews.push({
+    name, view: S.view, boardStage: S.board.stage, search: S.filters.search,
+    facets: Object.fromEntries(Object.entries(S.filters.facets).map(([k, v]) => [k, [...v]])),
+    ranges: JSON.parse(JSON.stringify(S.filters.ranges)), custom: JSON.parse(JSON.stringify(S.filters.custom)), quick: { ...S.filters.quick },
+  });
+  persist(); renderRail();
+}
+function applySaved(v) {
+  S.filters.search = v.search || ''; $('search').value = v.search || '';
+  S.filters.facets = Object.fromEntries(Object.entries(v.facets || {}).map(([k, a]) => [k, new Set(a)]));
+  S.filters.ranges = v.ranges || {}; S.filters.custom = v.custom || []; S.filters.quick = v.quick || {};
+  if (v.boardStage) S.board.stage = v.boardStage;
+  setView(v.view || S.view); applyFilters();
+}
+
+/* ================= capacity model ================= */
+function stageByKey(k) { return STAGES.find(s => s.key === k); }
+function laneList(stageKey) {
+  const m = S.model;
+  if (stageKey === 'sew') {
+    const groups = [];
+    for (const site of m.sites) groups.push({ group: site.site + (site.inout === 'Inside' ? ' · in-house' : ' · subcontract'), lines: site.lines.map(l => ({ name: l.name, label: l.label })) });
+    return groups;
+  }
+  if (stageKey === 'wash') return [{ group: 'Laundry lines', lines: m.ldLines.filter(l => !/^non/i.test(l.name)).map(l => ({ name: l.name, label: 'LD ' + l.name })) }];
+  if (stageKey === 'fin' || stageKey === 'pack') return [{ group: 'Finishing lines', lines: m.finLines.map(l => ({ name: l.name, label: l.name })) }];
+  return [{ group: 'Factory sites', lines: m.sites.map(s => ({ name: s.site, label: s.site })) }];
+}
+function buildLoad(stageKey, orders, mode) {
+  const stage = stageByKey(stageKey); const out = new Map(); const meta = new Map();
+  const asOfKey = dayKey(S.model.asOf);
+  for (const o of orders) PC.spreadLoad(S.model, o, stage, mode || 'planned', asOfKey, out, meta);
+  return { load: out, meta };
+}
+function capFor(stageKey, res, loadMap) {
+  const ov = S.caps[stageKey] && S.caps[stageKey][res];
+  if (typeof ov === 'number' && ov > 0) return { cap: ov, est: false };
+  if (stageKey === 'sew') { const L = S.model.lineMap.get(res); if (L && L.target) return { cap: L.target, est: false }; }
+  if (loadMap) { const a = PC.autoCapacity(loadMap, 0.85); if (a > 0) return { cap: a, est: true }; }
+  return { cap: 0, est: true };
+}
+function setCap(stageKey, res, val) { if (!S.caps[stageKey]) S.caps[stageKey] = {}; if (val > 0) S.caps[stageKey][res] = val; else delete S.caps[stageKey][res]; persist(); }
+function ratioClass(r) { return r > 1.001 ? 'over' : r > 0.85 ? 'near' : 'under'; }
+function heatStyle(r) {
+  if (!isFinite(r) || r <= 0) return '';
+  if (r > 1.0) { const t = Math.min(1, (r - 1) / 0.8); return `background:color-mix(in srgb, var(--sx-intent-danger) ${Math.round(24 + t * 58)}%, transparent);color:var(--sx-text-primary)`; }
+  if (r > 0.85) return 'background:var(--sx-tint-warning);color:var(--sx-text-primary)';
+  const t = r / 0.85; return `background:color-mix(in srgb, var(--st3) ${Math.round(8 + t * 40)}%, transparent)`;
+}
+
+/* ================= render dispatch ================= */
+function render() {
+  if (!S.model) return;
+  const view = $('view'), bar = $('viewbar');
+  clear(view); clear(bar);
+  bar.appendChild(h('button', { class: 'btn icon', title: S.railHidden ? 'Show filters' : 'Hide filters', onclick: () => { S.railHidden = !S.railHidden; $('rail').classList.toggle('collapsed', S.railHidden); render(); } }, S.railHidden ? '»' : '«'));
+  if (S.view === 'overview') renderOverview(view, bar);
+  else if (S.view === 'board') renderBoard(view, bar);
+  else if (S.view === 'capacity') renderCapacity(view, bar);
+  else if (S.view === 'orders') renderOrders(view, bar);
+  else renderChanges(view, bar);
+  syncEditUI();
+}
+function syncEditUI() {
+  const n = S.model ? S.model.edits.size : 0;
+  const ec = $('editcount'); ec.textContent = n; ec.classList.toggle('hidden', !n);
+  $('undo').disabled = !S.model || !S.model.undo.length;
+  $('redo').disabled = !S.model || !S.model.redo.length;
+  $('exportbtn').classList.toggle('primary', n > 0);
+}
+function afterEdit(msg, undoable) {
+  persist(); applyFilters();
+  if (msg) toast(msg, undoable ? 'Undo' : null, undoable ? () => { $('undo').click(); } : null);
+  if ($('drawer').classList.contains('on') && S.sel) openDrawer(S.sel, true);
+  syncEditUI();
+}
+
+/* ================= view: overview ================= */
+function renderOverview(view, bar) {
+  const m = S.model, F = m.F, rows = S.filtered;
+  bar.appendChild(h('span', { class: 'vlabel' }, 'Plan as of ' + fmtDate(m.asOf)));
+  bar.appendChild(h('span', { class: 'sm muted' }, `${fmt(rows.length)} orders in view`));
+  bar.appendChild(h('div', { class: 'spacer', style: 'flex:1' }));
+  if (S.sample) bar.appendChild(h('button', { class: 'tag warn', onclick: () => $('drop').classList.remove('hide') },
+    `Sample: ${m.orders.length} of ${fmt(window.SAMPLE.total)} orders — open your workbook`));
+
+  const wrap = h('div', { class: 'ov' });
+  // ---- KPIs
+  let qty = 0, open = 0, openQty = 0, late = 0, lateQty = 0, wip = 0, shipped = 0, shippedOnTime = 0, exWeek = 0, exWeekQty = 0, blocked = 0;
+  const asOfK = dayKey(m.asOf), weekEnd = asOfK + 7;
+  const stagePcs = new Array(6).fill(0), stageDone = new Array(6).fill(0);
+  for (const o of rows) {
+    const p = PC.orderProgress(m, o); qty += p.qty;
+    if (p.shipped) { shipped++; const otd = PC.otdDays(m, o); if (otd == null || otd >= 0) shippedOnTime++; }
+    else { open++; openQty += p.qty; }
+    if (p.stage >= 0 && p.stage <= 5) wip++;
+    for (let i = 0; i < 6; i++) { stagePcs[i] += p.qty; stageDone[i] += Math.min(p.done[i], p.qty); }
+    if (PC.isLate(m, o)) { late++; lateQty += p.qty; }
+    const ex = o.v[F.planExFactory];
+    if (isDate(ex) && dayKey(ex) >= asOfK && dayKey(ex) <= weekEnd) { exWeek++; exWeekQty += p.qty; }
+    if (!p.shipped && PC.approvalPending(m, o)) blocked++;
+  }
+  const kpis = h('div', { class: 'kpis' });
+  const kpi = (k, v, s, cls, act) => kpis.appendChild(h('button', { class: 'kpi ' + (cls || ''), onclick: act || null, title: act ? 'Filter to these orders' : '' }, h('span', { class: 'k' }, k), h('span', { class: 'v' }, v), h('span', { class: 's' }, s)));
+  kpi('Open orders', fmt(open), fmtK(openQty) + ' pcs to make', '', () => { S.filters.quick.wip = false; setOnlyFacet('late', 'On plan'); });
+  kpi('Planned quantity', fmtK(qty), fmt(rows.length) + ' manufacturing orders');
+  kpi('At risk or late', fmt(late), fmtK(lateQty) + ' pcs · ex-factory after delivery', late ? 'alert' : 'good', () => { S.filters.quick.late = true; applyFilters(); });
+  kpi('In production', fmt(wip), 'cut through packing', '', () => { S.filters.quick.wip = true; applyFilters(); });
+  kpi('Ex-factory this week', fmt(exWeek), fmtK(exWeekQty) + ' pcs by ' + fmtDateShort(keyToDate(weekEnd)), '', () => { S.filters.ranges.planExFactory = [ymd(m.asOf), ymd(keyToDate(weekEnd))]; applyFilters(); });
+  kpi('Approvals pending', fmt(blocked), 'fit, PP or wash not signed off', blocked ? 'warn' : '', () => { S.filters.quick.approvalPending = true; applyFilters(); });
+  kpi('Shipped', fmt(shipped), shipped ? pct(shippedOnTime / shipped) + ' on time' : 'none yet', 'good', () => setOnlyFacet('stage', 'Shipped'));
+  wrap.appendChild(kpis);
+
+  const bandTop = h('div'), cards = h('div', { class: 'masonry' }), bandBottom = h('div');
+  // ---- stage funnel
+  {
+    const p = panel('Where the quantity sits', 'plan vs done, all filtered orders');
+    const body = h('div', { class: 'funnel' });
+    const maxQ = Math.max(...stagePcs, 1);
+    STAGES.forEach((st, i) => {
+      const done = stageDone[i], total = stagePcs[i], bal = Math.max(0, total - done);
+      body.appendChild(h('button', { class: 'frow2', onclick: () => setOnlyFacet('stage', st.name), title: 'Filter to orders now in ' + st.name },
+        h('span', { class: 'nm' }, h('i', { class: 'dot', style: 'background:' + stageColor(i) }), st.name),
+        h('span', { class: 'bar' },
+          h('i', { style: `width:${(done / maxQ) * 100}%;background:${stageColor(i)}` }),
+          h('i', { style: `width:${(bal / maxQ) * 100}%;background:${stageColor(i)};opacity:.22` })),
+        h('span', { class: 'fig' }, h('b', {}, fmtK(done)), ' done · ', fmtK(bal), ' left')));
+    });
+    body.appendChild(h('div', { class: 'legend' },
+      h('span', {}, h('i', { style: 'background:var(--st4)' }), 'completed'),
+      h('span', {}, h('i', { style: 'background:var(--st4);opacity:.22' }), 'balance to do'),
+      h('span', { class: 'muted' }, 'Click a stage to filter every view.')));
+    p.querySelector('.body').appendChild(body); cards.appendChild(p);
+  }
+  // ---- sewing load vs capacity by week
+  {
+    const p = panel('Sewing load against line capacity', 'pieces per week across every sewing line in this filter');
+    p.querySelector('.body').appendChild(loadVsCapacityChart('sew'));
+    bandTop.appendChild(p);
+  }
+  // ---- late by buyer
+  {
+    const p = panel('At-risk quantity by buyer', 'ex-factory later than the confirmed delivery');
+    const byC = new Map();
+    for (const o of rows) if (PC.isLate(m, o)) { const c = str(o.v[F.customer]) || '(none)'; byC.set(c, (byC.get(c) || 0) + num(o.v[F.qty])); }
+    const top = [...byC.entries()].sort((a, b) => b[1] - a[1]).slice(0, 9);
+    const body = h('div', { class: 'funnel' });
+    if (!top.length) body.appendChild(h('div', { class: 'empty' }, 'No order in this view is forecast to miss its delivery.'));
+    const mx = top.length ? top[0][1] : 1;
+    for (const [c, q] of top) body.appendChild(h('button', { class: 'frow2', onclick: () => { setOnlyFacet('customer', c); S.filters.quick.late = true; applyFilters(); } },
+      h('span', { class: 'nm' }, c), h('span', { class: 'bar' }, h('i', { style: `width:${(q / mx) * 100}%;background:var(--sx-intent-danger)` })),
+      h('span', { class: 'fig' }, h('b', {}, fmtK(q)), ' pcs')));
+    p.querySelector('.body').appendChild(body); cards.appendChild(p);
+  }
+  // ---- most overloaded line-weeks
+  {
+    const p = panel('Sewing lines over capacity', 'next 8 weeks, remaining quantity only');
+    const { load } = buildLoad('sew', rows, 'remaining');
+    const rowsOut = [];
+    for (const [res, days] of load) {
+      const { cap } = capFor('sew', res, days); if (!cap) continue;
+      const byWeek = new Map();
+      for (const [k, v] of days) { if (k < asOfK || k > asOfK + 56) continue; const wk = U.weekKey(keyToDate(k)); byWeek.set(wk, (byWeek.get(wk) || 0) + v); }
+      for (const [wk, v] of byWeek) { const days2 = PC.workdayCount(wk - 6, wk); const c = cap * days2; if (v > c) rowsOut.push({ res, wk, v, c, r: v / c }); }
+    }
+    rowsOut.sort((a, b) => b.r - a.r);
+    const body = h('div', { class: 'list' });
+    if (!rowsOut.length) body.appendChild(h('div', { class: 'empty' }, 'Every sewing line fits its remaining load for the next 8 weeks.'));
+    for (const r of rowsOut.slice(0, 10)) {
+      const L = m.lineMap.get(r.res);
+      body.appendChild(h('button', { class: 'lrow', style: 'grid-template-columns:1fr auto auto', onclick: () => { setOnlyFacet('lineUnit', L ? L.label : r.res); S.board.stage = 'sew'; S.board.from = r.wk - 20; setView('board'); } },
+        h('span', { class: 't' }, r.res, h('span', { class: 'm' }, '  week to ' + fmtDateShort(keyToDate(r.wk)))),
+        h('span', { class: 'm mono' }, fmt(r.v) + ' / ' + fmt(r.c) + ' pcs'),
+        h('span', { class: 'tag bad' }, '+' + fmt(r.v - r.c))));
+    }
+    p.querySelector('.body').appendChild(body); cards.appendChild(p);
+  }
+  // ---- what is blocking the next cuts
+  {
+    const p = panel('Blocked before the cut date', 'planned to cut within 14 days, still waiting on something');
+    const soon = [];
+    for (const o of rows) {
+      const cut = o.v[F.pcd];
+      if (!isDate(cut) || dayKey(cut) < asOfK || dayKey(cut) > asOfK + 14) continue;
+      if (num(o.v[F.cutQty]) > 0) continue;
+      const gates = PC.openGates(m, o);
+      if (gates.length) soon.push({ o, cut, gates });
+    }
+    soon.sort((a, b) => dayKey(a.cut) - dayKey(b.cut));
+    const body = h('div', { class: 'list' });
+    if (!soon.length) body.appendChild(h('div', { class: 'empty' }, 'Nothing due to cut in the next 14 days is waiting on fabric, approvals, trims or shrinkage.'));
+    for (const s of soon.slice(0, 12)) body.appendChild(h('button', { class: 'lrow', style: 'grid-template-columns:112px 1fr auto', onclick: () => openDrawer(s.o) },
+      h('span', { class: 't mono' }, fmtDate(s.cut)),
+      h('span', { class: 'm' }, str(s.o.v[F.customer]) + ' · ' + str(s.o.v[F.style]) + ' · ' + fmt(num(s.o.v[F.qty])) + ' pcs'),
+      h('span', { style: 'display:flex;gap:3px' }, ...s.gates.map(g => h('span', { class: 'tag warn' }, g)))));
+    if (soon.length > 12) body.appendChild(h('button', { class: 'lrow', style: 'grid-template-columns:1fr', onclick: () => { S.filters.ranges.pcd = [ymd(m.asOf), ymd(keyToDate(asOfK + 14))]; setView('orders'); applyFilters(); } },
+      h('span', { class: 'm' }, `${soon.length - 12} more — open them in the table`)));
+    p.querySelector('.body').appendChild(body); cards.appendChild(p);
+  }
+  // ---- idle capacity: where work could still go
+  {
+    const p = panel('Room on the lines', 'next 14 days, sewing lines under 70% of their daily target');
+    const { load } = buildLoad('sew', S.filtered, 'remaining');
+    const spare = [];
+    for (const L of m.lines) {
+      if (!L.target) continue;
+      const days = load.get(L.name) || new Map();
+      let used = 0, cap = 0;
+      for (let k = asOfK; k <= asOfK + 13; k++) { if (keyToDate(k).getUTCDay() === 0) continue; used += days.get(k) || 0; cap += L.target; }
+      if (!cap) continue;
+      const r = used / cap;
+      if (r < 0.7) spare.push({ L, r, free: cap - used });
+    }
+    spare.sort((a, b) => b.free - a.free);
+    const body = h('div', { class: 'funnel' });
+    if (!spare.length) body.appendChild(h('div', { class: 'empty' }, 'Every sewing line is at least 70% committed for the next two weeks.'));
+    for (const s of spare.slice(0, 8)) body.appendChild(h('button', { class: 'frow2', title: 'Show this line on the board', onclick: () => { setOnlyFacet('lineUnit', s.L.label); S.board.stage = 'sew'; setView('board'); } },
+      h('span', { class: 'nm' }, s.L.label, h('span', { class: 'muted' }, ' ' + s.L.site)),
+      h('span', { class: 'bar' }, h('i', { style: `width:${Math.min(100, s.r * 100)}%;background:var(--st3)` })),
+      h('span', { class: 'fig' }, h('b', {}, fmtK(s.free)), ' pcs free · ', pct(s.r))));
+    p.querySelector('.body').appendChild(body); cards.appendChild(p);
+  }
+  // ---- ex-factory outlook
+  {
+    const p = panel('Ex-factory outlook', 'pieces leaving the factory each week, and how much of it is already late');
+    const weeks = []; for (let i = 0; i < 9; i++) weeks.push(U.weekKey(keyToDate(asOfK + i * 7)));
+    const uniq = [...new Set(weeks)];
+    const ok = new Map(uniq.map(w => [w, 0])), bad = new Map(uniq.map(w => [w, 0]));
+    for (const o of rows) {
+      const ex = o.v[F.planExFactory]; if (!isDate(ex) || ex.getUTCFullYear() < 2000) continue;
+      const w = U.weekKey(ex); if (!ok.has(w)) continue;
+      const q = num(o.v[F.qty]);
+      (PC.isLate(m, o) ? bad : ok).set(w, (PC.isLate(m, o) ? bad : ok).get(w) + q);
+    }
+    const W = 640, H = 190, PAD = { l: 46, r: 8, t: 12, b: 28 };
+    const maxV = Math.max(1, ...uniq.map(w => ok.get(w) + bad.get(w)));
+    const bw = (W - PAD.l - PAD.r) / uniq.length;
+    const x = i => PAD.l + i * bw, y = v => PAD.t + (1 - v / maxV) * (H - PAD.t - PAD.b);
+    const g = sv('svg', { viewBox: `0 0 ${W} ${H}`, width: '100%', height: H, role: 'img', 'aria-label': 'Pieces leaving the factory each week' });
+    for (let i = 0; i <= 4; i++) { const v = maxV * i / 4; g.appendChild(sv('line', { class: 'gridline', x1: PAD.l, x2: W - PAD.r, y1: y(v), y2: y(v) })); g.appendChild(sv('text', { x: PAD.l - 6, y: y(v) + 3, 'text-anchor': 'end', text: fmtK(v) })); }
+    uniq.forEach((w, i) => {
+      const a = ok.get(w), b = bad.get(w), tot = a + b;
+      if (b) g.appendChild(sv('rect', { x: x(i) + 4, y: y(tot), width: Math.max(2, bw - 8), height: Math.max(1, y(a) - y(tot) - 2), fill: 'var(--sx-intent-danger)', rx: 1 }));
+      if (a) g.appendChild(sv('rect', { x: x(i) + 4, y: y(a), width: Math.max(2, bw - 8), height: Math.max(1, H - PAD.b - y(a)), fill: 'var(--st4)', rx: 1 }));
+      if (tot) g.appendChild(sv('text', { class: 'val', x: x(i) + bw / 2, y: y(tot) - 4, 'text-anchor': 'middle', text: fmtK(tot) }));
+      g.appendChild(sv('text', { x: x(i) + bw / 2, y: H - 10, 'text-anchor': 'middle', text: fmtDateShort(keyToDate(w)) }));
+    });
+    g.appendChild(sv('line', { class: 'axis', x1: PAD.l, x2: W - PAD.r, y1: H - PAD.b, y2: H - PAD.b }));
+    const body = p.querySelector('.body');
+    body.appendChild(g);
+    body.appendChild(h('div', { class: 'legend' },
+      h('span', {}, h('i', { style: 'background:var(--st4)' }), 'on plan'),
+      h('span', {}, h('i', { style: 'background:var(--sx-intent-danger)' }), 'already late'),
+      h('span', { class: 'muted' }, 'week ending Saturday')));
+    cards.appendChild(p);
+  }
+  // ---- at risk list
+  {
+    const p = panel('Orders to act on first', 'sorted by how late ex-factory runs');
+    const risky = rows.filter(o => PC.isLate(m, o)).map(o => {
+      const ex = o.v[F.planExFactory], dly = o.v[F.cusFinalDly];
+      const slip = isDate(ex) && isDate(dly) ? dayKey(ex) - dayKey(dly) : 999;
+      return { o, slip };
+    }).sort((a, b) => b.slip - a.slip).slice(0, 40);
+    const body = h('div', { class: 'list' });
+    if (!risky.length) body.appendChild(h('div', { class: 'empty' }, 'Nothing at risk in this view.'));
+    for (const { o, slip } of risky) {
+      const p2 = PC.orderProgress(m, o);
+      body.appendChild(h('button', { class: 'lrow', style: 'grid-template-columns:150px 1fr 78px 62px', onclick: () => openDrawer(o) },
+        h('span', { class: 't mono' }, str(o.v[F.po])),
+        h('span', { class: 'm' }, [str(o.v[F.customer]), str(o.v[F.style]), str(o.v[F.line])].filter(Boolean).join(' · ')),
+        h('span', { class: 'm mono' }, fmt(num(o.v[F.qty])) + ' pcs'),
+        h('span', { class: 'tag ' + (slip > 14 ? 'bad' : 'warn') }, slip === 999 ? 'no date' : '+' + slip + 'd')));
+    }
+    p.querySelector('.body').appendChild(body); bandBottom.appendChild(p);
+  }
+  wrap.appendChild(bandTop); wrap.appendChild(cards); wrap.appendChild(bandBottom);
+  view.appendChild(wrap);
+}
+function panel(title, sub) {
+  return h('div', { class: 'panel' }, h('header', {}, h('h3', {}, title), sub ? h('span', { class: 'sub' }, sub) : null), h('div', { class: 'body' }));
+}
+function loadVsCapacityChart(stageKey) {
+  const m = S.model, asOfK = dayKey(m.asOf);
+  const { load } = buildLoad(stageKey, S.filtered, 'planned');
+  const weeks = []; for (let i = -2; i < 14; i++) weeks.push(U.weekKey(keyToDate(asOfK + i * 7)));
+  const uniq = [...new Set(weeks)];
+  const loadByWeek = new Map(uniq.map(w => [w, 0])), capByWeek = new Map(uniq.map(w => [w, 0]));
+  for (const [res, days] of load) {
+    const { cap } = capFor(stageKey, res, days);
+    for (const [k, v] of days) { const w = U.weekKey(keyToDate(k)); if (loadByWeek.has(w)) loadByWeek.set(w, loadByWeek.get(w) + v); }
+    if (cap) for (const w of uniq) capByWeek.set(w, capByWeek.get(w) + cap * PC.workdayCount(w - 6, w));
+  }
+  const W = Math.max(720, uniq.length * 62), H = 210, PAD = { l: 46, r: 8, t: 12, b: 26 };
+  const maxV = Math.max(1, ...loadByWeek.values(), ...capByWeek.values());
+  const x = i => PAD.l + i * ((W - PAD.l - PAD.r) / uniq.length);
+  const bw = ((W - PAD.l - PAD.r) / uniq.length) - 6;
+  const y = v => PAD.t + (1 - v / maxV) * (H - PAD.t - PAD.b);
+  const g = sv('svg', { viewBox: `0 0 ${W} ${H}`, width: '100%', height: H, role: 'img', 'aria-label': 'Weekly sewing load against capacity' });
+  for (let i = 0; i <= 4; i++) { const v = maxV * i / 4; g.appendChild(sv('line', { class: 'gridline', x1: PAD.l, x2: W - PAD.r, y1: y(v), y2: y(v) })); g.appendChild(sv('text', { x: PAD.l - 6, y: y(v) + 3, 'text-anchor': 'end' , text: fmtK(v)})); }
+  uniq.forEach((w, i) => {
+    const v = loadByWeek.get(w) || 0, c = capByWeek.get(w) || 0;
+    const over = c > 0 && v > c;
+    g.appendChild(sv('rect', { x: x(i) + 3, y: y(v), width: Math.max(2, bw), height: Math.max(0, H - PAD.b - y(v)), fill: over ? 'var(--sx-intent-danger)' : 'var(--st3)', rx: 1 }));
+    if (c > 0) g.appendChild(sv('line', { class: 'caplin', x1: x(i) + 1, x2: x(i) + bw + 5, y1: y(c), y2: y(c) }));
+    g.appendChild(sv('text', { x: x(i) + bw / 2 + 3, y: H - 9, 'text-anchor': 'middle', text: fmtDateShort(keyToDate(w)) }));
+    if (v) g.appendChild(sv('text', { class: 'val', x: x(i) + bw / 2 + 3, y: y(v) - 4, 'text-anchor': 'middle', text: fmtK(v) }));
+  });
+  g.appendChild(sv('line', { class: 'axis', x1: PAD.l, x2: W - PAD.r, y1: H - PAD.b, y2: H - PAD.b }));
+  const box = h('div');
+  box.appendChild(g);
+  box.appendChild(h('div', { class: 'legend' },
+    h('span', {}, h('i', { style: 'background:var(--st3)' }), 'planned load (pcs)'),
+    h('span', {}, h('i', { style: 'background:var(--sx-intent-danger)' }), 'week over capacity'),
+    h('span', {}, h('i', { style: 'background:var(--sx-intent-danger);height:2px;width:16px' }), 'capacity = line target × working days')));
+  return box;
+}
+
+/* ================= view: line board ================= */
+function renderBoard(view, bar) {
+  const m = S.model, F = m.F, B = S.board;
+  const stage = stageByKey(B.stage);
+  // toolbar
+  const seg = h('div', { class: 'seg' });
+  for (const st of STAGES) seg.appendChild(h('button', { 'aria-pressed': st.key === B.stage, onclick: () => { B.stage = st.key; render(); } }, st.short));
+  bar.appendChild(h('span', { class: 'vlabel' }, 'Lanes'));
+  bar.appendChild(seg);
+  const zoomOut = h('span', { class: 'vlabel', style: 'min-width:52px' }, B.dayW + 'px/day');
+  const zoom = h('input', {
+    type: 'range', class: 'zoom', min: 12, max: 64, step: 2, value: B.dayW, 'aria-label': 'Day width in pixels',
+    title: 'How wide one day is on the board',
+    oninput: e => { B.dayW = +e.target.value; zoomOut.textContent = B.dayW + 'px/day'; drawZoom(); }
+  });
+  let zoomTimer = null;
+  const drawZoom = () => { clearTimeout(zoomTimer); zoomTimer = setTimeout(() => { render(); document.querySelector('.zoom') && document.querySelector('.zoom').focus(); }, 90); };
+  bar.appendChild(h('span', { class: 'vlabel' }, 'Zoom')); bar.appendChild(zoom); bar.appendChild(zoomOut);
+  bar.appendChild(h('button', { class: 'btn', onclick: () => { B.from = dayKey(m.asOf) - 7; render(); } }, 'Today'));
+  bar.appendChild(h('button', { class: 'btn', onclick: () => { fitToFiltered(); } }, 'Fit to filter'));
+  bar.appendChild(h('button', { class: 'btn', 'aria-pressed': B.narrowLanes,
+    title: 'The line column stays pinned while you scroll. Narrow it when it covers the blocks you want to see.',
+    onclick: () => { B.narrowLanes = !B.narrowLanes; render(); } }, B.narrowLanes ? 'Widen line column' : 'Narrow line column'));
+  bar.appendChild(h('button', { class: 'btn', 'aria-pressed': B.others, title: 'Show load from orders hidden by the filter as grey bars', onclick: () => { B.others = !B.others; render(); } }, B.others ? 'Hiding nothing' : 'Filtered load only'));
+  bar.appendChild(h('button', { class: 'btn', 'aria-pressed': B.refitOnDrop, title: 'When an order is dropped on another line, refit its end date to that line’s daily target', onclick: () => { B.refitOnDrop = !B.refitOnDrop; render(); } }, B.refitOnDrop ? 'Refit on drop: on' : 'Refit on drop: off'));
+  bar.appendChild(h('div', { style: 'flex:1' }));
+  bar.appendChild(h('div', { class: 'runkey' },
+    h('span', { title: 'A process has produced pieces, or the marker is already cut' }, h('i', { style: 'border-color:var(--run-go)' }), 'Running'),
+    h('span', { title: `Nothing is holding it up and sewing starts within ${PC.READY_WINDOW_DAYS} days` }, h('i', { style: 'border-color:var(--run-ready)' }), 'Ready to run'),
+    h('span', { title: 'Not started: waiting on fabric, approvals, trims or shrinkage, or not due yet' }, h('i', {}), 'Not started'),
+    h('span', { title: 'Ex-factory runs past the confirmed delivery' }, h('i', { class: 'lateswatch' }), 'Late')));
+  bar.appendChild(h('div', { style: 'flex:1' }));
+  bar.appendChild(h('span', { class: 'sm muted' }, stage.key === 'sew' ? 'Drag sideways to move the sewing dates · drag onto another line to reassign · drag an edge to change duration'
+    : stage.key === 'wash' || stage.key === 'fin' || stage.key === 'pack' ? 'Drag sideways to shift the whole plan · drag onto another lane to reassign this stage' : 'Drag sideways to shift the whole plan'));
+
+  const from = B.from, to = from + B.days - 1;
+  const groups = laneList(B.stage);
+  const all = buildLoad(B.stage, m.orders, 'planned');
+  const mine = buildLoad(B.stage, S.filtered, 'planned');
+  // blocks per resource
+  const blocks = new Map();
+  let shown = 0, skippedNonWash = 0;
+  for (const o of S.filtered) {
+    const w = PC.stageWindow(m, o, stage); if (!w) continue;
+    if (w[1] < from || w[0] > to) continue;
+    if (stage.key === 'wash' && PC.isNonWash(m, o)) { skippedNonWash++; continue; }
+    const res = PC.resourceOf(m, o, stage) || '(unassigned)';
+    if (!blocks.has(res)) blocks.set(res, []);
+    blocks.get(res).push({ o, a: w[0], b: w[1] }); shown++;
+  }
+  // unassigned lane if needed
+  const known = new Set(groups.flatMap(g => g.lines.map(l => l.name)));
+  const extra = [...blocks.keys()].filter(r => !known.has(r));
+  if (extra.length) groups.unshift({ group: 'Not assigned to a lane', lines: extra.map(r => ({ name: r, label: r === '(unassigned)' ? 'No lane set' : r })) });
+
+  // Filtering to particular lines focuses the board on them; with only a few on
+  // screen the rows grow so the orders are easier to read and drag.
+  const laneFilterOn = ['lineUnit', 'ldLine', 'finLine', 'site'].some(k => S.filters.facets[k] && S.filters.facets[k].size);
+  const keepLane = L => blocks.has(L.name) || (!laneFilterOn && B.stage === 'sew');
+  const visGroups = groups.map(g => ({ group: g.group, lines: g.lines.filter(keepLane) })).filter(g => g.lines.length);
+  const laneCount = visGroups.reduce((a, g) => a + g.lines.length, 0);
+  const ROWH = laneCount <= 2 ? 40 : laneCount <= 5 ? 30 : laneCount <= 12 ? 25 : 22;
+  const BLKH = ROWH - 3, MINW = 92;
+
+  const board = h('div', { class: 'board' });
+  const scroll = h('div', { class: 'bscroll' });
+  const grid = h('div', { class: 'bgrid' });
+  const HEADW = B.narrowLanes ? 66 : 208, dayW = B.dayW, plotW = B.days * dayW;
+  // header
+  const head = h('div', { class: 'bhead' });
+  if (B.stage === 'wash' && skippedNonWash) bar.appendChild(h('span', { class: 'tag neutral' }, fmt(skippedNonWash) + ' orders are not washed'));
+  head.appendChild(h('div', { class: 'corner', style: `width:${HEADW}px` },
+    h('span', { class: 't' }, stage.key === 'sew' ? 'Sewing line' : stage.key === 'wash' ? 'Laundry line' : stage.key === 'fin' || stage.key === 'pack' ? 'Finishing line' : 'Factory site'),
+    h('span', { class: 'sm muted' }, fmt(shown) + ' blocks')));
+  const days = h('div', { class: 'days', style: `width:${plotW}px` });
+  const months = h('div', { class: 'months' });
+  let mi = 0;
+  while (mi < B.days) { const d = keyToDate(from + mi); let len = 0; while (mi + len < B.days && keyToDate(from + mi + len).getUTCMonth() === d.getUTCMonth()) len++; months.appendChild(h('div', { class: 'm', style: `width:${len * dayW}px` }, MON[d.getUTCMonth()] + " '" + String(d.getUTCFullYear()).slice(2))); mi += len; }
+  const dayrow = h('div', { class: 'dayrow' });
+  const asOfK = dayKey(m.asOf);
+  for (let i = 0; i < B.days; i++) {
+    const d = keyToDate(from + i), su = d.getUTCDay() === 0;
+    dayrow.appendChild(h('div', { class: 'dcell' + (su ? ' sun' : '') + (from + i === asOfK ? ' tdy' : ''), style: `width:${dayW}px` },
+      dayW >= 20 ? h('b', {}, d.getUTCDate()) : (d.getUTCDate() % 5 === 0 || d.getUTCDate() === 1 ? h('b', {}, d.getUTCDate()) : h('b', {}, '')),
+      dayW >= 26 ? ['S', 'M', 'T', 'W', 'T', 'F', 'S'][d.getUTCDay()] : ''));
+  }
+  days.appendChild(months); days.appendChild(dayrow); head.appendChild(days); grid.appendChild(head);
+
+  const laneEls = [];
+  for (const g of visGroups) {
+    const collapsed = B.collapsed.has(g.group);
+    const gLines = g.lines;
+    const gQty = gLines.reduce((a, l) => a + ((blocks.get(l.name) || []).reduce((x, b) => x + num(b.o.v[F.qty]), 0)), 0);
+    grid.appendChild(h('div', { class: 'lane group' },
+      h('button', { class: 'groupbar', style: `min-width:${HEADW + plotW}px`, onclick: () => { if (collapsed) B.collapsed.delete(g.group); else B.collapsed.add(g.group); render(); } },
+        h('span', {}, collapsed ? '▸' : '▾'), g.group,
+        h('span', { class: 'gn' }, gLines.length + ' lanes · ' + fmtK(gQty) + ' pcs in view'))));
+    if (collapsed) continue;
+    for (const L of gLines) {
+      const items = (blocks.get(L.name) || []).sort((a, b) => a.a - b.a || a.b - b.b);
+      // greedy row packing
+      // A short order is widened to MINW so its name always fits; packing works in
+      // pixels, not days, so the widened bar still never overlaps the next one.
+      for (const it of items) {
+        it.x = (it.a - from) * dayW + 1;
+        it.natW = Math.max(dayW - 2, (it.b - it.a + 1) * dayW - 2);
+        it.w = Math.max(it.natW, MINW);
+      }
+      const rowsEnd = []; let maxRow = 0;
+      for (const it of items) {
+        let r = 0; while (r < rowsEnd.length && rowsEnd[r] > it.x - 4) r++;
+        rowsEnd[r] = it.x + it.w; it.row = r; if (r + 1 > maxRow) maxRow = r + 1;
+      }
+      const nRows = Math.max(1, maxRow);
+      const plotH = nRows * ROWH + 14;
+      const myLoad = mine.load.get(L.name) || new Map(), allLoad = all.load.get(L.name) || new Map();
+      const capInfo = capFor(B.stage, L.name, allLoad);
+      const lane = h('div', { class: 'lane' });
+      // header
+      const nowNext = describeLane(items, asOfK);
+      const capIn = h('input', {
+        class: 'capedit' + (capInfo.est ? ' est' : ''), value: capInfo.cap || '', type: 'text', inputmode: 'numeric',
+        'aria-label': 'Daily capacity of ' + L.label + ' in pieces',
+        title: `How many pieces ${L.label} can put out in a day. The bars below turn amber above 85% of it and red over 100%.` +
+          (capInfo.est ? '\nThis figure is estimated from the plan because the workbook does not carry one — type the real number.' : '\nTaken from the TARGET column of the orders on this lane.'),
+        onchange: e => { setCap(B.stage, L.name, parseInt(e.target.value.replace(/[^\d]/g, ''), 10) || 0); render(); },
+        onclick: e => e.stopPropagation()
+      });
+      lane.appendChild(h('div', { class: 'lanehead' + (B.narrowLanes ? ' narrow' : ''), style: `width:${HEADW}px`, title: B.narrowLanes ? `${L.label} · ${items.length} orders` : '' },
+        h('div', { class: 'ln' },
+          h('span', { class: 'nm', title: 'Filter everything to ' + L.name, onclick: () => { if (B.stage === 'sew') setOnlyFacet('lineUnit', L.label); else if (B.stage === 'wash') setOnlyFacet('ldLine', L.name); else if (B.stage === 'fin' || B.stage === 'pack') setOnlyFacet('finLine', L.name); else setOnlyFacet('site', L.name); } }, L.label),
+          items.length ? h('button', { class: 'lanecount', title: 'List every order queued on this lane', onclick: () => showLaneOrders(L, items, stage) }, items.length) : null),
+        h('div', { class: 'meta' }, capIn, h('span', {}, 'pcs/day capacity'), h('span', { class: 'now', title: nowNext.title }, nowNext.text))));
+      // plot
+      const plot = h('div', { class: 'laneplot', style: `width:${plotW}px;height:${plotH}px` });
+      const cols = h('div', { class: 'daycols' });
+      for (let i = 0; i < B.days; i++) cols.appendChild(h('div', { class: 'daycol' + (keyToDate(from + i).getUTCDay() === 0 ? ' sun' : ''), style: `width:${dayW}px` }));
+      plot.appendChild(cols);
+      // capacity strip
+      const strip = h('div', { class: 'capstrip' });
+      for (let i = 0; i < B.days; i++) {
+        const k = from + i, mv = myLoad.get(k) || 0, av = allLoad.get(k) || 0;
+        const v = B.others ? av : mv;
+        const cap = capInfo.cap;
+        const r = cap ? v / cap : 0;
+        const hh = cap ? Math.min(1, r) * 12 : Math.min(1, v / Math.max(1, capInfo.cap || 800)) * 12;
+        const cls = !v ? '' : (B.others && mv === 0 ? 'ghost' : cap ? ratioClass(r) : 'under');
+        strip.appendChild(h('div', { class: 'capbar ' + cls, style: `width:${dayW}px`, title: v ? `${fmtDateShort(keyToDate(k))} · ${fmt(v)} pcs${cap ? ' of ' + fmt(cap) + ' (' + pct(r) + ')' : ''}` : '' },
+          v ? h('i', { style: `height:${Math.max(2, hh)}px` }) : null));
+      }
+      plot.appendChild(strip);
+      if (asOfK >= from && asOfK <= to) plot.appendChild(h('div', { class: 'todayline', style: `left:${(asOfK - from) * dayW + dayW / 2}px` }));
+      // blocks
+      for (const it of items) plot.appendChild(makeBlock(it, ROWH, BLKH, stage));
+      lane.appendChild(plot);
+      lane._lane = L; lane._plot = plot; lane._rowh = ROWH; laneEls.push(lane);
+      grid.appendChild(lane);
+    }
+  }
+  scroll.appendChild(grid); board.appendChild(scroll); view.appendChild(board);
+  attachDrag(scroll, laneEls, from, dayW, stage);
+  scroll.addEventListener('scroll', () => scroll.classList.toggle('pinned', scroll.scrollLeft > 0), { passive: true });
+  requestAnimationFrame(() => {
+    const x = Math.max(0, (asOfK - from) * dayW - 180);
+    scroll.scrollLeft = x; scroll.classList.toggle('pinned', x > 0);
+  });
+}
+function showLaneOrders(L, items, stage) {
+  const m = S.model, F = m.F, asOfK = dayKey(m.asOf);
+  const pop = openPop(`${L.label || L.name} · ${items.length} orders in this filter`);
+  const info = capFor(S.board.stage, L.name, null);
+  pop.appendChild(h('div', { class: 'hint', style: 'margin-bottom:6px' },
+    `${fmt(items.reduce((a, i) => a + num(i.o.v[F.qty]), 0))} pcs${info.cap ? ' · ' + fmt(info.cap) + ' pcs/day' : ''}. Running now is marked ●, everything below it is what comes next.`));
+  const sorted = items.slice().sort((a, b) => a.a - b.a);
+  for (const it of sorted) {
+    const o = it.o, running = it.a <= asOfK && it.b >= asOfK, future = it.a > asOfK;
+    pop.appendChild(h('button', { class: 'prow', onclick: () => { closePop(); openDrawer(o); } },
+      h('span', { style: 'width:9px;flex:none;color:var(--sx-text-success)' }, running ? '●' : future ? '' : '✓'),
+      h('span', { class: 'mono', style: 'width:82px;flex:none;overflow:hidden' }, str(o.v[F.po])),
+      h('span', { style: 'flex:1;overflow:hidden;text-overflow:ellipsis' }, str(o.v[F.customer]) + ' · ' + str(o.v[F.style])),
+      h('span', { class: 'mono muted', style: 'flex:none' }, fmt(num(o.v[F.qty]))),
+      h('span', { class: 'mono muted', style: 'flex:none;width:96px;text-align:right' }, fmtDateShort(keyToDate(it.a)) + '→' + fmtDateShort(keyToDate(it.b)))));
+  }
+  return pop;
+}
+function describeLane(items, asOfK) {
+  const m = S.model, F = m.F;
+  const now = items.filter(i => i.a <= asOfK && i.b >= asOfK);
+  const next = items.filter(i => i.a > asOfK).sort((a, b) => a.a - b.a)[0];
+  const lbl = it => `${str(it.o.v[F.customer])} ${str(it.o.v[F.style])}`.trim();
+  if (now.length) return { text: 'Now ' + lbl(now[0]) + (next ? ' → ' + lbl(next) : ''), title: 'Running now: ' + now.map(lbl).join(', ') + (next ? '\nNext: ' + lbl(next) + ' from ' + fmtDate(keyToDate(next.a)) : '') };
+  if (next) return { text: 'Next ' + lbl(next) + ' ' + fmtDateShort(keyToDate(next.a)), title: 'Next order on this lane' };
+  return { text: items.length ? '' : 'no orders in view', title: '' };
+}
+function makeBlock(it, rowH, blkH, stage) {
+  const m = S.model, F = m.F, o = it.o;
+  const p = PC.orderProgress(m, o);
+  const si = PC.STAGE_INDEX[stage.key];
+  const left = it.x, width = it.w, widened = it.w > it.natW + 2;
+  const late = PC.isLate(m, o);
+  const run = PC.runState(m, o);
+  const gates = PC.openGates(m, o);
+  const lead = PC.leadDays(m, o);
+  const locked = p.stage > 5 || (p.qty > 0 && num(o.v[F.packedQty]) >= p.qty);
+  const doneFrac = p.qty ? Math.min(1, p.done[si] / p.qty) : 0;
+  const label = width < 150 ? str(o.v[F.customer]) : `${str(o.v[F.customer])} · ${str(o.v[F.style])}`;
+  const b = h('div', {
+    class: 'blk' + (late ? ' late' : '') + (locked ? ' locked' : '') + (S.sel === o ? ' sel' : ''),
+    'data-run': run,
+    style: `left:${left}px;width:${width}px;top:${it.row * rowH + 1}px;height:${blkH}px;background:${stageColor(si)};color:${stageInk(si)};font-size:${blkH >= 24 ? 12 : 11}px`,
+    tabindex: 0, role: 'button',
+    title: `${str(o.v[F.po])} · ${str(o.v[F.customer])} · style ${str(o.v[F.style])}\n${fmt(p.qty)} pcs · ${str(o.v[F.line])}\n${stage.name}: ${fmtDate(keyToDate(it.a))} → ${fmtDate(keyToDate(it.b))}${widened ? ' (bar widened to fit the name; the dashed line is the real end)' : ''}\n${RUN_LABEL[run]}${run === 'running' ? ' — ' + fmt(p.done[si]) + ' of ' + fmt(p.qty) + ' pcs done at ' + stage.name.toLowerCase() : lead != null && lead >= 0 ? ' — sewing starts in ' + lead + ' d' : ''}${gates.length ? '\nStill waiting on: ' + gates.join(', ') : ''}\nEx-factory ${fmtDate(o.v[F.planExFactory])} · delivery ${fmtDate(o.v[F.cusFinalDly])}${locked ? '\nLocked: already packed or shipped' : ''}`,
+    onclick: e => { if (b._dragged) return; openDrawer(o); },
+    onkeydown: e => {
+      if (e.key === 'Enter') { openDrawer(o); return; }
+      if (!e.shiftKey) return;
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); shiftOrder(o, e.key === 'ArrowRight' ? 1 : -1); }
+    }
+  }, h('i', { class: 'prog', style: `width:${Math.min(width, doneFrac * it.natW)}px` }),
+    h('span', {}, label),
+    width > 150 ? h('span', { class: 'qty' }, fmt(p.qty)) : null,
+    widened ? h('i', { class: 'trueend', style: `left:${it.natW}px` }) : null,
+    late ? h('i', { class: 'lateflag', title: 'Ex-factory runs past the confirmed delivery' }) : null,
+    h('i', { class: 'grip l' }), h('i', { class: 'grip r' }));
+  b._it = it; b._o = o; b._locked = locked;
+  // previous-plan ghost
+  const prev = o.v[F.planPrev];
+  if (stage.key === 'sew' && isDate(prev) && prev.getUTCFullYear() > 2000 && dayKey(prev) !== it.b) {
+    const delta = dayKey(prev) - it.b;
+    b.title += `\nPrevious plan ended ${fmtDate(prev)} (${delta > 0 ? 'pulled in ' + delta : 'pushed out ' + -delta} d)`;
+  }
+  return b;
+}
+function fitToFiltered() {
+  const m = S.model, stage = stageByKey(S.board.stage);
+  let lo = Infinity, hi = -Infinity;
+  for (const o of S.filtered) { const w = PC.stageWindow(m, o, stage); if (!w) continue; lo = Math.min(lo, w[0]); hi = Math.max(hi, w[1]); }
+  if (!isFinite(lo)) { toast('No scheduled orders in this filter.'); return; }
+  S.board.from = lo - 3; S.board.days = Math.max(28, Math.min(420, hi - lo + 8)); render();
+}
+
+/* ---- drag & drop ---- */
+function attachDrag(scroll, laneEls, from, dayW, stage) {
+  let drag = null;
+  scroll.addEventListener('pointerdown', e => {
+    const blk = e.target.closest('.blk'); if (!blk || e.button !== 0) return;
+    const o = blk._o;
+    if (blk._locked) { toast('This order is already packed or shipped, so its plan is locked.'); return; }
+    const mode = e.target.classList.contains('grip') ? (e.target.classList.contains('l') ? 'l' : 'r') : 'move';
+    drag = { blk, o, mode, x0: e.clientX, y0: e.clientY, it: blk._it, moved: false, lane: blk.closest('.lane') };
+    blk.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+  scroll.addEventListener('pointermove', e => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x0, dy = e.clientY - drag.y0;
+    if (!drag.moved && Math.abs(dx) < 4 && Math.abs(dy) < 4) return;
+    if (!drag.moved) { drag.moved = true; drag.blk.classList.add('dragging'); drag.blk._dragged = true; }
+    const dd = Math.round(dx / dayW);
+    let target = drag.lane;
+    if (drag.mode === 'move') {
+      for (const l of laneEls) { const r = l.getBoundingClientRect(); if (e.clientY >= r.top && e.clientY <= r.bottom) { target = l; break; } }
+    }
+    drag.dd = dd; drag.target = target;
+    showGhost(drag, dd, target, from, dayW);
+    showTip(e, drag, dd, target, stage);
+  });
+  const finish = e => {
+    if (!drag) return;
+    const d = drag; drag = null;
+    d.blk.classList.remove('dragging');
+    hideGhost(); hideTip();
+    setTimeout(() => { d.blk._dragged = false; }, 0);
+    if (!d.moved) return;
+    applyDrag(d, stage, e);
+  };
+  scroll.addEventListener('pointerup', finish);
+  scroll.addEventListener('pointercancel', finish);
+}
+let ghostEl = null, tipEl = null;
+function showGhost(d, dd, target, from, dayW) {
+  const plot = target._plot || d.lane._plot;
+  const rowH = (target._rowh || d.lane._rowh || 22);
+  if (!ghostEl) { ghostEl = h('div', { class: 'ghostblk' }); }
+  if (ghostEl.parentNode !== plot) plot.appendChild(ghostEl);
+  let a = d.it.a, b = d.it.b;
+  if (d.mode === 'move') { a += dd; b += dd; } else if (d.mode === 'l') { a = Math.min(d.it.b, a + dd); } else { b = Math.max(d.it.a, b + dd); }
+  ghostEl.style.left = ((a - from) * dayW + 1) + 'px';
+  ghostEl.style.width = Math.max(92, Math.max(dayW - 2, (b - a + 1) * dayW - 2)) + 'px';
+  ghostEl.style.top = (d.it.row * rowH + 1) + 'px';
+  ghostEl.style.height = (rowH - 3) + 'px';
+  ghostEl.textContent = fmtDateShort(keyToDate(a)) + ' → ' + fmtDateShort(keyToDate(b));
+}
+function hideGhost() { if (ghostEl && ghostEl.parentNode) ghostEl.parentNode.removeChild(ghostEl); }
+function showTip(e, d, dd, target, stage) {
+  const m = S.model, F = m.F, o = d.o;
+  if (!tipEl) { tipEl = h('div', { class: 'dragtip' }); document.body.appendChild(tipEl); }
+  const newLane = target._lane ? target._lane.name : null;
+  const sameLane = !newLane || newLane === PC.resourceOf(m, o, stage);
+  let a = d.it.a, b = d.it.b;
+  if (d.mode === 'move') { a += dd; b += dd; } else if (d.mode === 'l') a = Math.min(b, a + dd); else b = Math.max(a, b + dd);
+  const days = PC.workdayCount(a, b);
+  const need = num(o.v[F.target]) > 0 ? Math.ceil(num(o.v[F.qty]) / num(o.v[F.target])) : 0;
+  const lines = [`${str(o.v[F.po])} · ${fmt(num(o.v[F.qty]))} pcs`,
+  `${stage.name}  ${fmtDate(keyToDate(a))} → ${fmtDate(keyToDate(b))}  (${days} working days${need ? ', needs ' + need : ''})`];
+  if (!sameLane) lines.push(`Move to ${newLane}`);
+  const ex = o.v[F.planExFactory], dly = o.v[F.cusFinalDly];
+  if (isDate(ex) && isDate(dly)) { const shift = d.mode === 'move' ? dd : (d.mode === 'r' ? dd : 0); const nex = dayKey(ex) + shift; const slip = nex - dayKey(dly); lines.push(`Ex-factory ${fmtDateShort(keyToDate(nex))} vs delivery ${fmtDateShort(dly)} → ${slip > 0 ? slip + ' d late' : Math.abs(slip) + ' d spare'}`); }
+  tipEl.textContent = lines.join('\n');
+  tipEl.style.left = Math.min(window.innerWidth - 320, e.clientX + 16) + 'px';
+  tipEl.style.top = (e.clientY + 18) + 'px';
+}
+function hideTip() { if (tipEl && tipEl.parentNode) { tipEl.parentNode.removeChild(tipEl); tipEl = null; } }
+// Several cells change per drop, so wrap them in one undo group.
+function grouped(fn) { PC.beginGroup(S.model); try { return fn(); } finally { PC.endGroup(); } }
+// A drop proposes a change; nothing is written until it is confirmed.
+function planDrag(d, stage) {
+  const m = S.model, F = m.F, o = d.o, dd = d.dd || 0;
+  const snap = dt => U.skipSunday(U.startOfDay(dt));
+  const newLane = d.target && d.target._lane ? d.target._lane.name : null;
+  const curRes = PC.resourceOf(m, o, stage);
+  const sets = [], rows = [];
+  let s1 = o.v[F.sew1], s2 = o.v[F.sew2];
+  const was1 = s1, was2 = s2;
+  if (dd) {
+    if (d.mode === 'move') { s1 = snap(addDays(s1, dd)); s2 = snap(addDays(s2, dd)); }
+    else if (d.mode === 'r') { const t = snap(addDays(s2, dd)); if (dayKey(t) >= dayKey(s1)) s2 = t; }
+    else { const t = snap(addDays(s1, dd)); if (dayKey(t) <= dayKey(s2)) s1 = t; }
+  }
+  if (newLane && newLane !== curRes && d.mode === 'move') {
+    if (stage.key === 'sew') {
+      sets.push([F.line, newLane]); rows.push(['Sewing line', curRes || '—', newLane]);
+      const L = m.lineMap.get(newLane);
+      if (L) {
+        if (L.inout && str(o.v[F.inout]) && L.inout !== str(o.v[F.inout])) { sets.push([F.inout, L.inout]); rows.push(['In-house / subcon', str(o.v[F.inout]), L.inout]); }
+        if (S.board.refitOnDrop && L.target > 0) {
+          const need = Math.max(1, Math.ceil(num(o.v[F.qty]) / L.target));
+          let end = U.startOfDay(s1), counted = 1;
+          while (counted < need) { end = addDays(end, 1); if (end.getUTCDay() !== 0) counted++; }
+          s2 = end;
+          if (L.target !== num(o.v[F.target])) { sets.push([F.target, L.target]); rows.push(['Daily target', fmt(num(o.v[F.target])), fmt(L.target) + ' pcs/day']); }
+        }
+      }
+    } else if (stage.key === 'wash') { sets.push([F.ldLine, newLane]); rows.push(['Laundry line', curRes || '—', newLane]); }
+    else if (stage.key === 'fin' || stage.key === 'pack') { sets.push([F.finLine, newLane]); rows.push(['Finishing line', curRes || '—', newLane]); }
+    else return { blocked: 'Cutting and ex-factory follow the sewing line. Move the order on the Sew board to change its site.' };
+  }
+  if (isDate(s1) && dayKey(s1) !== dayKey(was1)) { sets.unshift([F.sew1, s1]); rows.unshift(['Sewing starts', fmtDate(was1), fmtDate(s1)]); }
+  if (isDate(s2) && dayKey(s2) !== dayKey(was2)) { sets.push([F.sew2, s2]); rows.push(['Sewing ends', fmtDate(was2), fmtDate(s2)]); }
+  if (!sets.length) return null;
+  // what the move does to the promise date, using the same chain the workbook uses
+  const shift = isDate(s1) && isDate(was1) ? dayKey(s2) - dayKey(was2) : 0;
+  const ex = o.v[F.planExFactory], dly = o.v[F.cusFinalDly];
+  let verdict = null;
+  if (isDate(ex) && isDate(dly)) {
+    const slip = dayKey(ex) + shift - dayKey(dly);
+    verdict = slip > 0 ? { bad: true, text: `Ex-factory lands ${slip} day${slip > 1 ? 's' : ''} after the ${fmtDate(dly)} delivery.` }
+                       : { bad: false, text: `Ex-factory keeps ${Math.abs(slip)} day${Math.abs(slip) === 1 ? '' : 's'} of slack before the ${fmtDate(dly)} delivery.` };
+  }
+  return { o, sets, rows, verdict };
+}
+function applyDrag(d, stage, ev) {
+  const plan = planDrag(d, stage);
+  if (!plan) { render(); return; }
+  if (plan.blocked) { toast(plan.blocked); render(); return; }
+  confirmDrag(plan, ev);
+}
+function confirmDrag(plan, ev) {
+  const m = S.model, F = m.F, o = plan.o;
+  const pop = openPop('Confirm this change', ev ? ev.clientX : null, ev ? ev.clientY : null);
+  pop.appendChild(h('div', { style: 'font-weight:600;font-size:12px;margin-bottom:6px' },
+    h('span', { class: 'mono' }, str(o.v[F.po])), ' · ', str(o.v[F.customer]), ' · ', fmt(num(o.v[F.qty])), ' pcs'));
+  const tbl = h('div', { style: 'display:grid;grid-template-columns:auto 1fr auto;gap:2px 8px;font-size:12px;align-items:center' });
+  for (const [label, from, to] of plan.rows) {
+    tbl.appendChild(h('span', { class: 'muted' }, label));
+    tbl.appendChild(h('span', { class: 'mono', style: 'color:var(--sx-text-disabled);text-decoration:line-through' }, from));
+    tbl.appendChild(h('span', { class: 'mono', style: 'color:var(--sx-text-warning);font-weight:600' }, to));
+  }
+  pop.appendChild(tbl);
+  if (plan.verdict) pop.appendChild(h('div', { class: 'tag ' + (plan.verdict.bad ? 'bad' : 'ok'), style: 'margin-top:8px;white-space:normal;line-height:1.5' }, plan.verdict.text));
+  pop.appendChild(h('div', { class: 'hint', style: 'margin-top:6px' }, 'Cut, wash, finishing, packing and ex-factory dates all follow from this.'));
+  const apply = h('button', { class: 'btn primary', onclick: () => { closePop(); commitDrag(plan); } }, 'Apply change');
+  pop.appendChild(h('div', { style: 'display:flex;gap:6px;margin-top:10px' }, apply,
+    h('button', { class: 'btn', onclick: () => { closePop(); render(); } }, 'Cancel')));
+  apply.focus();
+  pop.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); apply.click(); } });
+}
+function commitDrag(plan) {
+  const m = S.model, F = m.F, o = plan.o;
+  grouped(() => { for (const [c, v] of plan.sets) PC.setCell(m, o, c, v); });
+  S.sel = o;
+  afterEdit(`${str(o.v[F.po])} · ${plan.rows.map(r => r[0].toLowerCase() + ' ' + r[2]).join(', ')}`, true);
+}
+function shiftDates(o, dd) {
+  const m = S.model, F = m.F;
+  grouped(() => {
+  const s1 = o.v[F.sew1], s2 = o.v[F.sew2];
+    if (isDate(s1)) PC.setCell(m, o, F.sew1, U.skipSunday(U.startOfDay(addDays(s1, dd))));
+    if (isDate(s2)) PC.setCell(m, o, F.sew2, U.skipSunday(U.startOfDay(addDays(s2, dd))));
+  });
+}
+function shiftOrder(o, dd) { shiftDates(o, dd); S.sel = o; afterEdit(`${str(o.v[S.model.F.po])} moved ${dd > 0 ? '+' : ''}${dd} d`, true); }
+
+/* ================= view: capacity ================= */
+function renderCapacity(view, bar) {
+  const m = S.model, C = S.cap;
+  const seg = h('div', { class: 'seg' });
+  seg.appendChild(h('button', { 'aria-pressed': C.stage === 'all', onclick: () => { C.stage = 'all'; render(); } }, 'All stages'));
+  for (const st of STAGES) seg.appendChild(h('button', { 'aria-pressed': C.stage === st.key, onclick: () => { C.stage = st.key; render(); } }, st.short));
+  bar.appendChild(h('span', { class: 'vlabel' }, 'Stage')); bar.appendChild(seg);
+  const gr = h('div', { class: 'seg' });
+  for (const [g, l] of [['day', 'Day'], ['week', 'Week']]) gr.appendChild(h('button', { 'aria-pressed': C.grain === g, onclick: () => { C.grain = g; render(); } }, l));
+  bar.appendChild(h('span', { class: 'vlabel' }, 'Bucket')); bar.appendChild(gr);
+  bar.appendChild(h('div', { style: 'flex:1' }));
+  bar.appendChild(h('div', { class: 'capkey' },
+    h('span', { class: 'sc' }, h('i', { style: heatStyle(0.5) }), 'under 85%'),
+    h('span', { class: 'sc' }, h('i', { style: heatStyle(0.95) }), '85–100%'),
+    h('span', { class: 'sc' }, h('i', { style: heatStyle(1.4) }), 'over capacity'),
+    h('span', { class: 'muted' }, 'remaining quantity only')));
+
+  const asOfK = dayKey(m.asOf);
+  const buckets = [];
+  if (C.grain === 'week') { let w = U.weekKey(m.asOf); for (let i = 0; i < C.weeks; i++) { buckets.push({ a: w - 6, b: w, label: fmtDateShort(keyToDate(w)) }); w += 7; } }
+  else { for (let i = 0; i < 45; i++) { const k = asOfK + i; buckets.push({ a: k, b: k, label: keyToDate(k).getUTCDate() + '', sub: MON[keyToDate(k).getUTCMonth()], sun: keyToDate(k).getUTCDay() === 0 }); } }
+
+  const wrap = h('div', { style: 'padding:0' });
+  const table = h('table', { class: 'heat' });
+  const thead = h('thead'); const hr = h('tr');
+  hr.appendChild(h('th', { class: 'rh' }, C.stage === 'all' ? 'Production stage' : 'Lane · capacity/day'));
+  for (const b of buckets) hr.appendChild(h('th', { style: b.sun ? 'background:var(--sunday)' : '' }, b.label, b.sub ? h('div', { style: 'font-size:9px;opacity:.7' }, b.sub) : null));
+  thead.appendChild(hr); table.appendChild(thead);
+  const tbody = h('tbody');
+
+  const stageKeys = C.stage === 'all' ? STAGES.map(s => s.key) : [C.stage];
+  for (const sk of stageKeys) {
+    const stage = stageByKey(sk);
+    const { load, meta } = buildLoad(sk, S.filtered, 'remaining');
+    const groups = laneList(sk);
+    if (C.stage === 'all') {
+      // one row per stage, factory-wide
+      const tot = new Map(); let capSum = 0;
+      for (const [res, days] of load) { const { cap } = capFor(sk, res, days); capSum += cap; for (const [k, v] of days) tot.set(k, (tot.get(k) || 0) + v); }
+      const tr = h('tr', { class: 'grouprow' });
+      tr.appendChild(h('th', { class: 'rh' }, h('div', { class: 'nm' }, h('i', { style: `width:9px;height:9px;border-radius:2px;background:${stageColor(PC.STAGE_INDEX[sk])}` }), stage.name),
+        h('div', { class: 'sub' }, capSum ? fmt(capSum) + ' pcs/day across lanes' : 'no capacity set')));
+      for (const b of buckets) tr.appendChild(cell(tot, b, capSum, sk, null, meta));
+      tbody.appendChild(tr);
+      continue;
+    }
+    for (const g of groups) {
+      const lines = g.lines.filter(l => load.has(l.name));
+      const extras = [...load.keys()].filter(r => !groups.some(gg => gg.lines.some(l => l.name === r)));
+      if (!lines.length && !extras.length) continue;
+      if (groups.length > 1) tbody.appendChild(h('tr', { class: 'grouprow' }, h('th', { class: 'rh' }, g.group), ...buckets.map(() => h('td'))));
+      for (const L of [...lines, ...(g === groups[0] ? extras.map(r => ({ name: r, label: r === '(unassigned)' ? 'No lane set' : r })) : [])]) {
+        const days = load.get(L.name) || new Map();
+        const info = capFor(sk, L.name, days);
+        const tr = h('tr');
+        tr.appendChild(h('th', { class: 'rh' },
+          h('div', { class: 'nm' }, h('span', { style: 'cursor:pointer', onclick: () => { S.board.stage = sk; setView('board'); } }, L.label || L.name)),
+          h('div', { class: 'sub' },
+            h('input', {
+              class: 'capedit' + (info.est ? ' est' : ''), value: info.cap || '', title: info.est ? 'Estimated from the plan — type the real figure' : 'Daily capacity',
+              onchange: e => { setCap(sk, L.name, parseInt(String(e.target.value).replace(/[^\d]/g, ''), 10) || 0); render(); }
+            }), ' pcs/day', info.est ? ' (est.)' : '')));
+        for (const b of buckets) tr.appendChild(cell(days, b, info.cap, sk, L.name, meta));
+        tbody.appendChild(tr);
+      }
+    }
+  }
+  table.appendChild(tbody);
+  wrap.appendChild(table);
+  if (!tbody.children.length) wrap.appendChild(h('div', { class: 'empty' }, 'No remaining work in this filter for that stage.'));
+  // per-lane stage breakdown
+  wrap.appendChild(stageBreakdown());
+  view.appendChild(wrap);
+
+  function cell(days, b, cap, sk, res, meta) {
+    let v = 0; for (let k = b.a; k <= b.b; k++) v += days.get(k) || 0;
+    const wd = PC.workdayCount(b.a, b.b) || 1;
+    const capacity = cap * wd;
+    const r = capacity > 0 ? v / capacity : 0;
+    const td = h('td', {
+      class: 'cell', style: heatStyle(r) + (b.sun ? ';background-image:linear-gradient(var(--sunday),var(--sunday))' : ''),
+      title: v ? `${fmt(v)} pcs${capacity ? ' of ' + fmt(capacity) + ' capacity (' + pct(r) + ')' : ' — no capacity set'}\nClick to see the orders` : 'nothing loaded',
+      onclick: () => v && showCellOrders(sk, res, b, meta)
+    });
+    if (v) { td.appendChild(h('div', { class: 'r' }, capacity ? pct(r) : fmtK(v))); if (capacity && b.b - b.a > 0) td.appendChild(h('div', { style: 'font-size:9px;opacity:.75' }, fmtK(v))); }
+    return td;
+  }
+}
+function showCellOrders(sk, res, b, meta) {
+  const m = S.model, F = m.F;
+  const stage = stageByKey(sk);
+  const set = new Set();
+  if (res == null) { for (const [, mm] of meta) for (let k = b.a; k <= b.b; k++) (mm.get(k) || []).forEach(i => set.add(i)); }
+  else { const mm = meta.get(res); if (mm) for (let k = b.a; k <= b.b; k++) (mm.get(k) || []).forEach(i => set.add(i)); }
+  const list = [...set].map(i => m.orders[i]).filter(Boolean).sort((a, c) => num(c.v[F.qty]) - num(a.v[F.qty]));
+  const pop = openPop(`${stage.name} · ${res || 'all lanes'} · ${b.label}`);
+  pop.appendChild(h('div', { class: 'hint', style: 'margin-bottom:6px' }, `${list.length} orders · ${fmt(list.reduce((a, o) => a + num(o.v[F.qty]), 0))} pcs planned`));
+  for (const o of list.slice(0, 60)) pop.appendChild(h('button', { class: 'prow', onclick: () => { closePop(); openDrawer(o); } },
+    h('span', { class: 'mono' }, str(o.v[F.po])), h('span', { style: 'flex:1;overflow:hidden;text-overflow:ellipsis' }, str(o.v[F.customer]) + ' · ' + str(o.v[F.style])), h('span', { class: 'mono muted' }, fmt(num(o.v[F.qty])))));
+  pop.appendChild(h('button', { class: 'btn', style: 'margin-top:8px;width:100%;justify-content:center', onclick: () => { closePop(); if (res) { if (sk === 'sew') setOnlyFacet('lineUnit', (m.lineMap.get(res) || {}).label || res); else if (sk === 'wash') setOnlyFacet('ldLine', res); else if (sk === 'fin' || sk === 'pack') setOnlyFacet('finLine', res); else setOnlyFacet('site', res); } S.board.stage = sk; S.board.from = b.a - 5; setView('board'); } }, 'Open these on the board'));
+}
+function stageBreakdown() {
+  const m = S.model;
+  const box = h('div', { style: 'padding:12px' });
+  const p = panel('Every stage for the orders in view', 'from planned cut to ex-factory, pieces per week');
+  const asOfK = dayKey(m.asOf);
+  const weeks = []; { let w = U.weekKey(m.asOf); for (let i = -1; i < 15; i++) { weeks.push(w); w += 7; } }
+  const start = U.weekKey(m.asOf) - 7;
+  const series = STAGES.map((st, si) => {
+    const { load } = buildLoad(st.key, S.filtered, 'remaining');
+    const arr = weeks.map(() => 0);
+    for (const [, days] of load) for (const [k, v] of days) { const wk = U.weekKey(keyToDate(k)); const idx = Math.round((wk - start) / 7); if (idx >= 0 && idx < arr.length) arr[idx] += v; }
+    return { st, si, arr };
+  });
+  const maxV = Math.max(1, ...series.flatMap(s => s.arr));
+  const W = Math.max(560, weeks.length * 54), H = 208, PAD = { l: 50, r: 10, t: 10, b: 30 };
+  const bw = (W - PAD.l - PAD.r) / weeks.length;
+  const x = i => PAD.l + i * bw;
+  const y = v => PAD.t + (1 - v / maxV) * (H - PAD.t - PAD.b);
+  const g = sv('svg', { viewBox: `0 0 ${W} ${H}`, width: '100%', height: H, role: 'img', 'aria-label': 'Remaining work per stage per week' });
+  for (let i = 0; i <= 4; i++) { const v = maxV * i / 4; g.appendChild(sv('line', { class: 'gridline', x1: PAD.l, x2: W - PAD.r, y1: y(v), y2: y(v) })); g.appendChild(sv('text', { x: PAD.l - 6, y: y(v) + 3, 'text-anchor': 'end', text: fmtK(v) })); }
+  const sw = (bw - 8) / 6;
+  weeks.forEach((w, i) => {
+    series.forEach(s => {
+      const v = s.arr[i]; if (!v) return;
+      g.appendChild(sv('rect', { x: x(i) + 4 + s.si * sw, y: y(v), width: Math.max(1.5, sw - 1), height: Math.max(1, H - PAD.b - y(v)), fill: `var(--st${s.si + 1})`, rx: 1 }));
+    });
+    if (i % 2 === 0) g.appendChild(sv('text', { x: x(i) + bw / 2, y: H - 10, 'text-anchor': 'middle', text: fmtDateShort(keyToDate(w)) }));
+  });
+  g.appendChild(sv('line', { class: 'axis', x1: PAD.l, x2: W - PAD.r, y1: H - PAD.b, y2: H - PAD.b }));
+  const body = p.querySelector('.body');
+  body.appendChild(g);
+  const lg = h('div', { class: 'legend' });
+  STAGES.forEach((st, i) => lg.appendChild(h('span', {}, h('i', { style: `background:${stageColor(i)}` }), st.name)));
+  body.appendChild(lg);
+  box.appendChild(p);
+  return box;
+}
+
+/* ================= view: orders table ================= */
+const PRESETS = {
+  planner: { name: 'Planner', keys: ['po', 'blk', 'customer', 'style', 'desc', 'qty', 'line', 'target', 'pcd', 'sew1', 'sew2', 'factoryConfirm', 'output', 'ldLine', 'washLastOut', 'finLine', 'finLastOut', 'planExFactory', 'cusFinalDly', 'otd', 'status'] },
+  cutting: { name: 'Cutting', keys: ['po', 'customer', 'style', 'qty', 'fabric', 'mill', 'fabReqIH', 'fabActIH', 'markerRelease', 'markerAct', 'pcd', 'cutQty', 'cutBal', 'inputDate', 'inputQty'] },
+  sewing: { name: 'Sewing', keys: ['po', 'customer', 'style', 'qty', 'line', 'target', 'days', 'sew1', 'sew2', 'planPrev', 'factoryConfirm', 'inputQty', 'output', 'wipSewing', 'dispatched', 'sewBal'] },
+  laundry: { name: 'Laundry', keys: ['po', 'customer', 'style', 'qty', 'ldLine', 'wash', 'recipe', 'washFirstOut', 'washLastOut', 'laundryWip', 'lrCompletion', 'lrConfirm', 'washOutput', 'washBal', 'shrinkStatus'] },
+  finishing: { name: 'Finishing & packing', keys: ['po', 'customer', 'style', 'qty', 'finLine', 'finFirstOut', 'finLastOut', 'finConfirm', 'finOut', 'finBal', 'packLastOut', 'packConfirm', 'packedQty', 'packBal'] },
+  shipping: { name: 'Delivery', keys: ['po', 'customer', 'style', 'qty', 'planInspection', 'planExFactory', 'exFactory', 'shippedQty', 'shipBal', 'sysDelivery', 'cusFinalDly', 'dlyRevision', 'otd', 'delayBucket', 'delayReason', 'shipMonth'] },
+  approvals: { name: 'Approvals & materials', keys: ['po', 'customer', 'style', 'qty', 'fitStatus', 'fitApproved', 'ppStatus', 'ppApproved', 'washAppStatus', 'washAppDate', 'trimStatus', 'trimMax', 'pocketing', 'interlining', 'thread', 'zipper', 'label', 'shrinkStatus', 'fabActIH'] },
+  all: { name: 'Every column', keys: null },
+};
+function presetCols(key) {
+  const m = S.model;
+  if (key === 'all') return m.cols.filter(c => c.nonEmpty > 0 || c.formula);
+  return PRESETS[key].keys.map(k => m.F[k]).filter(i => i >= 0).map(i => m.cols[i]);
+}
+function renderOrders(view, bar) {
+  const m = S.model, F = m.F, T = S.table;
+  const seg = h('div', { class: 'seg' });
+  for (const k in PRESETS) seg.appendChild(h('button', { 'aria-pressed': T.preset === k, onclick: () => { T.preset = k; render(); } }, PRESETS[k].name));
+  bar.appendChild(h('span', { class: 'vlabel' }, 'Columns')); bar.appendChild(seg);
+  bar.appendChild(h('div', { style: 'flex:1' }));
+  bar.appendChild(h('span', { class: 'sm muted' }, 'Click a cell to edit. Blue column letters are written straight into the workbook.'));
+
+  const cols = presetCols(T.preset);
+  let rows = S.filtered.slice();
+  if (T.sort != null) {
+    const c = T.sort;
+    rows.sort((a, b) => {
+      const x = a.v[c], y = b.v[c];
+      if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1;
+      const cmp = isDate(x) && isDate(y) ? dayKey(x) - dayKey(y) : typeof x === 'number' && typeof y === 'number' ? x - y : String(x).localeCompare(String(y), undefined, { numeric: true });
+      return cmp * T.dir;
+    });
+  }
+  const wrap = h('div', { class: 'tblwrap' });
+  const table = h('table', { class: 'tbl' });
+  const colgroup = h('colgroup');
+  colgroup.appendChild(h('col', { style: 'width:34px' }));
+  for (const c of cols) colgroup.appendChild(h('col', { style: `width:${colWidth(c)}px` }));
+  table.appendChild(colgroup);
+  const thead = h('thead'); const tr = h('tr');
+  tr.appendChild(h('th', { class: 'stickycol', style: 'left:0' }, '#'));
+  let left = 34;
+  cols.forEach((c, i) => {
+    const sticky = i < 2;
+    const th = h('th', {
+      class: sticky ? 'stickycol' : '', style: sticky ? `left:${left}px` : '',
+      title: `${c.letter} · ${c.name}${c.owner ? '\nMaintained by ' + c.owner : ''}${c.formula ? '\nCalculated in the workbook — editing replaces the formula with a value' : ''}`,
+      onclick: () => { if (T.sort === c.i) T.dir = -T.dir; else { T.sort = c.i; T.dir = 1; } render(); }
+    }, h('span', { class: 'hl' }, c.letter, c.formula ? h('span', { class: 'fx' }, ' fx') : null), c.name.slice(0, 34), T.sort === c.i ? (T.dir > 0 ? ' ▲' : ' ▼') : '');
+    if (sticky) left += colWidth(c);
+    tr.appendChild(th);
+  });
+  thead.appendChild(tr); table.appendChild(thead);
+  const tbody = h('tbody'); table.appendChild(tbody);
+  wrap.appendChild(table); view.appendChild(wrap);
+
+  // virtualisation
+  const ROW = 30, BUF = 12;
+  const spacerTop = h('tr', { style: 'height:0' }), spacerBot = h('tr', { style: 'height:0' });
+  function draw() {
+    const top = wrap.scrollTop, vh = wrap.clientHeight;
+    const first = Math.max(0, Math.floor(top / ROW) - BUF);
+    const last = Math.min(rows.length, Math.ceil((top + vh) / ROW) + BUF);
+    clear(tbody);
+    spacerTop.style.height = first * ROW + 'px'; spacerBot.style.height = Math.max(0, (rows.length - last) * ROW) + 'px';
+    tbody.appendChild(spacerTop);
+    for (let i = first; i < last; i++) tbody.appendChild(rowEl(rows[i], i));
+    tbody.appendChild(spacerBot);
+  }
+  function rowEl(o, i) {
+    const tr = h('tr', { class: S.sel === o ? 'sel' : '' });
+    tr.appendChild(h('td', { class: 'stickycol n muted', style: 'left:0;cursor:pointer', onclick: () => openDrawer(o) }, i + 1));
+    let l = 34;
+    cols.forEach((c, ci) => {
+      const sticky = ci < 2;
+      const v = o.v[c.i];
+      const edited = m.edits.has(o.r + ':' + c.i);
+      const isNum = typeof v === 'number', isDt = isDate(v);
+      const locked = c.owner === 'PLM' && !edited;
+      const td = h('td', {
+        class: (sticky ? 'stickycol ' : '') + (isNum ? 'n ' : isDt ? 'd ' : '') + (edited ? 'edited ' : '') + (locked ? 'locked ' : 'editable'),
+        style: sticky ? `left:${l}px` : '',
+        title: locked ? c.name + ' comes from the PLM system. Click to edit anyway.' : '',
+        onclick: () => editCell(td, o, c)
+      }, cellText(v, c));
+      if (sticky) l += colWidth(c);
+      tr.appendChild(td);
+    });
+    return tr;
+  }
+  wrap.addEventListener('scroll', () => requestAnimationFrame(draw));
+  draw();
+  if (!rows.length) view.appendChild(h('div', { class: 'empty' }, 'No order matches these filters.'));
+}
+function colWidth(c) {
+  const k = c.nkey;
+  if (/SAITEX PO|CUST PO|BLK/.test(k)) return 108;
+  if (c.type === 'date') return 92;
+  if (c.type === 'number') return 78;
+  if (/DESCRIPTION|REMARK|REASON|RECIPE|STATUS$/.test(k)) return 210;
+  return 124;
+}
+function cellText(v, c) {
+  if (v == null) return '';
+  if (isDate(v)) return v.getUTCFullYear() < 2000 ? '' : fmtDate(v);
+  if (typeof v === 'number') return Number.isInteger(v) ? fmt(v) : (Math.abs(v) < 100 ? v.toFixed(2) : fmt(v));
+  return String(v);
+}
+function editCell(td, o, c) {
+  if (td.querySelector('input')) return;
+  const m = S.model, v = o.v[c.i];
+  const type = c.type === 'date' ? 'date' : c.type === 'number' ? 'number' : 'text';
+  const inp = h('input', { class: 'cellin', type, value: isDate(v) ? ymd(v) : v == null ? '' : v, step: 'any' });
+  clear(td); td.appendChild(inp); inp.focus(); inp.select();
+  const commit = save => {
+    const raw = inp.value.trim();
+    clear(td);
+    if (save) {
+      let nv = null;
+      if (raw !== '') nv = type === 'date' ? parseYmd(raw) : type === 'number' ? (isNaN(+raw) ? raw : +raw) : raw;
+      if (PC.setCell(m, o, c.i, nv)) { afterEdit(`${str(o.v[m.F.po])} · ${c.name} → ${cellText(nv, c) || 'blank'}`, true); return; }
+    }
+    td.textContent = cellText(o.v[c.i], c);
+  };
+  inp.addEventListener('blur', () => commit(true));
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); inp.blur(); } else if (e.key === 'Escape') { e.preventDefault(); commit(false); } });
+}
+
+/* ================= view: changes ================= */
+function renderChanges(view, bar) {
+  const m = S.model;
+  bar.appendChild(h('span', { class: 'vlabel' }, 'Edits waiting to be written back'));
+  bar.appendChild(h('div', { style: 'flex:1' }));
+  bar.appendChild(h('button', { class: 'btn', disabled: !m.edits.size, onclick: () => { if (confirm('Discard all ' + m.edits.size + ' edits and go back to the workbook values?')) discardAll(); } }, 'Discard all'));
+  bar.appendChild(h('button', { class: 'btn primary', disabled: !m.edits.size, onclick: doExport }, 'Export workbook'));
+
+  const wrap = h('div', { class: 'ov' });
+  if (!m.edits.size) {
+    wrap.appendChild(h('div', { class: 'panel' }, h('div', { class: 'empty' },
+      'No edits yet. Drag an order on the line board, or click any cell in Orders, and every change lands here before it goes back into the workbook.')));
+    view.appendChild(wrap); return;
+  }
+  const byRow = new Map();
+  for (const e of m.edits.values()) { if (!byRow.has(e.r)) byRow.set(e.r, []); byRow.get(e.r).push(e); }
+  const p = panel(`${m.edits.size} cell${m.edits.size > 1 ? 's' : ''} changed across ${byRow.size} order${byRow.size > 1 ? 's' : ''}`, 'exported into the same workbook, formulas elsewhere left untouched');
+  const body = p.querySelector('.body'); body.style.padding = '0';
+  for (const [r, list] of [...byRow.entries()].sort((a, b) => a[0] - b[0])) {
+    const o = PC.orderByRow(m, r);
+    body.appendChild(h('div', { style: 'padding:7px 12px 3px;font-weight:600;font-size:12px;display:flex;gap:8px;align-items:center' },
+      h('span', { class: 'mono' }, str(o.v[m.F.po])),
+      h('span', { class: 'muted sm' }, [str(o.v[m.F.customer]), str(o.v[m.F.style]), str(o.v[m.F.line])].filter(Boolean).join(' · ')),
+      h('button', { class: 'btn', style: 'margin-left:auto', onclick: () => openDrawer(o) }, 'Open')));
+    for (const e of list) {
+      const c = m.cols[e.c];
+      body.appendChild(h('button', { class: 'clrow', onclick: () => openDrawer(o) },
+        h('span', { class: 'col' }, c.letter + ' · ' + c.name),
+        h('span', { class: 'chg' }, h('span', { class: 'old' }, cellText(e.orig, c) || 'blank'), ' → ', h('span', { class: 'new' }, cellText(e.value, c) || 'blank')),
+        e.origFormula ? h('span', { class: 'tag warn' }, 'was a formula') : h('span')));
+    }
+  }
+  wrap.appendChild(p);
+  wrap.appendChild(h('div', { class: 'hint', style: 'padding:0 2px' },
+    'Cells that held a formula keep your typed value; every other formula in the workbook is preserved and Excel recalculates the file when it opens.'));
+  view.appendChild(wrap);
+}
+function discardAll() {
+  const m = S.model;
+  for (const e of [...m.edits.values()]) { const o = PC.orderByRow(m, e.r); if (!o) continue; o.v[e.c] = e.orig; o.f[e.c] = e.origFormula; o.dirty = false; PC.recompute(m, o); }
+  m.edits.clear(); m.undo.length = 0; m.redo.length = 0;
+  localStorage.removeItem(S.storeKey);
+  afterEdit('All edits discarded.');
+}
+
+/* ================= drawer ================= */
+function openDrawer(o, keepScroll) {
+  const m = S.model, F = m.F, d = $('drawer');
+  const prevScroll = keepScroll ? (d.querySelector('.dbody') || {}).scrollTop : 0;
+  const openSecs = new Set([...d.querySelectorAll('details[open]')].map(x => x.dataset.k));
+  S.sel = o;
+  clear(d);
+  const p = PC.orderProgress(m, o);
+  const g = k => (F[k] >= 0 ? o.v[F[k]] : null);
+  const late = PC.isLate(m, o);
+  const ex = g('planExFactory'), dly = g('cusFinalDly');
+  const slack = isDate(ex) && isDate(dly) ? dayKey(dly) - dayKey(ex) : null;
+  const L = m.lineMap.get(str(g('line')).trim());
+
+  const head = h('div', { class: 'dhead' },
+    h('div', { class: 'top' },
+      h('div', { style: 'flex:1;min-width:0' },
+        h('h2', {}, h('span', { class: 'mono' }, str(g('po')) || '(no MO)'), h('span', { class: 'tag neutral' }, str(g('blk')))),
+        h('div', { class: 'sub' }, [str(g('customer')), 'style ' + str(g('style')), str(g('desc'))].filter(Boolean).join(' · '))),
+      h('button', { class: 'btn icon', title: 'Close', onclick: closeDrawer }, '×')),
+    h('div', { class: 'dpills' },
+      h('span', { class: 'tag accent' }, PC.stageLabel(p.stage)),
+      (function () {
+        const run = PC.runState(m, o), lead = PC.leadDays(m, o);
+        if (run === 'running') return h('span', { class: 'tag ok' }, '● Running');
+        if (run === 'ready') return h('span', { class: 'tag warn' }, '◐ Ready to run' + (lead != null ? ', sewing in ' + lead + ' d' : ''));
+        if (run === 'clear') return h('span', { class: 'tag neutral' }, 'Cleared' + (lead != null ? ', sewing in ' + lead + ' d' : ''));
+        if (run === 'waiting') return h('span', { class: 'tag neutral' }, 'Waiting on ' + PC.openGates(m, o).join(', '));
+        return null;
+      })(),
+      (function () {
+        const otd = PC.otdDays(m, o);
+        if (otd != null && otd < 0) return h('span', { class: 'tag bad' }, '▲ ' + Math.round(-otd) + ' days late');
+        if (slack != null && slack < 0) return h('span', { class: 'tag bad' }, '▲ ex-factory ' + Math.abs(slack) + ' d after delivery');
+        if (late) return h('span', { class: 'tag bad' }, '▲ at risk');
+        return h('span', { class: 'tag ok' }, '● ' + (slack != null ? slack + ' days spare' : 'on plan'));
+      })(),
+      (function () { const otd = PC.otdDays(m, o); if (otd == null) return str(g('otd')) ? h('span', { class: 'tag neutral' }, str(g('otd'))) : null;
+        return h('span', { class: 'tag neutral', title: 'Column Y, on-time delivery in days. A minus figure means the order is late.' }, 'OTD ' + (otd < 0 ? '' : '+') + Math.round(otd) + ' d'); })(),
+      g('delayBucket') ? h('span', { class: 'tag warn' }, 'delay ' + str(g('delayBucket')).toLowerCase()) : null,
+      PC.isNonWash(m, o) ? h('span', { class: 'tag neutral' }, 'no wash — no laundry line') : null,
+      o.dirty ? h('span', { class: 'tag warn' }, 'edited') : null));
+  d.appendChild(head);
+
+  const body = h('div', { class: 'dbody' });
+  // --- order identity (the non-production columns the planner asked for)
+  body.appendChild(kvSection('order', 'Order', [
+    'po', 'blk', 'ldrLine', 'season', 'factoryNo', 'line', 'customerPlan', 'style', 'desc',
+    'sysDelivery', 'cusFinalDly', 'saitexDelivery', 'otd', 'custPo', 'sampleType', 'fabric', 'wash', 'qty', 'target',
+  ], o, true));
+  {
+    const rec = str(g('recipe')).trim();
+    body.appendChild(h('div', { style: 'margin-top:8px;border:1px solid var(--sx-border-subtle);padding:6px 8px' },
+      h('div', { class: 'k', style: 'font-size:11px;font-weight:500;color:var(--sx-text-disabled);display:flex;gap:4px' },
+        h('span', { class: 'cl', style: 'color:var(--sx-text-link);font-family:var(--sx-font-mono)' }, 'HX'), 'Wash recipe'),
+      rec && !/non\s*wash/i.test(rec)
+        ? h('div', { class: 'mono', style: 'font-size:11px;white-space:normal;line-height:1.5;margin-top:2px' }, rec)
+        : h('div', { style: 'margin-top:3px' }, h('span', { class: 'tag neutral' }, 'No recipe — this style is not washed, so no laundry line is allocated'))));
+  }
+  if (L) body.appendChild(h('div', { class: 'hint', style: 'margin-top:6px' },
+    `Sewing line ${L.name} → factory ${L.site}, ${L.unit}. ${L.inout === 'Inside' ? 'In-house' : 'Subcontract'} · ${fmt(L.target)} pcs/day target.`));
+
+  // --- stage rail
+  const rail = h('div', { class: 'stagerail' });
+  STAGES.forEach((st, i) => {
+    const w = PC.stageWindow(m, o, st);
+    const done = p.done[i], bal = Math.max(0, p.qty - done);
+    const actual = g(st.actual);
+    const skip = st.key === 'wash' && PC.isNonWash(m, o);
+    rail.appendChild(h('div', { class: 'scard' + (p.stage === i ? ' current' : '') + (done >= p.qty && p.qty ? ' done' : '') },
+      h('div', { class: 'sn' }, h('i', { class: 'dot', style: 'background:' + stageColor(i) }), st.short === 'Ship' ? 'Ex-factory' : st.name),
+      h('div', { class: 'sd' },
+        h('div', { class: 'dates' },
+          skip ? h('span', {}, 'not required') :
+            h('span', {}, 'plan ', h('b', {}, w ? fmtDateShort(keyToDate(w[0])) + ' → ' + fmtDate(keyToDate(w[1])) : '—')),
+          actual != null ? h('span', {}, 'actual ', h('b', {}, isDate(actual) ? fmtDate(actual) : str(actual))) : null,
+          st.key === 'sew' && isDate(g('factoryConfirm')) ? h('span', { style: dayKey(g('factoryConfirm')) > dayKey(g('sew2') || g('factoryConfirm')) ? 'color:var(--sx-text-warning)' : '' }, 'factory says ', h('b', {}, fmtDate(g('factoryConfirm')))) : null,
+          st.key === 'wash' && g('ldLine') ? h('span', {}, 'LD line ', h('b', {}, str(g('ldLine')))) : null,
+          st.key === 'fin' && g('finLine') ? h('span', {}, 'line ', h('b', {}, str(g('finLine')))) : null),
+        skip ? null : h('div', { class: 'qbar' }, h('i', { style: `width:${p.qty ? Math.min(100, done / p.qty * 100) : 0}%` })),
+        skip ? null : h('div', { class: 'qty' }, h('b', {}, fmt(done)), ' of ', fmt(p.qty), ' pcs · ', h('b', {}, fmt(bal)), ' to go'))));
+  });
+  body.appendChild(h('details', { class: 'dsec', 'data-k': 'stages', open: true }, h('summary', {}, 'Every production stage'), rail));
+
+  body.appendChild(kvSection('sewplan', 'Sewing plan (drag on the board writes these)', ['pcd', 'markerRelease', 'markerAct', 'inputDate', 'inputQty', 'sew1', 'sew2', 'planPrev', 'factoryConfirm', 'target', 'days', 'output', 'dispatched'], o, openSecs.has('sewplan') || true));
+  body.appendChild(kvSection('wip', 'Work in progress', ['cutQty', 'cutBal', 'wipInput', 'wipSewing', 'sewBal', 'wipDispatch', 'wipInLR', 'washBal', 'wipInFin', 'finBal', 'wipForPacking', 'packBal', 'whWip', 'shipBal'], o, openSecs.has('wip')));
+  body.appendChild(kvSection('appr', 'Approvals', ['fitStatus', 'fitSubmit', 'fitApproved', 'ppStatus', 'ppSubmit', 'ppApproved', 'washAppStatus', 'washAppDate', 'repeatNew'], o, openSecs.has('appr')));
+  body.appendChild(kvSection('laundry', 'Laundry', ['ldLine', 'recipe', 'washFirstOut', 'washLastOut', 'laundryWip', 'lrCompletion', 'lrConfirm', 'washOutput', 'washBal', 'rinse', 'dyeing', 'wash2', 'washQuality'], o, openSecs.has('laundry')));
+  body.appendChild(kvSection('fab', 'Fabric & shrinkage', ['fabric', 'mill', 'fabArticle', 'consumption', 'yds', 'fabReqIH', 'fabEstIH', 'fabActIH', 'shrinkStatus', 'shrinkActDate', 'shadeStatus'], o, openSecs.has('fab')));
+  {
+    const trims = ['pocketing', 'interlining', 'thread', 'zipper', 'label', 'hookBar'];
+    const box = h('div', { class: 'trims' });
+    for (const k of trims) {
+      const v = g(k); const s = isDate(v) ? fmtDate(v) : str(v);
+      const cls = /^IH$/i.test(s) ? 'ok' : /N\/A|^na$/i.test(s) ? 'neutral' : s ? 'warn' : 'neutral';
+      box.appendChild(h('span', { class: 'tag ' + cls }, PC.FIELD_DEFS[k][1] + ': ' + (s || '—')));
+    }
+    const st = str(g('trimStatus'));
+    box.appendChild(h('span', { class: 'tag ' + (/cmpl/i.test(st) ? 'ok' : 'warn') }, 'Trim status: ' + (st || '—')));
+    body.appendChild(h('details', { class: 'dsec', 'data-k': 'trims', open: openSecs.has('trims') }, h('summary', {}, 'Trims'), box));
+  }
+  body.appendChild(kvSection('dly', 'Delivery & merchandising', ['planInspection', 'planExFactory', 'exFactory', 'shippedQty', 'sysDelivery', 'dlyRevision', 'stxFinalDly', 'merchConfirm', 'merchComment', 'delayBucket', 'delayReason', 'shipMonthFinal'], o, openSecs.has('dly')));
+  // plan history
+  if (m.historyCols.length) {
+    const box = h('div', { class: 'hist' });
+    const vals = m.historyCols.map(c => ({ c, v: o.v[c] })).filter(x => isDate(x.v) && x.v.getUTCFullYear() > 2000);
+    if (vals.length) {
+      const lo = Math.min(...vals.map(x => dayKey(x.v))), hi = Math.max(...vals.map(x => dayKey(x.v)));
+      for (const x of vals) box.appendChild(h('div', { class: 'h' },
+        h('span', { class: 'muted' }, m.cols[x.c].name), h('span', {}, fmtDate(x.v)),
+        h('span', {}, h('i', { class: 'b', style: `display:block;width:${hi > lo ? 6 + (dayKey(x.v) - lo) / (hi - lo) * 90 : 40}%` }))));
+      body.appendChild(h('details', { class: 'dsec', 'data-k': 'hist', open: openSecs.has('hist') }, h('summary', {}, 'How the cut date moved across planning rounds'), box));
+    }
+  }
+  d.appendChild(body);
+  d.appendChild(h('div', { class: 'dactions' },
+    h('button', { class: 'btn', onclick: () => { S.board.stage = 'sew'; const w = PC.stageWindow(m, o, STAGES[1]); if (w) S.board.from = w[0] - 14; closeDrawer(); setView('board'); } }, 'Show on the board'),
+    h('button', { class: 'btn', onclick: () => { setOnlyFacet('blk', str(g('blk'))); closeDrawer(); } }, 'Show the whole bulk'),
+    h('button', { class: 'btn', onclick: () => shiftOrder(o, -1) }, '− 1 day'),
+    h('button', { class: 'btn', onclick: () => shiftOrder(o, 1) }, '+ 1 day')));
+  $('scrim').classList.add('on'); d.classList.add('on');
+  if (keepScroll) d.querySelector('.dbody').scrollTop = prevScroll;
+}
+function kvSection(key, title, fieldKeys, o, open) {
+  const m = S.model, F = m.F;
+  const grid = h('div', { class: 'kv' });
+  for (const k of fieldKeys) {
+    const ci = F[k]; if (ci == null || ci < 0) continue;
+    const c = m.cols[ci], v = o.v[ci];
+    const edited = m.edits.has(o.r + ':' + ci);
+    const val = h('div', { class: 'v editable' + (edited ? ' edited' : ''), tabindex: 0, title: 'Click to edit ' + c.name, onclick: () => editKV(val, o, c), onkeydown: e => { if (e.key === 'Enter') editKV(val, o, c); } }, cellText(v, c) || '—');
+    grid.appendChild(h('div', {}, h('div', { class: 'k' }, h('span', { class: 'cl' }, c.letter), c.name.slice(0, 30)), val));
+  }
+  return h('details', { class: 'dsec', 'data-k': key, open: !!open }, h('summary', {}, title), grid);
+}
+function editKV(el, o, c) {
+  if (el.querySelector('input')) return;
+  const m = S.model, v = o.v[c.i];
+  const type = c.type === 'date' ? 'date' : c.type === 'number' ? 'number' : 'text';
+  const inp = h('input', { type, value: isDate(v) ? ymd(v) : v == null ? '' : v, step: 'any' });
+  clear(el); el.appendChild(inp); inp.focus(); inp.select();
+  const commit = save => {
+    const raw = inp.value.trim(); clear(el);
+    if (save) {
+      let nv = null; if (raw !== '') nv = type === 'date' ? parseYmd(raw) : type === 'number' ? (isNaN(+raw) ? raw : +raw) : raw;
+      if (PC.setCell(m, o, c.i, nv)) { afterEdit(`${str(o.v[m.F.po])} · ${c.name} → ${cellText(nv, c) || 'blank'}`, true); return; }
+    }
+    el.textContent = cellText(o.v[c.i], c) || '—';
+  };
+  inp.addEventListener('blur', () => commit(true));
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); inp.blur(); } else if (e.key === 'Escape') commit(false); });
+}
+function closeDrawer() { $('drawer').classList.remove('on'); $('scrim').classList.remove('on'); }
+
+/* ---- popover ---- */
+let popEl = null;
+function openPop(title, x, y) {
+  closePop();
+  popEl = h('div', { class: 'pop', tabindex: -1 }, h('h4', {}, title));
+  document.body.appendChild(popEl);
+  const w = popEl.offsetWidth || 300, hh = popEl.offsetHeight || 200;
+  const px = x == null ? window.innerWidth / 2 - w / 2 : Math.min(x + 12, window.innerWidth - w - 12);
+  const py = y == null ? 120 : Math.min(y + 12, window.innerHeight - hh - 12);
+  popEl.style.left = Math.max(8, px) + 'px'; popEl.style.top = Math.max(8, py) + 'px';
+  setTimeout(() => document.addEventListener('pointerdown', outside, { once: false }), 0);
+  return popEl;
+}
+function outside(e) { if (popEl && !popEl.contains(e.target)) closePop(); }
+function closePop() { if (popEl) { popEl.remove(); popEl = null; document.removeEventListener('pointerdown', outside); } }
+
+/* ================= export ================= */
+async function doExport() {
+  const m = S.model;
+  if (S.sample || !m.buffer) {
+    toast('This is the read-only sample. Load your own workbook to write edits back and export.', 'Load workbook', () => $('drop').classList.remove('hide'));
+    return;
+  }
+  if (!m.edits.size) { toast('Nothing has changed yet, so the workbook would be identical.'); return; }
+  const btn = $('exportbtn'); btn.disabled = true; const label = btn.firstChild.textContent;
+  try {
+    const blob = await PC.buildEditedWorkbook(m, { onProgress: (l, f) => { btn.firstChild.textContent = l + ' ' + Math.round(f * 100) + '%'; } });
+    const name = m.fileName.replace(/\.xlsx?$/i, '') + ' (edited).xlsx';
+    const a = h('a', { href: URL.createObjectURL(blob), download: name });
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+    toast(`${name} saved with ${m.edits.size} changed cell${m.edits.size > 1 ? 's' : ''}. Excel recalculates the sheet when it opens.`);
+  } catch (err) {
+    console.error(err); toast('Export failed: ' + (err.message || err));
+  } finally { btn.disabled = false; btn.firstChild.textContent = label; }
+}
+
+boot();
+})();
+
+</script>
