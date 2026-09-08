@@ -58,7 +58,14 @@ function boot() {
   const tabs = $('tabs');
   for (const [id, label] of VIEWS) tabs.appendChild(h('button', { role: 'tab', 'data-v': id, 'aria-selected': id === S.view, onclick: () => setView(id) }, label));
   $('search').addEventListener('input', debounce(e => { S.filters.search = e.target.value.trim(); applyFilters(); }, 160));
-  $('undo').onclick = () => { const u = PC.undo(S.model); if (u) afterEdit('Undo · ' + S.model.cols[u.c].name); };
+  $('undo').onclick = () => {
+    const u = PC.undo(S.model);
+    if (!u) return;
+    const parked = S.stash.get(u.r);
+    if (parked && parked.col === u.c) S.stash.delete(u.r);   // it is back on a lane, so it is no longer stashed
+    afterEdit('Undo · ' + S.model.cols[u.c].name);
+    renderStashTray();
+  };
   $('redo').onclick = () => { const u = PC.redo(S.model); if (u) afterEdit('Redo · ' + S.model.cols[u.c].name); };
   $('exportbtn').onclick = doExport;
   const openPicker = () => $('drop').classList.remove('hide');
@@ -940,6 +947,15 @@ function attachStashDrag(tray) {
   tray.addEventListener('pointerup', end);
   tray.addEventListener('pointercancel', end);
 }
+function overStashTarget(x, y) {
+  const inside = el => { if (!el) return false; const r = el.getBoundingClientRect();
+    return x >= r.left - 6 && x <= r.right + 6 && y >= r.top - 6 && y <= r.bottom + 6; };
+  return inside(document.querySelector('.stashtab')) || inside(document.getElementById('stashtray'));
+}
+function markStashTarget(on) {
+  const b = document.querySelector('.stashtab'); if (b) b.classList.toggle('droptarget', !!on);
+  const t = document.getElementById('stashtray'); if (t) t.classList.toggle('droptarget', !!on);
+}
 function laneUnder(x, y) {
   for (const el of (S._laneEls || [])) {
     const r = el.getBoundingClientRect();
@@ -1060,6 +1076,16 @@ function attachDrag(scroll, laneEls, from, dayW, stage) {
     if (drag.mode === 'move') {
       for (const l of laneEls) { const r = l.getBoundingClientRect(); if (e.clientY >= r.top && e.clientY <= r.bottom) { target = l; break; } }
     }
+    drag.toStash = overStashTarget(e.clientX, e.clientY);
+    markStashTarget(drag.toStash);
+    if (drag.toStash) {
+      hideGhost();
+      if (!tipEl) { tipEl = h('div', { class: 'dragtip' }); document.body.appendChild(tipEl); }
+      tipEl.textContent = `Stash ${str(S.model.F.po >= 0 ? drag.o.v[S.model.F.po] : '')}\nIt comes off the lane and waits in the tray`;
+      tipEl.style.left = Math.min(window.innerWidth - 260, e.clientX + 16) + 'px';
+      tipEl.style.top = (e.clientY + 18) + 'px';
+      return;
+    }
     drag.dd = dd; drag.target = target;
     showGhost(drag, dd, target, from, dayW);
     showTip(e, drag, dd, target, stage);
@@ -1068,9 +1094,10 @@ function attachDrag(scroll, laneEls, from, dayW, stage) {
     if (!drag) return;
     const d = drag; drag = null;
     d.blk.classList.remove('dragging');
-    hideGhost(); hideTip();
+    hideGhost(); hideTip(); markStashTarget(false);
     setTimeout(() => { d.blk._dragged = false; }, 0);
     if (!d.moved) return;
+    if (d.toStash) { stashOrder(d.o); return; }
     applyDrag(d, stage, e);
   };
   scroll.addEventListener('pointerup', finish);
