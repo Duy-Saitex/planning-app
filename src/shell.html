@@ -501,6 +501,18 @@ input.zoom{width:110px;accent-color:var(--sx-intent-primary);height:20px;cursor:
 .pop{position:fixed;z-index:250;background:var(--sx-surface-base);border:1px solid var(--sx-border-strong);
   border-radius:var(--sx-radius-control);box-shadow:var(--sx-shadow-layer);padding:8px;min-width:240px;max-width:360px;
   max-height:62vh;overflow:auto}
+.menubtn .caret{opacity:.6;font-size:9px;margin-left:1px}
+.menupop{min-width:250px;padding:6px}
+.menupop h4{margin:0 0 4px;padding:0 6px}
+.mrow{display:flex;align-items:baseline;gap:8px;width:100%;text-align:left;padding:5px 6px;
+  border-radius:var(--sx-radius-badge);font-size:12px;cursor:pointer}
+.mrow:hover{background:var(--sx-surface-hover)}
+.mrow.on{color:var(--sx-text-link)}
+.mrow .tick{width:11px;flex:none;font-size:11px;color:var(--sx-intent-primary)}
+.mrow .mlabel{flex:1;min-width:0}
+.mrow .mhint{color:var(--sx-text-disabled);font-size:11px;flex:none}
+.menuhint{border-top:1px solid var(--sx-border-subtle);margin-top:6px;padding:7px 6px 2px;
+  font-size:11px;color:var(--sx-text-disabled);line-height:1.5;white-space:normal}
 .pop h4{margin:0 0 6px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--sx-text-disabled)}
 .pop .prow{display:flex;align-items:center;gap:7px;padding:3px 5px;border-radius:2px;font-size:12px;width:100%;text-align:left;cursor:pointer}
 .pop .prow:hover{background:var(--sx-surface-hover)}

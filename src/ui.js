@@ -604,6 +604,22 @@ function renderOverview(view, bar) {
   wrap.appendChild(bandTop); wrap.appendChild(cards); wrap.appendChild(bandBottom);
   view.appendChild(wrap);
 }
+// A button that opens a small menu under itself.
+function menuButton(label, title, build) {
+  const b = h('button', { class: 'btn menubtn', title, onclick: () => {
+    const r = b.getBoundingClientRect();
+    const pop = openPop(label, r.left - 12, r.bottom - 10);
+    pop.classList.add('menupop');
+    build(pop);
+  } }, label, h('span', { class: 'caret' }, '▾'));
+  return b;
+}
+function menuRow(label, checked, onSelect, hint) {
+  return h('button', { class: 'mrow' + (checked ? ' on' : ''), onclick: () => { closePop(); onSelect(); } },
+    h('span', { class: 'tick' }, checked ? '✓' : ''),
+    h('span', { class: 'mlabel' }, label),
+    hint ? h('span', { class: 'mhint' }, hint) : null);
+}
 function panel(title, sub) {
   return h('div', { class: 'panel' }, h('header', {}, h('h3', {}, title), sub ? h('span', { class: 'sub' }, sub) : null), h('div', { class: 'body' }));
 }
@@ -647,31 +663,35 @@ function loadVsCapacityChart(stageKey) {
 function renderBoard(view, bar) {
   const m = S.model, F = m.F, B = S.board;
   const stage = stageByKey(B.stage);
-  // toolbar
-  const seg = h('div', { class: 'seg' });
-  for (const st of STAGES) seg.appendChild(h('button', { 'aria-pressed': st.key === B.stage, onclick: () => { B.stage = st.key; render(); } }, st.short));
-  bar.appendChild(h('span', { class: 'vlabel' }, 'Lanes'));
-  bar.appendChild(seg);
+  // toolbar: what you touch every minute stays out; the rest lives under Board options
+  bar.appendChild(menuButton('Lanes: ' + stage.short, 'Which production stage the lanes represent', pop => {
+    for (const st of STAGES) pop.appendChild(menuRow(st.name, st.key === B.stage, () => { B.stage = st.key; render(); },
+      st.key === 'sew' ? 'sewing lines' : st.key === 'wash' ? 'laundry lines' : (st.key === 'fin' || st.key === 'pack') ? 'finishing lines' : 'factory sites'));
+  }));
   const zoomOut = h('span', { class: 'vlabel', style: 'min-width:52px' }, B.dayW + 'px/day');
+  let zoomTimer = null;
+  const drawZoom = () => { clearTimeout(zoomTimer); zoomTimer = setTimeout(() => { render(); const z = document.querySelector('.zoom'); if (z) z.focus(); }, 90); };
   const zoom = h('input', {
     type: 'range', class: 'zoom', min: 12, max: 64, step: 2, value: B.dayW, 'aria-label': 'Day width in pixels',
     title: 'How wide one day is on the board',
     oninput: e => { B.dayW = +e.target.value; zoomOut.textContent = B.dayW + 'px/day'; drawZoom(); }
   });
-  let zoomTimer = null;
-  const drawZoom = () => { clearTimeout(zoomTimer); zoomTimer = setTimeout(() => { render(); document.querySelector('.zoom') && document.querySelector('.zoom').focus(); }, 90); };
-  bar.appendChild(h('span', { class: 'vlabel' }, 'Zoom')); bar.appendChild(zoom); bar.appendChild(zoomOut);
-  bar.appendChild(h('button', { class: 'btn', onclick: () => { B.from = dayKey(m.asOf) - 7; render(); } }, 'Today'));
-  bar.appendChild(h('button', { class: 'btn', onclick: () => { fitToFiltered(); } }, 'Fit to filter'));
-  bar.appendChild(h('button', { class: 'btn', 'aria-pressed': B.narrowLanes,
-    title: 'The line column stays pinned while you scroll. Narrow it when it covers the blocks you want to see.',
-    onclick: () => { B.narrowLanes = !B.narrowLanes; render(); } }, B.narrowLanes ? 'Widen line column' : 'Narrow line column'));
-  bar.appendChild(h('button', { class: 'btn', 'aria-pressed': B.others, title: 'Show load from orders hidden by the filter as grey bars', onclick: () => { B.others = !B.others; render(); } }, B.others ? 'Hiding nothing' : 'Filtered load only'));
+  bar.appendChild(zoom); bar.appendChild(zoomOut);
+  bar.appendChild(h('button', { class: 'btn', title: 'Scroll back to this week', onclick: () => { B.from = dayKey(m.asOf) - 7; render(); } }, 'Today'));
   bar.appendChild(h('button', { class: 'btn' + (S.stash.size ? ' hasstash' : ''), 'aria-pressed': S.stashOpen,
     title: S.stash.size ? 'Orders parked off the board. Open the tray to put one back or drag it onto a lane.' : 'Nothing stashed yet. Park an order from its detail panel.',
     onclick: () => { S.stashOpen = !S.stashOpen; renderStashTray(); } },
     S.stash.size ? `⇩ Stash ${S.stash.size}` : '⇩ Stash'));
-  bar.appendChild(h('button', { class: 'btn', 'aria-pressed': B.refitOnDrop, title: 'When an order is dropped on another line, refit its end date to that line’s daily target', onclick: () => { B.refitOnDrop = !B.refitOnDrop; render(); } }, B.refitOnDrop ? 'Refit on drop: on' : 'Refit on drop: off'));
+  bar.appendChild(menuButton('Board options', 'Fit, column width, load display and drop behaviour', pop => {
+    pop.appendChild(menuRow('Fit the dates to the filter', false, () => fitToFiltered(), 'zoom to what is showing'));
+    pop.appendChild(menuRow('Narrow the line column', B.narrowLanes, () => { B.narrowLanes = !B.narrowLanes; render(); }, 'when it covers the bars'));
+    pop.appendChild(menuRow('Show load from filtered-out orders', B.others, () => { B.others = !B.others; render(); }, 'as grey bars'));
+    pop.appendChild(menuRow('Refit duration when dropped on a line', B.refitOnDrop, () => { B.refitOnDrop = !B.refitOnDrop; render(); }, "to that line's daily target"));
+    pop.appendChild(h('div', { class: 'menuhint' },
+      stage.key === 'sew' ? 'Drag a bar sideways to move the sewing dates, onto another line to reassign it, or by an edge to change its duration.'
+        : (stage.key === 'cut' || stage.key === 'ship') ? 'Drag a bar sideways to shift the whole plan.'
+        : 'Drag sideways to shift the whole plan, or onto another lane to reassign this stage.'));
+  }));
   bar.appendChild(h('div', { style: 'flex:1' }));
   bar.appendChild(h('div', { class: 'runkey' },
     h('span', { title: 'A process has produced pieces, or the marker is already cut' }, h('i', { style: 'border-color:var(--run-go)' }), 'Running'),
@@ -679,8 +699,6 @@ function renderBoard(view, bar) {
     h('span', { title: 'Not started: waiting on fabric, approvals, trims or shrinkage, or not due yet' }, h('i', {}), 'Not started'),
     h('span', { title: 'Ex-factory runs past the confirmed delivery' }, h('i', { class: 'lateswatch' }), 'Late')));
   bar.appendChild(h('div', { style: 'flex:1' }));
-  bar.appendChild(h('span', { class: 'sm muted' }, stage.key === 'sew' ? 'Drag sideways to move the sewing dates · drag onto another line to reassign · drag an edge to change duration'
-    : stage.key === 'wash' || stage.key === 'fin' || stage.key === 'pack' ? 'Drag sideways to shift the whole plan · drag onto another lane to reassign this stage' : 'Drag sideways to shift the whole plan'));
 
   const from = B.from, to = from + B.days - 1;
   const groups = laneList(B.stage);
@@ -1180,10 +1198,10 @@ function shiftOrder(o, dd) { shiftDates(o, dd); S.sel = o; afterEdit(`${str(o.v[
 /* ================= view: capacity ================= */
 function renderCapacity(view, bar) {
   const m = S.model, C = S.cap;
-  const seg = h('div', { class: 'seg' });
-  seg.appendChild(h('button', { 'aria-pressed': C.stage === 'all', onclick: () => { C.stage = 'all'; render(); } }, 'All stages'));
-  for (const st of STAGES) seg.appendChild(h('button', { 'aria-pressed': C.stage === st.key, onclick: () => { C.stage = st.key; render(); } }, st.short));
-  bar.appendChild(h('span', { class: 'vlabel' }, 'Stage')); bar.appendChild(seg);
+  bar.appendChild(menuButton('Stage: ' + (C.stage === 'all' ? 'All' : stageByKey(C.stage).short), 'Which stage to measure', pop => {
+    pop.appendChild(menuRow('All stages', C.stage === 'all', () => { C.stage = 'all'; render(); }, 'one row each, factory-wide'));
+    for (const st of STAGES) pop.appendChild(menuRow(st.name, C.stage === st.key, () => { C.stage = st.key; render(); }));
+  }));
   const gr = h('div', { class: 'seg' });
   for (const [g, l] of [['day', 'Day'], ['week', 'Week']]) gr.appendChild(h('button', { 'aria-pressed': C.grain === g, onclick: () => { C.grain = g; render(); } }, l));
   bar.appendChild(h('span', { class: 'vlabel' }, 'Bucket')); bar.appendChild(gr);
