@@ -701,7 +701,7 @@ function renderBoard(view, bar) {
   const visGroups = groups.map(g => ({ group: g.group, lines: g.lines.filter(keepLane) })).filter(g => g.lines.length);
   const laneCount = visGroups.reduce((a, g) => a + g.lines.length, 0);
   const ROWH = laneCount <= 2 ? 46 : laneCount <= 5 ? 38 : laneCount <= 12 ? 32 : 30;
-  const BLKH = ROWH - 3, MINW = 118;
+  const BLKH = ROWH - 3, MINW = 148;   // short orders are padded to this so their text stays readable
 
   const board = h('div', { class: 'board' });
   const scroll = h('div', { class: 'bscroll' });
