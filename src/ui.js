@@ -701,7 +701,7 @@ function renderBoard(view, bar) {
   const visGroups = groups.map(g => ({ group: g.group, lines: g.lines.filter(keepLane) })).filter(g => g.lines.length);
   const laneCount = visGroups.reduce((a, g) => a + g.lines.length, 0);
   const ROWH = laneCount <= 2 ? 46 : laneCount <= 5 ? 38 : laneCount <= 12 ? 32 : 30;
-  const BLKH = ROWH - 3, MINW = 148;   // short orders are padded to this so their text stays readable
+  const BLKH = ROWH - 3, MINW = 240;   // short orders are padded to this so their text stays readable
 
   const board = h('div', { class: 'board' });
   const scroll = h('div', { class: 'bscroll' });
@@ -884,6 +884,7 @@ function makeBlock(it, rowH, blkH, stage) {
   }, h('i', { class: 'prog', style: `width:${Math.min(width, doneFrac * it.natW)}px` }),
     h('span', { class: 'l1' },
       h('span', { class: 'mo' }, str(o.v[F.po])),
+      h('span', { class: 'desc' }, str(o.v[F.desc])),
       h('span', { class: 'qty' }, fmt(p.qty))),
     blkH >= 40
       ? [h('span', { class: 'l2' }, buyer), style ? h('span', { class: 'l3' }, style) : null]

@@ -303,7 +303,9 @@ svg .caplin{stroke:var(--sx-intent-danger);stroke-width:1.5;stroke-dasharray:4 3
   border-radius:2px;border:1px solid rgba(0,0,0,.2);z-index:4;white-space:nowrap;touch-action:none;
   user-select:none;line-height:1.1}
 .blk .l1{display:flex;align-items:baseline;gap:5px;position:relative;min-width:0}
-.blk .mo{font-family:var(--sx-font-mono);font-size:10px;font-weight:600;opacity:.88;
+.blk .mo{font-family:var(--sx-font-mono);font-size:10px;font-weight:600;opacity:.88;flex:none;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.blk .desc{font-size:10px;font-weight:500;opacity:.82;flex:1;min-width:0;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .blk .l2{position:relative;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;font-weight:600;min-width:0}
 .blk .l3{position:relative;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;font-weight:400;opacity:.85;min-width:0}
@@ -1951,7 +1953,7 @@ function renderBoard(view, bar) {
   const visGroups = groups.map(g => ({ group: g.group, lines: g.lines.filter(keepLane) })).filter(g => g.lines.length);
   const laneCount = visGroups.reduce((a, g) => a + g.lines.length, 0);
   const ROWH = laneCount <= 2 ? 46 : laneCount <= 5 ? 38 : laneCount <= 12 ? 32 : 30;
-  const BLKH = ROWH - 3, MINW = 148;   // short orders are padded to this so their text stays readable
+  const BLKH = ROWH - 3, MINW = 240;   // short orders are padded to this so their text stays readable
 
   const board = h('div', { class: 'board' });
   const scroll = h('div', { class: 'bscroll' });
@@ -2134,6 +2136,7 @@ function makeBlock(it, rowH, blkH, stage) {
   }, h('i', { class: 'prog', style: `width:${Math.min(width, doneFrac * it.natW)}px` }),
     h('span', { class: 'l1' },
       h('span', { class: 'mo' }, str(o.v[F.po])),
+      h('span', { class: 'desc' }, str(o.v[F.desc])),
       h('span', { class: 'qty' }, fmt(p.qty))),
     blkH >= 40
       ? [h('span', { class: 'l2' }, buyer), style ? h('span', { class: 'l3' }, style) : null]
