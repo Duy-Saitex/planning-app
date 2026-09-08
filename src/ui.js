@@ -1426,7 +1426,13 @@ function openDrawer(o, keepScroll) {
         return h('span', { class: 'tag neutral', title: 'Column Y, on-time delivery in days. A minus figure means the order is late.' }, 'OTD ' + (otd < 0 ? '' : '+') + Math.round(otd) + ' d'); })(),
       g('delayBucket') ? h('span', { class: 'tag warn' }, 'delay ' + str(g('delayBucket')).toLowerCase()) : null,
       PC.isNonWash(m, o) ? h('span', { class: 'tag neutral' }, 'no wash — no laundry line') : null,
-      o.dirty ? h('span', { class: 'tag warn' }, 'edited') : null));
+      o.dirty ? h('span', { class: 'tag warn' }, 'edited') : null,
+      (function () {
+        const lane = laneFieldForBoard(), cur = str(o.v[lane.col]).trim();
+        if (!cur || /^#/.test(cur)) return null;
+        return h('button', { class: 'unassign', title: `Clear ${lane.what} ${cur}. The order leaves that lane and parks under "Not assigned to a lane", where you can drag it back. It is not deleted.`,
+          onclick: e => removeFromLane(o, e) }, '✕ Take off ' + cur);
+      })()));
   d.appendChild(head);
 
   const body = h('div', { class: 'dbody' });
@@ -1550,6 +1556,36 @@ function editKV(el, o, c) {
   };
   inp.addEventListener('blur', () => commit(true));
   inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); inp.blur(); } else if (e.key === 'Escape') commit(false); });
+}
+// Which lane column the board is currently drawing rows from.
+function laneFieldForBoard() {
+  const F = S.model.F, k = S.board.stage;
+  if (k === 'wash') return { col: F.ldLine, what: 'laundry line' };
+  if (k === 'fin' || k === 'pack') return { col: F.finLine, what: 'finishing line' };
+  return { col: F.line, what: 'sewing line' };
+}
+// Takes the order off its lane. It is an ordinary edit: undoable, listed in
+// Changes, and written to the workbook as a blank cell on export.
+function removeFromLane(o, ev) {
+  const m = S.model, F = m.F, lane = laneFieldForBoard();
+  const cur = str(o.v[lane.col]).trim();
+  if (!cur) { toast(`This order has no ${lane.what} set.`); return; }
+  const pop = openPop('Take it off the ' + lane.what, ev ? ev.clientX : null, ev ? ev.clientY : null);
+  pop.appendChild(h('div', { style: 'font-weight:600;font-size:12px;margin-bottom:6px' },
+    h('span', { class: 'mono' }, str(o.v[F.po])), ' · ', str(o.v[F.customer]), ' · ', fmt(num(o.v[F.qty])), ' pcs'));
+  pop.appendChild(h('div', { style: 'display:grid;grid-template-columns:auto 1fr;gap:2px 8px;font-size:12px;align-items:baseline' },
+    h('span', { class: 'muted' }, m.cols[lane.col].name),
+    h('span', { class: 'mono', style: 'color:var(--sx-text-disabled);text-decoration:line-through' }, cur)));
+  pop.appendChild(h('div', { class: 'hint', style: 'margin-top:7px;white-space:normal;line-height:1.5' },
+    `It drops off ${cur} and parks under "Not assigned to a lane" on the board, keeping its dates and quantities. Drag it onto a lane to put it back. The order itself is not deleted, and the workbook keeps the row.`));
+  const go = h('button', { class: 'btn primary', onclick: () => { closePop();
+    PC.setCell(m, o, lane.col, null);
+    S.sel = o;
+    afterEdit(`${str(o.v[F.po])} taken off ${cur}`, true);
+  } }, 'Take it off the lane');
+  pop.appendChild(h('div', { style: 'display:flex;gap:6px;margin-top:10px' }, go,
+    h('button', { class: 'btn', onclick: closePop }, 'Cancel')));
+  go.focus();
 }
 function closeDrawer() { $('drawer').classList.remove('on'); $('scrim').classList.remove('on'); }
 
