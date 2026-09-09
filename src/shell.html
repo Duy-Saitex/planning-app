@@ -344,6 +344,11 @@ svg .caplin{stroke:var(--sx-intent-danger);stroke-width:1.5;stroke-dasharray:4 3
   background:var(--sx-intent-danger);clip-path:polygon(100% 0,100% 100%,0 100%)}
 .blk.locked{cursor:not-allowed;background-image:repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(0,0,0,.16) 3px,rgba(0,0,0,.16) 6px)}
 .blk.dragging{opacity:.3}
+.blk.leaving{transition:transform 280ms cubic-bezier(.4,0,.6,1),opacity 280ms ease;transform-origin:center;will-change:transform,opacity}
+@media (prefers-reduced-motion:no-preference){
+  .blk.entering{animation:blkin 280ms cubic-bezier(.2,.7,.3,1)}
+}
+@keyframes blkin{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
 .blk .trueend{position:absolute;top:0;bottom:0;width:0;border-right:1px dashed currentColor;opacity:0;pointer-events:none;
   transition:opacity var(--sx-duration-state)}
 .blk:hover .trueend,.blk.sel .trueend{opacity:.6}

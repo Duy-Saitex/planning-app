@@ -386,6 +386,8 @@ function heatStyle(r) {
 function render() {
   if (!S.model) return;
   const view = $('view'), bar = $('viewbar');
+  const bs = view.querySelector('.bscroll');
+  if (bs) S._scroll = { left: bs.scrollLeft, top: bs.scrollTop, dayW: S.board.dayW, from: S.board.from, stage: S.board.stage };
   clear(view); clear(bar);
   bar.appendChild(h('button', { class: 'btn icon', title: S.railHidden ? 'Show filters' : 'Hide filters', onclick: () => { S.railHidden = !S.railHidden; $('rail').classList.toggle('collapsed', S.railHidden); render(); } }, S.railHidden ? '»' : '«'));
   if (S.view === 'overview') renderOverview(view, bar);
@@ -844,10 +846,17 @@ function renderBoard(view, bar) {
   S._laneEls = laneEls; S._boardGeom = { from, dayW };
   renderStashTray();
   scroll.addEventListener('scroll', () => scroll.classList.toggle('pinned', scroll.scrollLeft > 0), { passive: true });
-  requestAnimationFrame(() => {
-    const x = Math.max(0, (asOfK - from) * dayW - 180);
-    scroll.scrollLeft = x; scroll.classList.toggle('pinned', x > 0);
-  });
+  const s = S._scroll;
+  let x, y = 0;
+  if (s && s.from === from && s.stage === B.stage) {
+    x = s.dayW === dayW ? s.left : s.left * (dayW / s.dayW);   // a zoom keeps the same days in view
+    y = s.top;
+  } else {
+    x = Math.max(0, (asOfK - from) * dayW - 180);
+  }
+  void scroll.scrollWidth;                    // lay the grid out before scrolling into it
+  scroll.scrollLeft = x; scroll.scrollTop = y;
+  scroll.classList.toggle('pinned', scroll.scrollLeft > 0);
 }
 function showLaneOrders(L, items, stage, lateOnly, ev) {
   const m = S.model, F = m.F, asOfK = dayKey(m.asOf);
@@ -988,6 +997,7 @@ function dropFromStash(o, hit, ev) {
     try { PC.setCell(m, o, info.col, hit.lane.name); if (shift) { shiftDatesInner(o, shift); } } finally { PC.endGroup(); }
     S.sel = o;
     afterEdit(`${str(o.v[F.po])} placed on ${hit.lane.name}`, true);
+    markEntering(o.r);
     renderStashTray();
   } }, 'Place it here');
   pop.appendChild(h('div', { style: 'display:flex;gap:6px;margin-top:10px' }, go, h('button', { class: 'btn', onclick: closePop }, 'Cancel')));
@@ -1721,14 +1731,74 @@ function editKV(el, o, c) {
   inp.addEventListener('blur', () => commit(true));
   inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); inp.blur(); } else if (e.key === 'Escape') commit(false); });
 }
+const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Where every bar sits right now, keyed by sheet row.
+function blockRects() {
+  const map = new Map();
+  for (const b of document.querySelectorAll('.blk')) if (b._o) map.set(b._o.r, b.getBoundingClientRect());
+  return map;
+}
+// A copy of the bar that is leaving, pinned to the screen so it can fade out
+// after the real one has gone.
+function leavingGhost(row) {
+  const el = [...document.querySelectorAll('.blk')].find(b => b._o && b._o.r === row);
+  if (!el) return null;
+  const r = el.getBoundingClientRect();
+  if (!r.width) return null;
+  const g = el.cloneNode(true);
+  g.classList.add('leaving');
+  Object.assign(g.style, { position: 'fixed', left: r.left + 'px', top: r.top + 'px',
+    width: r.width + 'px', height: r.height + 'px', margin: '0', zIndex: '120', pointerEvents: 'none' });
+  document.body.appendChild(g);
+  void g.offsetWidth;
+  g.style.transform = 'scale(.82)';
+  g.style.opacity = '0';
+  setTimeout(() => g.remove(), 400);
+  return g;
+}
+// Put the survivors back where they were, then let them glide to the new layout.
+function flipBlocks(before) {
+  for (const b of document.querySelectorAll('.blk')) {
+    if (!b._o) continue;
+    const was = before.get(b._o.r); if (!was) continue;
+    const now = b.getBoundingClientRect();
+    const dx = was.left - now.left, dy = was.top - now.top;
+    if ((!dx && !dy) || Math.abs(dx) > 900 || Math.abs(dy) > 900) continue;
+    b.style.transition = 'none';
+    b.style.transform = `translate(${dx}px,${dy}px)`;
+    void b.offsetWidth;                                  // commit that position before animating away from it
+    b.style.transition = 'transform 300ms cubic-bezier(.2,.7,.3,1)';
+    b.style.transform = '';
+    setTimeout(() => { b.style.transition = ''; b.style.transform = ''; }, 340);
+  }
+}
+// Run an edit that takes a bar off the board, with the movement made visible.
+function markEntering(row) {
+  if (reducedMotion()) return;
+  const el = [...document.querySelectorAll('.blk')].find(b => b._o && b._o.r === row);
+  if (!el) return;
+  el.classList.add('entering');
+  setTimeout(() => el.classList.remove('entering'), 320);
+}
+function withBoardTransition(row, run) {
+  if (S.view !== 'board' || reducedMotion()) { run(); return; }
+  const ghost = leavingGhost(row);
+  const before = blockRects();
+  run();
+  flipBlocks(before);
+  return ghost;
+}
 function stashOrder(o) {
   const m = S.model, F = m.F, lane = laneFieldForBoard();
   const from = str(o.v[lane.col]).trim();
   PC.beginGroup(m);
   try { if (from) PC.setCell(m, o, lane.col, null); } finally { PC.endGroup(); }
-  S.stash.set(o.r, { col: lane.col, lane: from, what: lane.what });
   closeDrawer(true);
-  afterEdit(`${str(o.v[F.po])} stashed${from ? ' from ' + from : ''}`, true);
+  withBoardTransition(o.r, () => {
+    S.stash.set(o.r, { col: lane.col, lane: from, what: lane.what });
+    afterEdit(`${str(o.v[F.po])} stashed${from ? ' from ' + from : ''}`, true);
+  });
 }
 function unstash(row, laneName) {
   const m = S.model, o = PC.orderByRow(m, row), info = S.stash.get(row);
@@ -1737,6 +1807,7 @@ function unstash(row, laneName) {
   const target = laneName === undefined ? info.lane : laneName;
   if (target) { PC.beginGroup(m); try { PC.setCell(m, o, info.col, target); } finally { PC.endGroup(); } }
   afterEdit(`${str(o.v[m.F.po])} back${target ? ' on ' + target : ' on the board'}`, true);
+  markEntering(row);
 }
 // Which lane column the board is currently drawing rows from.
 function laneFieldForBoard() {
@@ -1760,9 +1831,11 @@ function removeFromLane(o, ev) {
   pop.appendChild(h('div', { class: 'hint', style: 'margin-top:7px;white-space:normal;line-height:1.5' },
     `It drops off ${cur} and parks under "Not assigned to a lane" on the board, keeping its dates and quantities. Drag it onto a lane to put it back. The order itself is not deleted, and the workbook keeps the row.`));
   const go = h('button', { class: 'btn primary', onclick: () => { closePop();
-    PC.setCell(m, o, lane.col, null);
-    S.sel = o;
-    afterEdit(`${str(o.v[F.po])} taken off ${cur}`, true);
+    withBoardTransition(o.r, () => {
+      PC.setCell(m, o, lane.col, null);
+      S.sel = o;
+      afterEdit(`${str(o.v[F.po])} taken off ${cur}`, true);
+    });
   } }, 'Take it off the lane');
   pop.appendChild(h('div', { style: 'display:flex;gap:6px;margin-top:10px' }, go,
     h('button', { class: 'btn', onclick: closePop }, 'Cancel')));
