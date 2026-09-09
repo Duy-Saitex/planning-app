@@ -350,11 +350,7 @@ svg .caplin{stroke:var(--sx-intent-danger);stroke-width:1.5;stroke-dasharray:4 3
   background:var(--sx-intent-danger);clip-path:polygon(100% 0,100% 100%,0 100%)}
 .blk.locked{cursor:not-allowed;background-image:repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(0,0,0,.16) 3px,rgba(0,0,0,.16) 6px)}
 .blk.dragging{opacity:.3}
-.blk.leaving{transition:transform 280ms cubic-bezier(.4,0,.6,1),opacity 280ms ease;transform-origin:center;will-change:transform,opacity}
-@media (prefers-reduced-motion:no-preference){
-  .blk.entering{animation:blkin 280ms cubic-bezier(.2,.7,.3,1)}
-}
-@keyframes blkin{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+.blk.leaving{transform-origin:center;will-change:transform,opacity}
 .blk .trueend{position:absolute;top:0;bottom:0;width:0;border-right:1px dashed currentColor;opacity:0;pointer-events:none;
   transition:opacity var(--sx-duration-state)}
 .blk:hover .trueend,.blk.sel .trueend{opacity:.6}
@@ -3075,15 +3071,17 @@ function editKV(el, o, c) {
   inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); inp.blur(); } else if (e.key === 'Escape') commit(false); });
 }
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const GLIDE = { duration: 320, easing: 'cubic-bezier(.2,.7,.3,1)', fill: 'backwards' };
 
-// Where every bar sits right now, keyed by sheet row.
-function blockRects() {
-  const map = new Map();
-  for (const b of document.querySelectorAll('.blk')) if (b._o) map.set(b._o.r, b.getBoundingClientRect());
-  return map;
+// Where every lane and every bar sits right now.
+function boardSnapshot() {
+  const lanes = new Map(), blocks = new Map();
+  for (const l of document.querySelectorAll('.lane')) if (l._lane) lanes.set(l._lane.name, l.getBoundingClientRect());
+  for (const b of document.querySelectorAll('.blk')) if (b._o) blocks.set(b._o.r, b.getBoundingClientRect());
+  return { lanes, blocks };
 }
-// A copy of the bar that is leaving, pinned to the screen so it can fade out
-// after the real one has gone.
+// A copy of the bar that is leaving, pinned where it was, shrinking and fading
+// after the real one has already gone.
 function leavingGhost(row) {
   const el = [...document.querySelectorAll('.blk')].find(b => b._o && b._o.r === row);
   if (!el) return null;
@@ -3094,42 +3092,56 @@ function leavingGhost(row) {
   Object.assign(g.style, { position: 'fixed', left: r.left + 'px', top: r.top + 'px',
     width: r.width + 'px', height: r.height + 'px', margin: '0', zIndex: '120', pointerEvents: 'none' });
   document.body.appendChild(g);
-  void g.offsetWidth;
-  g.style.transform = 'scale(.82)';
-  g.style.opacity = '0';
-  setTimeout(() => g.remove(), 400);
+  const a = g.animate(
+    [{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.8)' }],
+    { duration: 420, easing: 'cubic-bezier(.4,0,.6,1)', fill: 'forwards' });
+  a.onfinish = () => g.remove();
+  setTimeout(() => g.remove(), 700);
   return g;
 }
-// Put the survivors back where they were, then let them glide to the new layout.
-function flipBlocks(before) {
+// Lanes that shifted glide to their new place; bars that changed row within a
+// lane glide by the remainder. Nested FLIP, driven by the Web Animations API so
+// it does not depend on style-recalc ordering or a frame callback.
+function flipBoard(before) {
+  // Read every position first. Starting an animation mid-measurement would
+  // shift the rects of everything read after it.
+  const laneMoves = [], laneDy = new Map();
+  for (const l of document.querySelectorAll('.lane')) {
+    if (!l._lane) continue;
+    const was = before.lanes.get(l._lane.name); if (!was) continue;
+    const dy = was.top - l.getBoundingClientRect().top;
+    laneDy.set(l._lane.name, dy);
+    if (dy && Math.abs(dy) < 900) laneMoves.push([l, dy]);
+  }
+  const barMoves = [];
   for (const b of document.querySelectorAll('.blk')) {
     if (!b._o) continue;
-    const was = before.get(b._o.r); if (!was) continue;
+    const was = before.blocks.get(b._o.r); if (!was) continue;
     const now = b.getBoundingClientRect();
-    const dx = was.left - now.left, dy = was.top - now.top;
+    const lane = b.closest('.lane');
+    const ldy = lane && lane._lane ? (laneDy.get(lane._lane.name) || 0) : 0;
+    const dx = Math.round(was.left - now.left), dy = Math.round((was.top - now.top) - ldy);
     if ((!dx && !dy) || Math.abs(dx) > 900 || Math.abs(dy) > 900) continue;
-    b.style.transition = 'none';
-    b.style.transform = `translate(${dx}px,${dy}px)`;
-    void b.offsetWidth;                                  // commit that position before animating away from it
-    b.style.transition = 'transform 300ms cubic-bezier(.2,.7,.3,1)';
-    b.style.transform = '';
-    setTimeout(() => { b.style.transition = ''; b.style.transform = ''; }, 340);
+    barMoves.push([b, dx, dy]);
   }
+  // Then write.
+  for (const [l, dy] of laneMoves) l.animate([{ transform: `translateY(${dy}px)` }, { transform: 'none' }], GLIDE);
+  barMoves.forEach(([b, dx, dy], i) =>
+    b.animate([{ transform: `translate(${dx}px,${dy}px)` }, { transform: 'none' }], { ...GLIDE, delay: Math.min(i * 14, 110) }));
 }
-// Run an edit that takes a bar off the board, with the movement made visible.
 function markEntering(row) {
   if (reducedMotion()) return;
   const el = [...document.querySelectorAll('.blk')].find(b => b._o && b._o.r === row);
-  if (!el) return;
-  el.classList.add('entering');
-  setTimeout(() => el.classList.remove('entering'), 320);
+  if (el) el.animate([{ opacity: 0, transform: 'scale(.88)' }, { opacity: 1, transform: 'none' }],
+    { duration: 300, easing: 'cubic-bezier(.2,.7,.3,1)' });
 }
+// Run an edit that takes a bar off the board, with the movement made visible.
 function withBoardTransition(row, run) {
   if (S.view !== 'board' || reducedMotion()) { run(); return; }
   const ghost = leavingGhost(row);
-  const before = blockRects();
+  const before = boardSnapshot();
   run();
-  flipBlocks(before);
+  flipBoard(before);
   return ghost;
 }
 function stashOrder(o) {
