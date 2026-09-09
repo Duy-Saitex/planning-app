@@ -629,7 +629,7 @@ function unescapeXml(s) {
   });
 }
 function escapeXml(s) { return String(s).replace(/[<>&"]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c])); }
-function attr(a, name) { const m = new RegExp('(?:^|\\s)' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '="([^"]*)"').exec(a); return m ? m[1] : undefined; }
+function attr(a, name) { const m = new RegExp('(?:^|\\s)' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\<script>/*CORE*/</script>') + '="([^"]*)"').exec(a); return m ? m[1] : undefined; }
 function normKey(s) { return String(s || '').toUpperCase().replace(/[^A-Z0-9#%&/()+-]+/g, ' ').replace(/\s+/g, ' ').trim(); }
 function yieldToUI() { return new Promise(r => setTimeout(r, 0)); }
 

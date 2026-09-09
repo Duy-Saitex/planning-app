@@ -7,8 +7,10 @@ with your edits written into it. Everything runs in the browser; no server, no u
 
 ## Use it
 
-Open `app.html` in a browser and choose the master plan `.xlsx`. The file is read locally,
-and stays local.
+Open `public/index.html` in a browser and choose the master plan `.xlsx`. The file is read
+locally, and stays local — nothing is uploaded, and the app works offline once loaded.
+
+It is also deployable as a static site. See [Deploy](#deploy).
 
 ## What it does
 
@@ -56,15 +58,17 @@ no wash recipe is never given a laundry line.
 ## Develop
 
 ```
-npm install          # jszip, used to read and write the workbook
-./build.sh           # bundles src/ into app.html
-node selfcheck.js "/path/to/Production Plan.xlsx"
+npm install          # jszip, needed only by the self-check
+npm run build        # bundles src/ into public/index.html
+npm run check -- "/path/to/Production Plan.xlsx"
 ```
+
+The build is plain node with no dependencies, so `node build.mjs` is all a deploy runner needs.
 
 `src/core.js` is the data layer: it parses the workbook, reproduces the formula chain,
 tracks edits with grouped undo, and patches the original `.xlsx` on export. It runs in the
 browser and under node, which is how the self-check exercises it against a real file.
-`src/ui.js` is the interface, `src/shell.html` the markup and design tokens. `build.sh`
+`src/ui.js` is the interface, `src/shell.html` the markup and design tokens. `build.mjs`
 inlines all three.
 
 `selfcheck.js` is the one runnable check. It asserts the parts that would otherwise fail
@@ -75,15 +79,25 @@ running, and an export reopens with the edits intact and the neighbouring row un
 
 ## Demo data
 
-`build.sh` also writes `app.demo.html` when a `sample.json` is present, which opens on a
-few hundred real orders instead of the file picker.
+`npm run build` also writes `app.demo.html` when a `sample.json` is present, which opens on
+a few hundred real orders instead of the file picker.
 
 **That file contains live customer orders and is deliberately excluded from this
 repository**, along with `sample.json` and any `.xlsx`. Regenerate it locally:
 
 ```
 node tools/make-sample.js "/path/to/Production Plan.xlsx"
-./build.sh
+npm run build
 ```
 
-Only `app.html`, which carries no order data, is committed.
+Only `public/index.html`, which carries no order data, is committed or deployed.
+
+## Deploy
+
+Import the repository into Vercel and accept the defaults. `vercel.json` sets the build to
+`node build.mjs` and the output directory to `public/`, so the deployed site is one static
+file served at `/`, built from `src/` on every push.
+
+There is no server and no database. A deployment holds no order data: `sample.json` and
+`app.demo.html` are gitignored, so the site always opens on the file picker, and each
+planner's workbook is read in their own browser.

@@ -4,7 +4,7 @@
   "private": true,
   "description": "Drag-and-drop line board for the Saitex master production plan",
   "scripts": {
-    "build": "./build.sh",
+    "build": "node build.mjs",
     "check": "node selfcheck.js",
     "sample": "node tools/make-sample.js"
   },
