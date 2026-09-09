@@ -1,3 +1,9 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Drag-and-drop line board for the master production plan. Workbooks are read in your browser and never uploaded.">
 <title>Saitex Line Board</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -546,6 +552,8 @@ input.zoom{width:110px;accent-color:var(--sx-intent-primary);height:20px;cursor:
   .brand span.t{display:none}
 }
 </style>
+</head>
+<body>
 
 <div id="app">
   <header class="topbar">
@@ -629,7 +637,7 @@ function unescapeXml(s) {
   });
 }
 function escapeXml(s) { return String(s).replace(/[<>&"]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c])); }
-function attr(a, name) { const m = new RegExp('(?:^|\\s)' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\<script>/*CORE*/</script>') + '="([^"]*)"').exec(a); return m ? m[1] : undefined; }
+function attr(a, name) { const m = new RegExp('(?:^|\\s)' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '="([^"]*)"').exec(a); return m ? m[1] : undefined; }
 function normKey(s) { return String(s || '').toUpperCase().replace(/[^A-Z0-9#%&/()+-]+/g, ' ').replace(/\s+/g, ' ').trim(); }
 function yieldToUI() { return new Promise(r => setTimeout(r, 0)); }
 
@@ -3157,3 +3165,6 @@ boot();
 })();
 
 </script>
+
+</body>
+</html>
