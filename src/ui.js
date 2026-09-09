@@ -1830,8 +1830,12 @@ function blockMenu(o, e) {
   const lane = laneFieldForBoard(), cur = str(o.v[lane.col]).trim();
   const pop = openPop(`${str(o.v[F.po])} · ${str(o.v[F.customer])}`, e.clientX, e.clientY);
   pop.classList.add('menupop');
-  pop.appendChild(menuRow('Stash it', false, () => stashOrder(o), 'off the board, into the tray'));
-  if (cur && !/^#/.test(cur)) pop.appendChild(menuRow('Remove from ' + cur, false, () => removeFromLane(o, e), 'keeps the order, clears the lane'));
+  const stash = menuRow('⇩ Stash it', false, () => stashOrder(o), 'off the board, into the tray');
+  stash.classList.add('m-stash'); pop.appendChild(stash);
+  if (cur && !/^#/.test(cur)) {
+    const rm = menuRow('✕ Remove from ' + cur, false, () => removeFromLane(o, e), 'keeps the order, clears the lane');
+    rm.classList.add('m-danger'); pop.appendChild(rm);
+  }
   pop.appendChild(menuRow('Open the order', false, () => openDrawer(o)));
 }
 function stashOrder(o) {

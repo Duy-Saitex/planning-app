@@ -525,15 +525,20 @@ input.zoom{width:110px;accent-color:var(--sx-intent-primary);height:20px;cursor:
   border-radius:var(--sx-radius-control);box-shadow:var(--sx-shadow-layer);padding:8px;min-width:240px;max-width:360px;
   max-height:62vh;overflow:auto}
 .menubtn .caret{opacity:.6;font-size:9px;margin-left:1px}
-.menupop{min-width:250px;padding:6px}
+.menupop{width:auto;min-width:250px;max-width:min(460px,92vw);padding:6px}
 .menupop h4{margin:0 0 4px;padding:0 6px}
 .mrow{display:flex;align-items:baseline;gap:8px;width:100%;text-align:left;padding:5px 6px;
   border-radius:var(--sx-radius-badge);font-size:12px;cursor:pointer}
 .mrow:hover{background:var(--sx-surface-hover)}
 .mrow.on{color:var(--sx-text-link)}
 .mrow .tick{width:11px;flex:none;font-size:11px;color:var(--sx-intent-primary)}
-.mrow .mlabel{flex:1;min-width:0}
+.mrow .mlabel{flex:1;min-width:0;white-space:nowrap}
 .mrow .mhint{color:var(--sx-text-disabled);font-size:11px;flex:none}
+.mrow.m-stash{color:var(--sx-text-link);font-weight:600}
+.mrow.m-stash:hover{background:var(--sx-tint-primary)}
+.mrow.m-danger{color:var(--sx-text-danger);font-weight:600}
+.mrow.m-danger:hover{background:var(--sx-tint-danger)}
+.mrow.m-stash .mhint,.mrow.m-danger .mhint{color:inherit;opacity:.7;font-weight:400}
 .menuhint{border-top:1px solid var(--sx-border-subtle);margin-top:6px;padding:7px 6px 2px;
   font-size:11px;color:var(--sx-text-disabled);line-height:1.5;white-space:normal}
 .pop h4{margin:0 0 6px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--sx-text-disabled)}
@@ -3151,8 +3156,12 @@ function blockMenu(o, e) {
   const lane = laneFieldForBoard(), cur = str(o.v[lane.col]).trim();
   const pop = openPop(`${str(o.v[F.po])} · ${str(o.v[F.customer])}`, e.clientX, e.clientY);
   pop.classList.add('menupop');
-  pop.appendChild(menuRow('Stash it', false, () => stashOrder(o), 'off the board, into the tray'));
-  if (cur && !/^#/.test(cur)) pop.appendChild(menuRow('Remove from ' + cur, false, () => removeFromLane(o, e), 'keeps the order, clears the lane'));
+  const stash = menuRow('⇩ Stash it', false, () => stashOrder(o), 'off the board, into the tray');
+  stash.classList.add('m-stash'); pop.appendChild(stash);
+  if (cur && !/^#/.test(cur)) {
+    const rm = menuRow('✕ Remove from ' + cur, false, () => removeFromLane(o, e), 'keeps the order, clears the lane');
+    rm.classList.add('m-danger'); pop.appendChild(rm);
+  }
   pop.appendChild(menuRow('Open the order', false, () => openDrawer(o)));
 }
 function stashOrder(o) {
