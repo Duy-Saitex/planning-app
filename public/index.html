@@ -2370,6 +2370,7 @@ function makeBlock(it, rowH, blkH, stage) {
     tabindex: 0, role: 'button',
     title: `${str(o.v[F.po])} · ${str(o.v[F.customer])} · style ${str(o.v[F.style])}\n${fmt(p.qty)} pcs · ${str(o.v[F.line])}\n${stage.name}: ${fmtDate(keyToDate(it.a))} → ${fmtDate(keyToDate(it.b))}${widened ? ' (bar widened to fit the name; the dashed line is the real end)' : ''}\n${RUN_LABEL[run]}${run === 'running' ? ' — ' + fmt(p.done[si]) + ' of ' + fmt(p.qty) + ' pcs done at ' + stage.name.toLowerCase() : lead != null && lead >= 0 ? ' — sewing starts in ' + lead + ' d' : ''}${gates.length ? '\nStill waiting on: ' + gates.join(', ') : ''}\nEx-factory ${fmtDate(o.v[F.planExFactory])} · delivery ${fmtDate(o.v[F.cusFinalDly])}${locked ? '\nLocked: already packed or shipped' : ''}`,
     onclick: e => { if (b._dragged) return; openDrawer(o); },
+    oncontextmenu: e => { e.preventDefault(); e.stopPropagation(); blockMenu(o, e); },
     onkeydown: e => {
       if (e.key === 'Enter') { openDrawer(o); return; }
       if (!e.shiftKey) return;
@@ -3143,6 +3144,16 @@ function withBoardTransition(row, run) {
   run();
   flipBoard(before);
   return ghost;
+}
+// Right-click on a bar: the two ways to get it out of the way, plus open.
+function blockMenu(o, e) {
+  const m = S.model, F = m.F;
+  const lane = laneFieldForBoard(), cur = str(o.v[lane.col]).trim();
+  const pop = openPop(`${str(o.v[F.po])} · ${str(o.v[F.customer])}`, e.clientX, e.clientY);
+  pop.classList.add('menupop');
+  pop.appendChild(menuRow('Stash it', false, () => stashOrder(o), 'off the board, into the tray'));
+  if (cur && !/^#/.test(cur)) pop.appendChild(menuRow('Remove from ' + cur, false, () => removeFromLane(o, e), 'keeps the order, clears the lane'));
+  pop.appendChild(menuRow('Open the order', false, () => openDrawer(o)));
 }
 function stashOrder(o) {
   const m = S.model, F = m.F, lane = laneFieldForBoard();
