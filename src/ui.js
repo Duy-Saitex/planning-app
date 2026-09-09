@@ -721,7 +721,7 @@ function renderBoard(view, bar) {
       : 'Nothing stashed yet. Park an order from its detail panel to hold it here.',
     onclick: () => { S.stashOpen = !S.stashOpen; renderStashTray(); } },
     h('span', {}, '⇩ Stash'),
-    S.stash.size ? h('span', { class: 'stashbadge' }, S.stash.size) : null));
+    h('span', { class: 'stashbadge' + (S.stash.size ? '' : ' zero'), 'aria-label': S.stash.size + ' stashed' }, S.stash.size)));
 
   const from = B.from, to = from + B.days - 1;
   const groups = laneList(B.stage);
