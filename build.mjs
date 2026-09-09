@@ -65,6 +65,16 @@ ${head}
 `;
 }
 
+// A var() that nothing defines is not an error to the browser, it is a silent
+// fallback to whatever was inherited. That is how a white-on-white badge shipped.
+function assertCssVarsDefined(html) {
+  const defined = new Set([...html.matchAll(/(--[a-zA-Z0-9-]+)\s*:/g)].map(m => m[1]));
+  const used = new Set([...html.matchAll(/var\((--[a-zA-Z0-9-]+)/g)].map(m => m[1]));
+  const missing = [...used].filter(v => !defined.has(v));
+  if (missing.length) throw new Error('CSS variables used but never defined: ' + missing.join(', '));
+}
+assertCssVarsDefined(shell);
+
 const clean = standalone(bundle(''));
 if (clean.includes('window.SAMPLE=')) throw new Error('index.html must not carry order data');
 assertScriptsParse(clean, 'public/index.html');
