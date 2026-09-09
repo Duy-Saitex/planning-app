@@ -200,6 +200,16 @@ const RANGES = [
   { key: 'washLastOut', label: 'Wash out' }, { key: 'finLastOut', label: 'Finishing out' },
   { key: 'planExFactory', label: 'Ex-factory' }, { key: 'cusFinalDly', label: 'Customer delivery' }, { key: 'fabReqIH', label: 'Fabric needed' },
 ];
+const QUICK_HELP = {
+  late: 'Ex-factory falls after the confirmed delivery',
+  wip: 'Something has been produced but it has not shipped',
+  unassigned: 'No sewing line set yet',
+  fabricPending: 'No actual in-house date on the fabric',
+  approvalPending: 'Fit, PP or wash approval still outstanding',
+  unconfirmed: 'The order itself is not confirmed',
+  dirty: 'You have changed a cell on this order',
+  stashed: 'Parked off the board in the stash tray',
+};
 const QUICKS = [
   ['late', 'At risk / late'], ['wip', 'In production'], ['unassigned', 'No line yet'],
   ['fabricPending', 'Fabric not in-house'], ['approvalPending', 'Approval pending'],
@@ -241,8 +251,16 @@ function renderRail() {
     n ? h('button', { class: 'clearall', onclick: clearFilters }, 'Clear ' + n) : null));
 
   // quick filters
-  const qs = h('div', { class: 'qgrid' });
-  for (const [k, label] of QUICKS) qs.appendChild(h('button', { class: 'chip', 'aria-pressed': !!S.filters.quick[k], onclick: () => { S.filters.quick[k] = !S.filters.quick[k]; if (!S.filters.quick[k]) delete S.filters.quick[k]; applyFilters(); } }, label));
+  const qs = h('div', { class: 'facet' });
+  for (const [k, label] of QUICKS) {
+    const on = !!S.filters.quick[k];
+    const test = PC.QUICK_TESTS[k];
+    const n = k === 'stashed' ? S.stash.size
+      : test ? S.filtered.reduce((a, o) => a + (test(S.model, o) ? 1 : 0), 0) : 0;
+    qs.appendChild(h('button', { class: 'frow', role: 'checkbox', 'aria-checked': on, title: QUICK_HELP[k] || '',
+      onclick: () => { if (on) delete S.filters.quick[k]; else S.filters.quick[k] = true; applyFilters(); } },
+      h('i', { class: 'box' }), h('span', { class: 'lbl' }, label), h('span', { class: 'cnt' }, fmt(n))));
+  }
   rail.appendChild(sec('quick', 'Quick filters', qs, true));
 
   // facets

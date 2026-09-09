@@ -489,16 +489,23 @@ function buildPredicate(model, fs, skipFacet) {
     for (const k of facetKeys) { const val = facetValue(model, o, k); if (!fs.facets[k].has(val)) return false; }
     for (const k of rangeKeys) { const c = F[k]; if (c < 0) continue; const v = o.v[c]; const [from, to] = fs.ranges[k]; if (!isDate(v)) return false; const dk = dayKey(v); if (from && dk < dayKey(parseYmd(from))) return false; if (to && dk > dayKey(parseYmd(to))) return false; }
     for (const cf of custom) if (!matchesCustom(model, o, cf)) return false;
-    if (quick.late && !isLate(model, o)) return false;
-    if (quick.unconfirmed && !/un[\s-]?confirmed/i.test(str(o.v[F.status]))) return false;
-    if (quick.dirty && !o.dirty) return false;
-    if (quick.wip) { const st = orderProgress(model, o).stage; if (st < 0 || st > 5) return false; }
-    if (quick.unassigned && str(o.v[F.line]).trim()) return false;
-    if (quick.fabricPending && isDate(o.v[F.fabActIH])) return false;
-    if (quick.approvalPending && !approvalPending(model, o)) return false;
+    for (const k in quick) {
+      const test = QUICK_TESTS[k];
+      if (quick[k] && test && !test(model, o)) return false;   // "stashed" has no test here; the interface holds that list
+    }
     return true;
   };
 }
+// One definition per quick filter, so the interface can both apply and count them.
+const QUICK_TESTS = {
+  late: (m, o) => isLate(m, o),
+  wip: (m, o) => { const st = orderProgress(m, o).stage; return st >= 0 && st <= 5; },
+  unassigned: (m, o) => !str(o.v[m.F.line]).trim(),
+  fabricPending: (m, o) => !isDate(o.v[m.F.fabActIH]),
+  approvalPending: (m, o) => approvalPending(m, o),
+  unconfirmed: (m, o) => /un[\s-]?confirmed/i.test(str(o.v[m.F.status])),
+  dirty: (m, o) => !!o.dirty,
+};
 // What still has to land before this order can start. A blank cell is not a blocker:
 // the planners leave columns empty for order types the gate does not apply to.
 const TRIM_KEYS = ['pocketing', 'interlining', 'thread', 'zipper', 'label', 'hookBar'];
@@ -709,6 +716,6 @@ async function buildEditedWorkbook(model, opts = {}) {
 
 return { loadWorkbook, recompute, setCell, undo, redo, beginGroup, endGroup, orderByRow, exportEdits, importEdits, buildEditedWorkbook, shiftFormula, parseLineName, buildLines,
   STAGES, STAGE_INDEX, STAGE_NAMES, stageLabel, stageWindow, orderProgress, resourceOf, spreadLoad, capacityOf, autoCapacity, workdayCount, isNonWash, isLate, approvalPending,
-  buildPredicate, applyFilter, facetCounts, facetValue, textOf, FIELD_DEFS, otdDays, openGates, runState, lateReasons, trimsPending, productionComplete, leadDays, READY_WINDOW_DAYS,
+  buildPredicate, applyFilter, facetCounts, facetValue, textOf, FIELD_DEFS, otdDays, openGates, runState, lateReasons, QUICK_TESTS, trimsPending, productionComplete, leadDays, READY_WINDOW_DAYS,
   util: { serialToDate, dateToSerial, isDate, dayKey, keyToDate, addDays, startOfDay, isSunday, skipSunday, plusSkip, num, str, ymd, fmtDate, fmtDateShort, parseYmd, monthKey, weekKey, mmmyy, colToIdx, idxToCol, normKey, MON } };
 });
